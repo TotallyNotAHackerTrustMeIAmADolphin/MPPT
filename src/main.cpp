@@ -1,18 +1,14 @@
 #include <Arduino.h>
+#include <main.c>
 
-// put function declarations here:
-int myFunction(int, int);
-
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  initPWM();
+  setPWM(TIM_CHANNEL_1, 0);
+  setPWM(TIM_CHANNEL_2, 0);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+void loop()
+{
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }

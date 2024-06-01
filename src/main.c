@@ -17,11 +17,11 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "PWM.h"
+#include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdint.h>
+//#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,9 +46,9 @@ DMA_HandleTypeDef hdma_tim1_ch2;
 
 /* USER CODE BEGIN PV */
 #define TIMER_PERIOD ((uint16_t)479) // 100 kHz PWM frequency
-#define DITHER_TABLE_SIZE 8          // 3 bits of dithering
-uint16_t aDitherTable1[2 * DITHER_TABLE_SIZE];
-uint16_t aDitherTable2[2 * DITHER_TABLE_SIZE];
+#define DITHER_TABLE_SIZE 8          // 3 bits of dithering, has to be a power of 2
+uint16_t ditherTableCH1[2 * DITHER_TABLE_SIZE];
+uint16_t ditherTableCH2[2 * DITHER_TABLE_SIZE];
 uint16_t maxDutyCycle = ((TIMER_PERIOD + 1) * DITHER_TABLE_SIZE) - 1;
 uint8_t ditherBits = 3; // log2(DITHER_TABLE_SIZE)
 /* USER CODE END PV */
@@ -103,8 +103,10 @@ void initPWM(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)aDitherTable1, 2 * DITHER_TABLE_SIZE);
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)aDitherTable2, 2 * DITHER_TABLE_SIZE);
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, 2 * DITHER_TABLE_SIZE);
+  HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, 2 * DITHER_TABLE_SIZE);
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, 2 * DITHER_TABLE_SIZE);
+  HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, 2 * DITHER_TABLE_SIZE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -295,17 +297,16 @@ void setPWM(uint32_t channel, float dutyCyclePct)
   {
     dutyCyclePct = 100;
   }
-  dutyCyclePct = dutyCyclePct / 100;
 
-  uint16_t dutyCycle = (uint16_t)roundf(dutyCyclePct * (float)maxDutyCycle);
+  uint16_t dutyCycle = (uint16_t)roundf(dutyCyclePct / 100 * (float)maxDutyCycle);
 
   if (channel == TIM_CHANNEL_1)
   {
-    updateDitherTable(aDitherTable1, dutyCycle);
+    updateDitherTable(ditherTableCH1, dutyCycle);
   }
   else if (channel == TIM_CHANNEL_2)
   {
-    updateDitherTable(aDitherTable2, dutyCycle);
+    updateDitherTable(ditherTableCH2, dutyCycle);
   }
 }
 /* USER CODE END 4 */
