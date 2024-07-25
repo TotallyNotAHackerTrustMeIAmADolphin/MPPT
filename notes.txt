@@ -1,0 +1,8 @@
+C++ in C benutzen
+https://barenakedembedded.com/how-to-use-cpp-with-stm32-hal/
+
+how to send UART over USB
+https://controllerstech.com/send-and-receive-data-to-pc-without-uart-stm32-usb-com/
+
+multiple ADC Channel
+https://controllerstech.com/stm32-adc-multiple-channels/
