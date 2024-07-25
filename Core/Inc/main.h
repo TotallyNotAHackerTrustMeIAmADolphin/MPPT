@@ -49,8 +49,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -59,6 +57,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define usbDetect_Pin GPIO_PIN_13
+#define usbDetect_GPIO_Port GPIOC
 #define VsenseIn_Pin GPIO_PIN_1
 #define VsenseIn_GPIO_Port GPIOA
 #define IsenseIn_Pin GPIO_PIN_2
@@ -69,14 +69,20 @@ void Error_Handler(void);
 #define IsenseOut_GPIO_Port GPIOA
 #define NTC100K_Pin GPIO_PIN_5
 #define NTC100K_GPIO_Port GPIOA
-#define oostLOWside_Pin GPIO_PIN_7
-#define oostLOWside_GPIO_Port GPIOA
+#define boostLOWside_Pin GPIO_PIN_7
+#define boostLOWside_GPIO_Port GPIOA
 #define buckLOWside_Pin GPIO_PIN_0
 #define buckLOWside_GPIO_Port GPIOB
+#define fanControllPin_Pin GPIO_PIN_8
+#define fanControllPin_GPIO_Port GPIOC
 #define boostHIGHside_Pin GPIO_PIN_8
 #define boostHIGHside_GPIO_Port GPIOA
 #define buckHIGHside_Pin GPIO_PIN_9
 #define buckHIGHside_GPIO_Port GPIOA
+#define LED_Pin GPIO_PIN_10
+#define LED_GPIO_Port GPIOC
+#define chipSelect_Pin GPIO_PIN_2
+#define chipSelect_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 

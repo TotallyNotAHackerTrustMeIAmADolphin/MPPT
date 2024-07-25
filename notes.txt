@@ -6,3 +6,6 @@ https://controllerstech.com/send-and-receive-data-to-pc-without-uart-stm32-usb-c
 
 multiple ADC Channel
 https://controllerstech.com/stm32-adc-multiple-channels/
+
+printf on USB
+https://github.com/alexeykosinov/Redirect-printf-to-USB-VCP-on-STM32H7-MCU
