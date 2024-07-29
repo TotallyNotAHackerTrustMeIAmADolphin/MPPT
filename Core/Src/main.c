@@ -33,6 +33,7 @@
 #include "string.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,17 +49,37 @@
 
 // ADC Stuff
 #define ADC_CHANNEL_COUNT 6
-#define ADC_SAMPLE_COUNT 50
+#define ADC_CHANNEL_AVG_BITS 7
+#define ADC_SAMPLE_COUNT (1 << ADC_CHANNEL_AVG_BITS)
 #define ADC_BUF_LEN (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
 
 // conversion factor for converting ADC values to voltage with 200k and 5.1k resistors at 12 bit resolution of 3.3V
-#define RESISTOR1 200.0f
-#define RESISTOR2 16.0f
-#define VOLTAGE_CONVERSION_FACTOR (3.3f / 4095.0f) * ((RESISTOR1 + RESISTOR2) / RESISTOR2)
+#define VOLT_IN_RAW_LOW 248
+#define VOLT_IN_RAW_HIGH 876
+#define VOLT_OUT_RAW_LOW 251
+#define VOLT_OUT_RAW_HIGH 878
+#define VOLT_REFERENCE_LOW 10.0f
+#define VOLT_REFERENCE_HIGH 30.0f
 
 // conversion factor from ADC values to current in mA with 0.333333 milli-ohm resistor at 12 bit resolution of 3.3V where 1.65V is the zero current point at 200 V/V gain
-#define shunt_resistor 0.000333333333333333f
-#define CURRENT_CONVERSION_FACTOR (-(3.3f / 4095.0f) / 200 / shunt_resistor)
+#define AMP_IN_RAW_LOW 1974
+#define AMP_IN_RAW_HIGH 500
+#define AMP_OUT_RAW_LOW 1974
+#define AMP_OUT_RAW_HIGH 524
+#define AMP_REFERENCE_LOW 0
+#define AMP_REFERENCE_HIGH 4.1f
+// #define AMP_IN_RAW_LOW 0
+// #define AMP_IN_RAW_HIGH 1
+// #define AMP_OUT_RAW_LOW 0
+// #define AMP_OUT_RAW_HIGH 1
+// #define AMP_REFERENCE_LOW 0
+// #define AMP_REFERENCE_HIGH 1
+
+// internal Temp sensor
+#define V_REF_INT 1.2f
+#define AVG_SLOPE (4.3f * 1000 * (4096 / V_REF_INT))
+#define V30 (1.43f * (4096 / V_REF_INT))
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -83,8 +104,13 @@ float voltIn = 0;
 float voltOut = 0;
 float AmpIn = 0;
 float AmpOut = 0;
+float tempMofets = 0;
+float tempMCU = 0;
 float wattIn = 0;
 float wattOut = 0;
+volatile bool bufferFull = false;
+
+uint32_t previousTime = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -142,7 +168,10 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
+  // HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
   HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
+  // HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
+
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
@@ -153,7 +182,12 @@ int main(void)
   // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
   // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
+  // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+  // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+
   setPWM(100);
+  // updateDitherTable(ditherTableCH1, 960);
+  // updateDitherTable(ditherTableCH2, 960);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -163,18 +197,29 @@ int main(void)
     // send a serial message via USB
     // char msg[] = "Hello World!\r\n";
     // CDC_Transmit_FS((uint8_t *)msg, strlen(msg));
-    printf("Characters: %c %c\n", 'a', 65);
-    printf("Decimals: %d %ld\n", 1977, 650000L);
-    printf("Preceding with blanks: %10d\n", 1977);
-    printf("Preceding with zeros: %010d\n", 1977);
-    printf("Some different radices: %d %x %o %#x %#o\n", 100, 100, 100, 100, 100);
-    printf("floats: %4.2f %+.0e %E\n", 3.1416, 3.1416, 3.1416);
-    printf("Width trick: %*d\n", 5, 10);
-    printf("%s\n", "A string");
+    // printf("Characters: %c %c\n", 'a', 65);
+    // printf("Decimals: %d %ld\n", 1977, 650000L);
+    // printf("Preceding with blanks: %10d\n", 1977);
+    // printf("Preceding with zeros: %010d\n", 1977);
+    // printf("Some different radices: %d %x %o %#x %#o\n", 100, 100, 100, 100, 100);
+    // printf("floats: %4.2f %+.0e %E\n", 3.1416, 3.1416, 3.1416);
+    // printf("Width trick: %*d\n", 5, 10);
+    // printf("%s\n", "A string");
+    // print all the values
+    // printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut);
     // HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
-    readSensors();
+    // readSensors();
     // setPWM((20 / voltIn) * 100);
-    HAL_Delay(1000);
+    // HAL_Delay(100);
+
+    if (bufferFull)
+    {
+      bufferFull = false;
+      uint32_t time = HAL_GetTick();
+      readSensors();
+      printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%lu ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
+      previousTime = time;
+    }
 
     /* USER CODE END WHILE */
 
@@ -225,10 +270,22 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-// needeed for printf
+// needed for printf
 int _write(int file, char *ptr, int len)
 {
-  CDC_Transmit_FS((uint8_t *)ptr, len);
+  static uint8_t rc = USBD_OK;
+
+  do
+  {
+    rc = CDC_Transmit_FS((uint8_t *)ptr, len);
+  } while (USBD_BUSY == rc);
+
+  if (USBD_FAIL == rc)
+  {
+    /// NOTE: Should never reach here.
+    /// TODO: Handle this error.
+    return 0;
+  }
   return len;
 }
 
@@ -313,30 +370,41 @@ void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle)
 // Called when first half of buffer is filled
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
 {
-  // unused
+  bufferFull = true;
 }
 
 // Called when buffer is completely filled
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-  // unused
+  // bufferFull = true;
 }
 
 void readSensors()
 {
-  // write Values to the global variables
+  // temporary variables
+  uint32_t voltIn_temp = 0;
+  uint32_t voltOut_temp = 0;
+  int32_t AmpIn_temp = 0;
+  int32_t AmpOut_temp = 0;
+  uint32_t tempMofets_temp = 0;
+  uint32_t tempMCU_temp = 0;
+  // sum the values of the ADC buffer
   for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
   {
-    voltIn += adc_buf[i] * VOLTAGE_CONVERSION_FACTOR;
-    voltOut += adc_buf[i + 2] * VOLTAGE_CONVERSION_FACTOR;
-    AmpIn += ((int16_t)adc_buf[i + 1] - 1996.0) * CURRENT_CONVERSION_FACTOR;
-    AmpOut += ((int16_t)adc_buf[i + 3] - 1996.0) * CURRENT_CONVERSION_FACTOR;
+    voltIn_temp += adc_buf[i];
+    voltOut_temp += adc_buf[i + 2];
+    AmpIn_temp += adc_buf[i + 1];
+    AmpOut_temp += adc_buf[i + 3];
+    tempMofets_temp += adc_buf[i + 4];
+    tempMCU_temp += adc_buf[i + 5];
   }
-  // calculate average
-  voltIn /= ADC_SAMPLE_COUNT + 1;
-  voltOut /= ADC_SAMPLE_COUNT + 1;
-  AmpIn /= ADC_SAMPLE_COUNT + 1;
-  AmpOut /= ADC_SAMPLE_COUNT + 1;
+  // calculate average and convert to real values
+  voltIn = (((((float)voltIn_temp / ADC_SAMPLE_COUNT) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
+  voltOut = (((((float)voltOut_temp / ADC_SAMPLE_COUNT) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
+  AmpIn = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_REFERENCE_LOW;
+  AmpOut = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_REFERENCE_LOW;
+  tempMofets = (float)(tempMofets_temp >> ADC_CHANNEL_AVG_BITS);
+  tempMCU = (V30 - (float)(tempMCU_temp >> ADC_CHANNEL_AVG_BITS)) / AVG_SLOPE + 30;
   wattIn = voltIn * AmpIn;
   wattOut = voltOut * AmpOut;
 }
