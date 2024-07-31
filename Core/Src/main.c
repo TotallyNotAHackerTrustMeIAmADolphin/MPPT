@@ -84,7 +84,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -95,6 +95,7 @@ uint16_t ditherTableCH1[DITHER_TABLE_SIZE];
 uint16_t ditherTableCH2[DITHER_TABLE_SIZE];
 uint16_t maxDutyCycle = (TIMER_PERIOD * DITHER_TABLE_SIZE);
 uint8_t ditherBits = 3; // log2(DITHER_TABLE_SIZE)
+float dutyCycle = 0;
 
 // data for the ADC
 uint16_t adc_buf[ADC_BUF_LEN];
@@ -121,6 +122,9 @@ void setPWM(float dutyCyclePct);
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
 
 void readSensors();
+
+void constantVoltage(float voltage);
+void constantCurrent(float current);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -185,7 +189,8 @@ int main(void)
   // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
   // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
 
-  setPWM(100);
+  dutyCycle = 0;
+  setPWM(dutyCycle);
   // updateDitherTable(ditherTableCH1, 960);
   // updateDitherTable(ditherTableCH2, 960);
   /* USER CODE END 2 */
@@ -214,11 +219,27 @@ int main(void)
 
     if (bufferFull)
     {
+      static uint8_t counter = 0;
       bufferFull = false;
       uint32_t time = HAL_GetTick();
       readSensors();
-      printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%lu ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
+      // constantVoltage(20);
+      float maxVoltOut = 20;
+      if (voltOut < maxVoltOut - 0.3)
+      {
+        constantCurrent(3);
+      }
+      else
+      {
+        constantVoltage(maxVoltOut);
+      }
+      // constantCurrent(1.9);
+      if (counter % 8 == 0)
+      {
+        printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%lu ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
+      }
       previousTime = time;
+      counter++;
     }
 
     /* USER CODE END WHILE */
@@ -305,7 +326,7 @@ void setPWM(float dutyCyclePct)
   {
     dutyCyclePct = 0;
   }
-  else if (dutyCyclePct > 190)
+  else if (dutyCyclePct > 170)
   {
     dutyCyclePct = 190;
   }
@@ -408,6 +429,22 @@ void readSensors()
   wattIn = voltIn * AmpIn;
   wattOut = voltOut * AmpOut;
 }
+
+void constantVoltage(float voltage)
+{
+  float error = voltage - voltOut;
+  dutyCycle += error * 1;
+  dutyCycle = constrain(dutyCycle, 0, 200);
+  setPWM(dutyCycle);
+}
+void constantCurrent(float current)
+{
+  float error = current - AmpOut;
+  dutyCycle += error * 50;
+  dutyCycle = constrain(dutyCycle, 0, 200);
+  setPWM(dutyCycle);
+}
+
 /* USER CODE END 4 */
 
 /**
