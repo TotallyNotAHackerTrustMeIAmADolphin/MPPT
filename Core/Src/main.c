@@ -34,6 +34,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
+
+#include "pidautotuner.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,6 +82,12 @@
 #define AVG_SLOPE (4.3f * 1000 * (4096 / V_REF_INT))
 #define V30 (1.43f * (4096 / V_REF_INT))
 
+// some max values
+#define MAX_VOLTAGE_OUT 20
+#define MAX_CURRENT_OUT 3
+#define PWM_DEAD_BAND 2 // percent
+#define MIN_VOLTAGE_IN 12
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -98,33 +106,53 @@ uint8_t ditherBits = 3; // log2(DITHER_TABLE_SIZE)
 float dutyCycle = 0;
 
 // data for the ADC
-uint16_t adc_buf[ADC_BUF_LEN];
+volatile uint16_t adc_buf[ADC_BUF_LEN];
 
 // data read from Sensors
-float voltIn = 0;
-float voltOut = 0;
-float AmpIn = 0;
-float AmpOut = 0;
+float voltIn = 100;
+float voltOut = 100;
+float AmpIn = 100;
+float AmpOut = 100;
 float tempMofets = 0;
 float tempMCU = 0;
 float wattIn = 0;
 float wattOut = 0;
 volatile bool bufferFull = false;
 
-uint32_t previousTime = 0;
+typedef struct
+{
+  float Kp;
+  float Ki;
+  float Kd;
+  float previousError;
+  float integral;
+  float setPoint;
+  float *input;
+  float *output;
+  float maxIntegral;
+  float minOutput;
+  float maxOutput;
+} PID;
+float dutyCycleConstantVoltage = 0;
+float dutyCycleConstantCurrent = 0;
+float dutyCycleMPPT = 0;
+PID constantVoltage = {2.645532, 0.057958, 0.264580, 0, 0, 0, &voltOut, &dutyCycleConstantVoltage, 100, 0, 200};
+PID constantCurrent = {232.154495, 45.851463, 23.415422, 0, 0, 0, &AmpOut, &dutyCycleConstantCurrent, 100, 0, 200};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void SerialPrint(char msg[]);
 void setPWM(float dutyCyclePct);
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
 
 void readSensors();
 
-void constantVoltage(float voltage);
-void constantCurrent(float current);
+// void constantVoltage(float voltage);
+// void constantCurrent(float current);
+void computePID(PID *pid);
+void computeMPPT();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -170,6 +198,7 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC_Init();
   MX_TIM3_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
   // HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
@@ -180,6 +209,9 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
   HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
+
+  HAL_TIM_Base_Start(&htim6);
+  __HAL_TIM_GET_COUNTER(&htim6);
 
   // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -193,53 +225,115 @@ int main(void)
   setPWM(dutyCycle);
   // updateDitherTable(ditherTableCH1, 960);
   // updateDitherTable(ditherTableCH2, 960);
+  PIDAutotuner constantVoltageTuner;
+  PIDAutotuner_init(&constantVoltageTuner);
+  PIDAutotuner_setOutputRange(&constantVoltageTuner, 140, 160);
+  PIDAutotuner_setTargetInputValue(&constantVoltageTuner, 30);
+  uint16_t sampleTime = 1280;
+  PIDAutotuner_setLoopInterval(&constantVoltageTuner, sampleTime);
+  PIDAutotuner_setTuningCycles(&constantVoltageTuner, 100);
+  PIDAutotuner_setZNMode(&constantVoltageTuner, ZNModeLessOvershoot);
+  PIDAutotuner_startTuningLoop(&constantVoltageTuner, __HAL_TIM_GET_COUNTER(&htim6));
+
+  PIDAutotuner constantCurrentTuner;
+  PIDAutotuner_init(&constantCurrentTuner);
+  PIDAutotuner_setOutputRange(&constantCurrentTuner, 0, 80);
+  PIDAutotuner_setTargetInputValue(&constantCurrentTuner, 1.4);
+  PIDAutotuner_setLoopInterval(&constantCurrentTuner, sampleTime);
+  PIDAutotuner_setTuningCycles(&constantCurrentTuner, 50);
+  PIDAutotuner_setZNMode(&constantCurrentTuner, ZNModeNoOvershoot);
+  // PIDAutotuner_startTuningLoop(&constantCurrentTuner, __HAL_TIM_GET_COUNTER(&htim6));
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // send a serial message via USB
-    // char msg[] = "Hello World!\r\n";
-    // CDC_Transmit_FS((uint8_t *)msg, strlen(msg));
-    // printf("Characters: %c %c\n", 'a', 65);
-    // printf("Decimals: %d %ld\n", 1977, 650000L);
-    // printf("Preceding with blanks: %10d\n", 1977);
-    // printf("Preceding with zeros: %010d\n", 1977);
-    // printf("Some different radices: %d %x %o %#x %#o\n", 100, 100, 100, 100, 100);
-    // printf("floats: %4.2f %+.0e %E\n", 3.1416, 3.1416, 3.1416);
-    // printf("Width trick: %*d\n", 5, 10);
-    // printf("%s\n", "A string");
-    // print all the values
-    // printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut);
-    // HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
-    // readSensors();
-    // setPWM((20 / voltIn) * 100);
-    // HAL_Delay(100);
 
     if (bufferFull)
     {
       static uint8_t counter = 0;
       bufferFull = false;
-      uint32_t time = HAL_GetTick();
-      readSensors();
-      // constantVoltage(20);
-      float maxVoltOut = 20;
-      if (voltOut < maxVoltOut - 0.3)
+      static uint16_t previousTime = 0;
+      uint16_t time = __HAL_TIM_GET_COUNTER(&htim6);
+      uint16_t timeDiff = 0;
+      if (time < previousTime)
       {
-        constantCurrent(3);
+        timeDiff = (0xFFFF - previousTime) + time + 1;
       }
       else
       {
-        constantVoltage(maxVoltOut);
-      }
-      // constantCurrent(1.9);
-      if (counter % 8 == 0)
-      {
-        printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%lu ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
+        timeDiff = time - previousTime;
       }
       previousTime = time;
+      readSensors();
+
+      // if (!PIDAutotuner_isFinished(&constantVoltageTuner))
+      // {
+      //   dutyCycle = PIDAutotuner_tunePID(&constantVoltageTuner, voltOut, time);
+      //   // printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%u ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, timeDiff);
+      //   // printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tdutyCycle:%f\n", voltIn, voltOut, AmpIn * 10, AmpOut * 10, dutyCycle / 10);
+      //   if (PIDAutotuner_isFinished(&constantVoltageTuner))
+      //   {
+      //     printf("voltage Kp: %f\tKi: %f\tKd: %f\ttimeDiff: %u\n", PIDAutotuner_getKp(&constantVoltageTuner), PIDAutotuner_getKi(&constantVoltageTuner), PIDAutotuner_getKd(&constantVoltageTuner), timeDiff);
+      //     constantVoltage.Kp = PIDAutotuner_getKp(&constantVoltageTuner);
+      //     constantVoltage.Ki = PIDAutotuner_getKi(&constantVoltageTuner);
+      //     constantVoltage.Kd = PIDAutotuner_getKd(&constantVoltageTuner);
+      //     PIDAutotuner_startTuningLoop(&constantCurrentTuner, __HAL_TIM_GET_COUNTER(&htim6));
+      //     dutyCycle = 0;
+      //   }
+      // }
+      // else if (!PIDAutotuner_isFinished(&constantCurrentTuner))
+      // {
+      //   dutyCycle = PIDAutotuner_tunePID(&constantCurrentTuner, AmpOut, time);
+      //   // printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tdutyCycle:%f\n", voltIn, voltOut, AmpIn * 10, AmpOut * 10, dutyCycle / 10);
+      //   if (PIDAutotuner_isFinished(&constantCurrentTuner))
+      //   {
+      //     printf("current Kp: %f\tKi: %f\tKd: %f\ttimeDiff: %u\n", PIDAutotuner_getKp(&constantCurrentTuner), PIDAutotuner_getKi(&constantCurrentTuner), PIDAutotuner_getKd(&constantCurrentTuner), timeDiff);
+      //     constantCurrent.Kp = PIDAutotuner_getKp(&constantCurrentTuner);
+      //     constantCurrent.Ki = PIDAutotuner_getKi(&constantCurrentTuner);
+      //     constantCurrent.Kd = PIDAutotuner_getKd(&constantCurrentTuner);
+      //   }
+      // }
+      if (voltIn < MIN_VOLTAGE_IN)
+      {
+        dutyCycle = 0;
+        // computeMPPT();
+      }
+      else
+      {
+        // constantVoltage.setPoint = 20;
+        // computePID(&constantVoltage);
+        // dutyCycleConstantCurrent = 0;
+        // constantCurrent.setPoint = 1.7;
+        // computePID(&constantCurrent);
+        // computeMPPT();
+        // if (dutyCycleMPPT < dutyCycleConstantCurrent)
+        // {
+        //   dutyCycle = dutyCycleMPPT;
+        // }
+        // if (dutyCycleConstantCurrent < dutyCycleConstantVoltage)
+        // {
+        //   dutyCycle = dutyCycleConstantCurrent;
+        // }
+        // else
+        // {
+        //   dutyCycle = dutyCycleConstantVoltage;
+        // }
+        // computeMPPT();
+        dutyCycle = dutyCycleMPPT;
+      }
+      setPWM(dutyCycle);
+
+      if (counter % 32 == 0)
+      {
+        computeMPPT();
+        // printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%u ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
+        printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn * 10, AmpOut * 10, wattIn, wattOut, dutyCycleConstantCurrent / 10, dutyCycleConstantVoltage / 10, dutyCycleMPPT);
+      }
       counter++;
+      timeDiff++; // just here so the compiler doesn't complain about unused variable
     }
 
     /* USER CODE END WHILE */
@@ -322,26 +416,26 @@ void setPWM(float dutyCyclePct)
   float CH1Value = 0;
   float CH2Value = 0;
 
-  if (dutyCyclePct < 2)
+  if (dutyCyclePct < 0)
   {
     dutyCyclePct = 0;
   }
-  else if (dutyCyclePct > 170)
+  else if (dutyCyclePct > 160)
   {
-    dutyCyclePct = 190;
+    dutyCyclePct = 160;
   }
 
-  if (dutyCyclePct == 0)
+  if (dutyCyclePct < PWM_DEAD_BAND)
   { // Turn Off
     CH1Value = 0;
     CH2Value = 0;
   }
-  else if (dutyCyclePct == 100)
+  else if (dutyCyclePct <= 100 + PWM_DEAD_BAND && dutyCyclePct >= 100 - PWM_DEAD_BAND)
   {                         // Just Passthrough
     CH1Value = timerPeriod; // 100% duty cycle for the high side Mosfet of the BOOST side
     CH2Value = timerPeriod; // 100% duty cycle for the BUCK side
   }
-  else if (dutyCyclePct < 100)
+  else if (dutyCyclePct < 100 - PWM_DEAD_BAND)
   {                                              // Buck mode
     CH1Value = timerPeriod;                      // 100% duty cycle for the high side Mosfet of the BOOST side
     CH2Value = dutyCyclePct / 100 * timerPeriod; // duty cycle for the BUCK side
@@ -350,7 +444,7 @@ void setPWM(float dutyCyclePct)
     updateDitherTable(ditherTableCH1, (uint16_t)roundf(CH1Value));
     return;
   }
-  else if (dutyCyclePct > 100)
+  else if (dutyCyclePct > 100 + PWM_DEAD_BAND)
   {                                                        // Boost mode
     CH1Value = (200 - dutyCyclePct) / 100 * (timerPeriod); // duty cycle for the high side Mosfet of the BOOST side, but inverted logic (lower duty cycle = higher voltage)
     CH2Value = timerPeriod;                                // 100% duty cycle for the BUCK side
@@ -422,27 +516,55 @@ void readSensors()
   // calculate average and convert to real values
   voltIn = (((((float)voltIn_temp / ADC_SAMPLE_COUNT) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
   voltOut = (((((float)voltOut_temp / ADC_SAMPLE_COUNT) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  AmpIn = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_REFERENCE_LOW;
-  AmpOut = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_REFERENCE_LOW;
+  float AmpInTemp = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_REFERENCE_LOW;
+  AmpIn = AmpIn * 0.9 + AmpInTemp * 0.1;
+  float AmpOutTemp = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_REFERENCE_LOW;
+  AmpOut = AmpOut * 0.9 + AmpOutTemp * 0.1;
   tempMofets = (float)(tempMofets_temp >> ADC_CHANNEL_AVG_BITS);
   tempMCU = (V30 - (float)(tempMCU_temp >> ADC_CHANNEL_AVG_BITS)) / AVG_SLOPE + 30;
   wattIn = voltIn * AmpIn;
   wattOut = voltOut * AmpOut;
 }
 
-void constantVoltage(float voltage)
+void computePID(PID *pid)
 {
-  float error = voltage - voltOut;
-  dutyCycle += error * 1;
-  dutyCycle = constrain(dutyCycle, 0, 200);
-  setPWM(dutyCycle);
+  float error = pid->setPoint - *pid->input;
+  float integral = pid->integral + error;
+  float derivative = error - pid->previousError;
+
+  integral = constrain(integral, -pid->maxIntegral, pid->maxIntegral); // limit the integral term to prevent windup
+
+  *pid->output += pid->Kp * error + pid->Ki * integral + pid->Kd * derivative;
+  *pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput); // limit the output to the PWM range
+
+  pid->previousError = error;
+  pid->integral = integral;
 }
-void constantCurrent(float current)
+
+void computeMPPT()
 {
-  float error = current - AmpOut;
-  dutyCycle += error * 50;
-  dutyCycle = constrain(dutyCycle, 0, 200);
-  setPWM(dutyCycle);
+  static float previousWattOut = 0;
+  static float dutyCycleChange = 0;
+
+  static bool direction = true;
+
+  (wattOut - previousWattOut) / dutyCycleChange;
+
+  if (wattOut < previousWattOut)
+  {
+    direction = !direction;
+  }
+
+  if (direction)
+  {
+    dutyCycleMPPT += 1;
+  }
+  else
+  {
+    dutyCycleMPPT -= 1;
+  }
+  previousWattOut = wattOut;
+  dutyCycleMPPT = constrain(dutyCycleMPPT, 5, 90);
 }
 
 /* USER CODE END 4 */
