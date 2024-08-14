@@ -55,27 +55,25 @@
 #define ADC_SAMPLE_COUNT (1 << ADC_CHANNEL_AVG_BITS)
 #define ADC_BUF_LEN (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
 
+// turn on calibration mode
+#define CALIBRATION_MODE false
+
 // conversion factor for converting ADC values to voltage with 200k and 5.1k resistors at 12 bit resolution of 3.3V
-#define VOLT_IN_RAW_LOW 248
-#define VOLT_IN_RAW_HIGH 876
-#define VOLT_OUT_RAW_LOW 251
-#define VOLT_OUT_RAW_HIGH 878
+#define VOLT_IN_RAW_LOW 950.603760
+#define VOLT_IN_RAW_HIGH 2684.238525
+#define VOLT_OUT_RAW_LOW 891.904358
+#define VOLT_OUT_RAW_HIGH 2729.892090
 #define VOLT_REFERENCE_LOW 10.0f
 #define VOLT_REFERENCE_HIGH 30.0f
 
 // conversion factor from ADC values to current in mA with 0.333333 milli-ohm resistor at 12 bit resolution of 3.3V where 1.65V is the zero current point at 200 V/V gain
-#define AMP_IN_RAW_LOW 1974
-#define AMP_IN_RAW_HIGH 500
-#define AMP_OUT_RAW_LOW 1974
-#define AMP_OUT_RAW_HIGH 524
-#define AMP_REFERENCE_LOW 0
-#define AMP_REFERENCE_HIGH 4.1f
-// #define AMP_IN_RAW_LOW 0
-// #define AMP_IN_RAW_HIGH 1
-// #define AMP_OUT_RAW_LOW 0
-// #define AMP_OUT_RAW_HIGH 1
-// #define AMP_REFERENCE_LOW 0
-// #define AMP_REFERENCE_HIGH 1
+#define AMP_IN_RAW_LOW 1987.640991
+#define AMP_IN_RAW_HIGH 1674.981445
+#define AMP_OUT_RAW_LOW 1986.062378
+#define AMP_OUT_RAW_HIGH 1660.860840
+#define AMP_IN_REFERENCE_LOW 0.023f
+#define AMP_OUT_REFERENCE_LOW 0.0
+#define AMP_REFERENCE_HIGH 3.9f
 
 // internal Temp sensor
 #define V_REF_INT 1.2f
@@ -133,10 +131,12 @@ typedef struct
   float minOutput;
   float maxOutput;
 } PID;
-float dutyCycleConstantVoltage = 0;
-float dutyCycleConstantCurrent = 0;
+
+float dutyCycleConstantVoltage = 200;
+float dutyCycleConstantCurrent = 200;
 float dutyCycleMPPT = 0;
-float averageWattChange = 0;
+float minDutyCycle = 0;
+
 PID constantVoltage = {2.645532, 0.057958, 0.264580, 0, 0, 0, &voltOut, &dutyCycleConstantVoltage, 100, 0, 200};
 PID constantCurrent = {23.241537, 14.503763, -0.626228, 0, 0, 0, &AmpOut, &dutyCycleConstantCurrent, 100, 0, 200};
 
@@ -149,6 +149,7 @@ void setPWM(float dutyCyclePct);
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
 
 void readSensors();
+void calibrateSensors();
 
 // void constantVoltage(float voltage);
 // void constantCurrent(float current);
@@ -255,7 +256,7 @@ int main(void)
 
     if (bufferFull)
     {
-      static uint8_t counter = 0;
+      static uint16_t counter = 0;
       bufferFull = false;
       static uint16_t previousTime = 0;
       uint16_t time = __HAL_TIM_GET_COUNTER(&htim6);
@@ -270,6 +271,8 @@ int main(void)
       }
       previousTime = time;
       readSensors();
+      if (CALIBRATION_MODE)
+        calibrateSensors();
 
       if (autoTune)
       {
@@ -308,20 +311,24 @@ int main(void)
 
       else
       {
-        constantVoltage.setPoint = 24;
+        minDutyCycle = voltOut / voltIn * 100 - 1;
+
+        constantVoltage.setPoint = 25.2;
+        // constantVoltage.minOutput = minDutyCycle;
         computePID(&constantVoltage);
 
-        constantCurrent.setPoint = 3;
+        constantCurrent.setPoint = 1;
+        // constantCurrent.minOutput = minDutyCycle;
         computePID(&constantCurrent);
 
         if (counter % 32 == 0)
           computeMPPT();
 
-        if (dutyCycleMPPT < dutyCycleConstantCurrent && dutyCycleMPPT < dutyCycleConstantVoltage)
-        {
-          dutyCycle = dutyCycleMPPT;
-        }
-        else if (dutyCycleConstantCurrent < dutyCycleConstantVoltage)
+        // if (dutyCycleMPPT < dutyCycleConstantCurrent && dutyCycleMPPT < dutyCycleConstantVoltage)
+        // {
+        //   dutyCycle = dutyCycleMPPT;
+        // }
+        if (dutyCycleConstantCurrent < dutyCycleConstantVoltage)
         {
           dutyCycle = dutyCycleConstantCurrent;
         }
@@ -329,22 +336,28 @@ int main(void)
         {
           dutyCycle = dutyCycleConstantVoltage;
         }
+        // dutyCycle = dutyCycleConstantVoltage;
       }
 
+      if (CALIBRATION_MODE)
+        dutyCycle = 100;
+
+      // dutyCycle = 90;
+      // dutyCycle = 0;
+      dutyCycle = constrain(dutyCycle, minDutyCycle, 200);
       if (voltIn < MIN_VOLTAGE_IN)
       {
         dutyCycle = 0;
-        dutyCycleConstantVoltage = 0;
-        dutyCycleConstantCurrent = 0;
+        // dutyCycleConstantVoltage = 0;
+        // dutyCycleConstantCurrent = 0;
         dutyCycleMPPT = 0;
       }
       setPWM(dutyCycle);
 
-      if (counter % 32 == 0)
+      if (counter % 64 == 0)
       {
-        // computeMPPT();
-        // printf("In:\t%f V\t%f A\t%f W\tOUT:\t%f V\t%f A\t%f W\ttemp:\t%f\ttime:\t%u ms\n", voltIn, AmpIn, wattIn, voltOut, AmpOut, wattOut, tempMCU, time - previousTime);
-        printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn * 10, AmpOut * 10, wattIn, wattOut, dutyCycleConstantCurrent / 10, dutyCycleConstantVoltage / 10, dutyCycleMPPT / 10);
+        if (!CALIBRATION_MODE)
+          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycleConstantCurrent, dutyCycleConstantVoltage, dutyCycleMPPT);
       }
       counter++;
       timeDiff++; // just here so the compiler doesn't complain about unused variable
@@ -530,16 +543,54 @@ void readSensors()
   // calculate average and convert to real values
   voltIn = (((((float)voltIn_temp / ADC_SAMPLE_COUNT) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
   voltOut = (((((float)voltOut_temp / ADC_SAMPLE_COUNT) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  float AmpInTemp = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_REFERENCE_LOW;
-  // AmpIn = AmpIn * 0.95 + AmpInTemp * 0.05;
-  AmpIn = AmpInTemp;
-  float AmpOutTemp = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_REFERENCE_LOW;
-  // AmpOut = AmpOut * 0.95 + AmpOutTemp * 0.05;
-  AmpOut = AmpOutTemp;
+  AmpIn = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_IN_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_IN_REFERENCE_LOW;
+  AmpOut = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_OUT_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_OUT_REFERENCE_LOW;
   tempMofets = (float)(tempMofets_temp >> ADC_CHANNEL_AVG_BITS);
   tempMCU = (V30 - (float)(tempMCU_temp >> ADC_CHANNEL_AVG_BITS)) / AVG_SLOPE + 30;
   wattIn = voltIn * AmpIn;
   wattOut = voltOut * AmpOut;
+}
+
+void calibrateSensors()
+{
+  static float voltInRaw = 0;
+  static float voltOutRaw = 0;
+  static float AmpInRaw = 0;
+  static float AmpOutRaw = 0;
+  static uint16_t counter = 0;
+
+  // constants
+  const float alpha = 0.999;
+
+  // temporary variables
+  uint32_t voltIn_temp = 0;
+  uint32_t voltOut_temp = 0;
+  int32_t AmpIn_temp = 0;
+  int32_t AmpOut_temp = 0;
+  uint32_t tempMofets_temp = 0;
+  uint32_t tempMCU_temp = 0;
+
+  // sum the values of the ADC buffer
+  for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
+  {
+    voltIn_temp += adc_buf[i];
+    voltOut_temp += adc_buf[i + 2];
+    AmpIn_temp += adc_buf[i + 1];
+    AmpOut_temp += adc_buf[i + 3];
+    tempMofets_temp += adc_buf[i + 4];
+    tempMCU_temp += adc_buf[i + 5];
+  }
+
+  voltInRaw = voltInRaw * alpha + ((float)voltIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
+  voltOutRaw = voltOutRaw * alpha + ((float)voltOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
+  AmpInRaw = AmpInRaw * alpha + ((float)AmpIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
+  AmpOutRaw = AmpOutRaw * alpha + ((float)AmpOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
+
+  if (counter % 64 == 0)
+  {
+    printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\n", voltInRaw, voltOutRaw, AmpInRaw, AmpOutRaw);
+  }
+  counter++;
 }
 
 void computePID(PID *pid)
@@ -560,6 +611,7 @@ void computePID(PID *pid)
 void computeMPPT()
 {
   static float previousWattOut = 0;
+  static float averageWattChange = 0;
   static bool direction = true;
   const float alpha = 0.1;
   const float deltaDutyCycle = 0.1;
@@ -576,7 +628,8 @@ void computeMPPT()
     averageWattChange = 0;
     dutyCyclePlus = deltaDutyCycle;
   }
-  else{
+  else
+  {
     dutyCyclePlus += deltaDutyCycle;
   }
 
@@ -588,7 +641,7 @@ void computeMPPT()
   {
     dutyCycleMPPT -= dutyCyclePlus;
   }
-  dutyCycleMPPT = constrain(dutyCycleMPPT, 10, 200);
+  dutyCycleMPPT = constrain(dutyCycleMPPT, minDutyCycle, 200);
 }
 
 /* USER CODE END 4 */
