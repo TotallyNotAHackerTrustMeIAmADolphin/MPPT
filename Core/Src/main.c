@@ -46,7 +46,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // PWM Stuff
-#define TIMER_PERIOD ((uint16_t)480) // 100 kHz PWM frequency
+#define TIMER_PERIOD ((uint16_t)240) // 100 kHz PWM frequency
 #define DITHER_TABLE_SIZE 8          // 3 bits of dithering, has to be a power of 2
 
 // ADC Stuff
@@ -81,8 +81,8 @@
 #define V30 (1.43f * (4096 / V_REF_INT))
 
 // some max values
-#define MAX_VOLTAGE_OUT 20
-#define MAX_CURRENT_OUT 3
+#define MAX_VOLTAGE 80
+#define MAX_CURRENT 20
 #define PWM_DEAD_BAND 2 // percent
 #define MIN_VOLTAGE_IN 12
 
@@ -117,22 +117,20 @@ float wattIn = 0;
 float wattOut = 0;
 volatile bool bufferFull = false;
 
-bool buckEnable = false;
-bool output_Mode = false;
-bool chargingPause = false;
-bool MPPT_Mode = true;
-uint16_t REC = 100;
-float PPWM = 0;
-float PPWM_margin = 0;
-float pwmMax = 200;
-float PWM = 0;
+uint16_t REC = 2;
 const float currentCharging = 2;
-const float voltageBatteryMax = 40;
-float voltageBatteryMin = 3 * 6;
-float powerInputPrev = 0;
-float voltageInputPrev = 0;
-const float stepSize = 0.5;
-uint16_t batterDetectionCounter = 0;
+const float voltageBatteryMax = 25.2;
+const float voltageBatteryMin = 3 * 6;
+const float maxInputVoltage = 80;
+const float maxInputCurrent = 20;
+
+// safety check Variables
+bool overCurrentIn = false;
+bool overCurrentOut = false;
+bool overVoltageIn = false;
+bool overVoltageOut = false;
+bool underVoltageIn = false;
+bool underVoltageOut = false;
 uint8_t ERR = 0;
 
 typedef struct
@@ -154,12 +152,31 @@ float dutyCycleConstantVoltage = 200;
 float dutyCycleConstantCurrent = 200;
 float dutyCycleMPPT = 0;
 float minDutyCycle = 0;
-const float maxDutyCyclePercent = 180;
+const float maxDutyCyclePercent = 170;
 
 PID constantVoltage = {0.1, 0, 0.0001, 0, 0, voltageBatteryMax, &voltOut, &dutyCycle, 1, 0, maxDutyCyclePercent};
 PID constantCurrent = {0.1, 0, 0.0001, 0, 0, currentCharging, &AmpOut, &dutyCycle, 1, 0, maxDutyCyclePercent};
 // PID constantVoltage = {0.1, 0.0001, 0.0001, 0, 0, 0, &voltOut, &dutyCycleConstantVoltage, 100, 0, 200};
 // PID constantCurrent = {2.0, 0.0001, 0.00001, 0, 0, 0, &AmpOut, &dutyCycleConstantCurrent, 1, 0, 200};
+
+// --- State Machine for Global MPPT Sweep ---
+typedef enum
+{
+  MPPT_TRACKING,
+  MPPT_SWEEPING
+} MPPT_State_t;
+
+volatile MPPT_State_t mpptState = MPPT_TRACKING; // Start in normal tracking mode
+
+// --- Sweep Configuration ---
+const uint32_t SWEEP_INTERVAL_SECONDS = 300; // Sweep every 5 minutes
+const float SWEEP_STEP_SIZE = 1.0;           // How big are the duty cycle steps during a sweep
+uint32_t sweepTriggerCounter = 0;
+
+// --- Variables to store sweep results ---
+float sweepDutyCycle = 0;
+float sweepMaxPower = 0;
+float sweepBestDutyCycle = 0;
 
 /* USER CODE END PV */
 
@@ -175,7 +192,9 @@ void calibrateSensors();
 // void constantVoltage(float voltage);
 // void constantCurrent(float current);
 void computePID(PID *pid);
-void computeMPPT();
+
+void runMPPTAlgorithm();
+void mpptPerturbAndObserve();
 
 void Charging_Algorithm();
 /* USER CODE END PFP */
@@ -287,51 +306,83 @@ int main(void)
           REC--;
         }
         if (!CALIBRATION_MODE)
-          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycle, minDutyCycle, dutyCycleMPPT);
+          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycle, minDutyCycle, wattOut / wattIn * 100);
       }
 
       // calculate the minimum duty cycle to avoid reverse current
       if (voltOut < voltIn) // Buck mode
       {
-        minDutyCycle = voltOut / voltIn * 100 - 2;
+        minDutyCycle = voltOut / voltIn * 100;
+        minDutyCycle = minDutyCycle - (100 / minDutyCycle) + 1;
       }
       else // boost mode
       {
         minDutyCycle = 198 - voltIn / voltOut * 100;
       }
 
+      // safety checks
+      underVoltageIn = voltIn < MIN_VOLTAGE_IN;
+      underVoltageOut = voltOut < voltageBatteryMin;
+      overVoltageIn = voltIn > maxInputVoltage;
+      overVoltageOut = voltOut > (voltageBatteryMax - 0.05);
+      overCurrentIn = AmpIn > maxInputCurrent;
+      overCurrentOut = AmpOut > (currentCharging - 0.1);
+
       // safety check to see if Input Voltage is high enough
-      if (voltIn < MIN_VOLTAGE_IN)
+      if (overCurrentIn || overVoltageIn)
+      {
+        ERR = 1; // set Error counter to 1
+      }
+      else if (underVoltageIn)
       {
         REC = 3; // set Recovery counter to 3
       }
-      // If Current is too high, limit the current
-      else if (AmpOut > currentCharging - 0.1)
+      if (overCurrentOut || overVoltageOut)
       {
-        computePID(&constantCurrent);
+        // If we are in CC or CV mode, reset the sweep timer and stay in tracking
+        sweepTriggerCounter = 0;
+        mpptState = MPPT_TRACKING; // Ensure we are in tracking mode
+
+        if (overCurrentOut)
+          computePID(&constantCurrent);
+        if (overVoltageOut)
+          computePID(&constantVoltage);
       }
-      // If Voltage is too high, limit the voltage
-      else if (voltOut > voltageBatteryMax - 0.05)
+      else if (counter % 8 == 0) // Run MPPT logic at a regular interval
       {
-        computePID(&constantVoltage);
+        // --- Sweep Trigger Logic ---
+        if (mpptState == MPPT_TRACKING)
+        {
+          sweepTriggerCounter++;
+
+          // Assuming the ADC callback happens roughly 200 times/sec,
+          // and we run this block every 4 cycles (50 times/sec)
+          const uint32_t calls_per_second = 50;
+          if (sweepTriggerCounter > (SWEEP_INTERVAL_SECONDS * calls_per_second))
+          {
+            // Time to start a sweep!
+            mpptState = MPPT_SWEEPING;
+            sweepTriggerCounter = 0;
+
+            // Initialize sweep variables
+            sweepMaxPower = 0;
+            sweepBestDutyCycle = minDutyCycle;
+            sweepDutyCycle = minDutyCycle; // Start sweep from the bottom
+          }
+        }
+
+        // --- Run the main MPPT state machine ---
+        runMPPTAlgorithm();
       }
-      // otherwise do MPPT
-      else if (counter % 4 == 0)
-      {
-        computeMPPT();
-      }
+
       dutyCycle = constrain(dutyCycle, minDutyCycle, maxDutyCyclePercent);
 
       if (CALIBRATION_MODE)
         dutyCycle = 100;
-
-      if(REC > 0)
-      {
+      if (REC > 0 || ERR > 0)
         dutyCycle = 0;
-      }
 
       setPWM(dutyCycle);
-
       counter++;
       timeDiff++; // just here so the compiler doesn't complain about unused variable
     }
@@ -426,11 +477,13 @@ void setPWM(float dutyCyclePct)
   }
   else if (dutyCyclePct < 100 && dutyCyclePct > 100 - PWM_DEAD_BAND)
   {
-    dutyCyclePct = 100 - PWM_DEAD_BAND;
+    // dutyCyclePct = 100 - PWM_DEAD_BAND;
+    dutyCyclePct = 100;
   }
   else if (dutyCyclePct > 100 && dutyCyclePct < 100 + PWM_DEAD_BAND)
   {
-    dutyCyclePct = 100 + PWM_DEAD_BAND;
+    // dutyCyclePct = 100 + PWM_DEAD_BAND;
+    dutyCyclePct = 100;
   }
 
   if (dutyCyclePct == 0)
@@ -590,70 +643,84 @@ void computePID(PID *pid)
   pid->integral = integral;
 }
 
-void computeMPPT()
+void mpptPerturbAndObserve(void)
 {
-  static float previousWattOut = 0;
-  static float averageRelativePowerChange = 0;
-  static float previousVoltIn = 0;
-  static bool direction = true;
-  const float alpha = 0.2;
-  const float deltaDutyCycle = 0.3;
-  static float dutyCyclePlus = deltaDutyCycle;
+  // The entire contents of your working computeMPPT function go here
+  static float previousWattIn = 0;
+  static bool direction = true; // true = increase duty cycle, false = decrease
 
-  float relativeChangePower = ((wattOut - previousWattOut) / wattOut) * 100; // relative change in percent
-  averageRelativePowerChange = averageRelativePowerChange * alpha + relativeChangePower * (1 - alpha);
-
-  bool previousDirection = direction;
-
-  if (averageRelativePowerChange < 0)
+  const float MIN_INPUT_VOLTAGE_MPPT = 15.0;
+  if (voltIn < MIN_INPUT_VOLTAGE_MPPT)
   {
-    direction = voltIn > previousVoltIn;
-    // direction = !direction;
-  }
-  else
-  {
-    direction = voltIn < previousVoltIn;
+    dutyCycle -= 1.0;
+    dutyCycle = constrain(dutyCycle, 0, maxDutyCyclePercent);
+    previousWattIn = wattIn;
+    return;
   }
 
-  if (AmpOut < 0)
+  float powerChange = wattIn - previousWattIn;
+  const float POWER_THRESHOLD = 0.05;
+
+  if (fabs(powerChange) > POWER_THRESHOLD)
   {
-    direction = true;
+    if (powerChange < 0)
+    {
+      direction = !direction;
+    }
   }
 
-  if (previousDirection == direction)
-  {
-    // dutyCyclePlus += 0.01;
-    // dutyCyclePlus += dutyCyclePlus;
-    // dutyCyclePlus = constrain(dutyCyclePlus, deltaDutyCycle, 1);
-  }
-  else
-  {
-    averageRelativePowerChange = 0;
-    dutyCyclePlus = deltaDutyCycle;
-  }
+  const float STEP_SIZE = 0.4;
 
   if (direction)
   {
-    dutyCycle += dutyCyclePlus;
+    dutyCycle += STEP_SIZE;
   }
   else
   {
-    dutyCycle -= dutyCyclePlus;
+    dutyCycle -= STEP_SIZE;
   }
 
-  // if (dutyCycle < 100 && dutyCycle > 100 - PWM_DEAD_BAND)
-  // {
-  //   dutyCycle = 100 - PWM_DEAD_BAND;
-  // }
-  // else if (dutyCycle >= 100 && dutyCycle < 100 + PWM_DEAD_BAND)
-  // {
-  //   dutyCycle = 100 + PWM_DEAD_BAND;
-  // }
+  dutyCycle = constrain(dutyCycle, minDutyCycle, maxDutyCyclePercent);
+  previousWattIn = wattIn;
+}
 
-  dutyCycle = constrain(dutyCycle, 0, maxDutyCyclePercent);
+void runMPPTAlgorithm(void)
+{
+  switch (mpptState)
+  {
+  case MPPT_TRACKING:
+    // Perform normal, fast P&O tracking
+    mpptPerturbAndObserve();
+    break;
 
-  previousVoltIn = voltIn;
-  previousWattOut = wattOut;
+  case MPPT_SWEEPING:
+    // Set the duty cycle for the current step of the sweep
+    dutyCycle = sweepDutyCycle;
+
+    // Give the system a moment to stabilize before measuring power
+    // (In this code, the next loop iteration provides this delay)
+
+    // Check if the current power is the highest we've seen so far
+    if (wattIn > sweepMaxPower)
+    {
+      sweepMaxPower = wattIn;
+      sweepBestDutyCycle = sweepDutyCycle;
+    }
+
+    // Move to the next duty cycle step
+    sweepDutyCycle += SWEEP_STEP_SIZE;
+
+    // Check if the sweep is finished
+    if (sweepDutyCycle > maxDutyCyclePercent)
+    {
+      // Sweep is done! Jump to the best duty cycle found.
+      dutyCycle = sweepBestDutyCycle;
+
+      // Return to normal tracking mode
+      mpptState = MPPT_TRACKING;
+    }
+    break;
+  }
 }
 
 /* USER CODE END 4 */
