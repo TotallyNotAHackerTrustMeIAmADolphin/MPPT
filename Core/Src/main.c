@@ -2,7 +2,7 @@
 /**
  ******************************************************************************
  * @file           : main.c
- * @brief          : Main program body
+ * @brief          : Main program body (Refactored for Clarity and Robustness)
  ******************************************************************************
  * @attention
  *
@@ -34,202 +34,202 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
-
-#include "pidautotuner.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
+// --- System State and Settings Structures ---
+
+// Holds all real-time sensor data and status flags
+typedef struct {
+    float voltIn;
+    float voltOut;
+    float ampIn;
+    float ampOut;
+    float wattIn;
+    float wattOut;
+    float tempMCU;
+    float tempMosfets;
+    
+    // Status Flags
+    bool overCurrentIn;
+    bool overCurrentOut;
+    bool overVoltageIn;
+    bool overVoltageOut;
+    bool underVoltageIn;
+    bool underVoltageOut;
+} ControllerState_t;
+
+// Holds all configurable system limits and parameters
+typedef struct {
+    float maxInputVoltage;
+    float maxInputCurrent;
+    float minInputVoltage;
+
+    float batteryMaxVoltage;
+    float batteryMinVoltage;
+    float batteryChargeCurrent;
+    
+    // PWM settings
+    float dutyCycleMax; // e.g., 170.0 for a boost range up to 70%
+    float pwmDeadBand;
+    
+    // MPPT settings
+    float mpptMinInputVoltage;
+} SystemSettings_t;
+
+// Defines the main operating modes of the controller
+typedef enum {
+    MODE_OFF,
+    MODE_MPPT,
+    MODE_CONSTANT_CURRENT,
+    MODE_CONSTANT_VOLTAGE,
+    MODE_FAULT
+} OperatingMode_t;
+
+// State machine for the global MPPT sweep
+typedef enum {
+    MPPT_STATE_TRACKING,
+    MPPT_STATE_SWEEPING
+} MpptSubState_t;
+
+// PID Controller Structure
+typedef struct {
+  float Kp, Ki, Kd;
+  float integral, previousError;
+  float setPoint;
+  float *input, *output;
+  float minOutput, maxOutput;
+  float maxIntegral;
+} PID_t;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// PWM Stuff
-#define TIMER_PERIOD ((uint16_t)240) // 100 kHz PWM frequency
-#define DITHER_TABLE_SIZE 8          // 3 bits of dithering, has to be a power of 2
+// --- Hardware & System Defines ---
+#define CALIBRATION_MODE      false   // Set true to print raw ADC values for calibration
+#define DEBUG_PRINT_INTERVAL  64      // Print debug info every N main loops
+#define ADC_UPDATE_DIVIDER    4       // Run control logic every N ADC updates
 
-// ADC Stuff
-#define ADC_CHANNEL_COUNT 6
-#define ADC_CHANNEL_AVG_BITS 7
-#define ADC_SAMPLE_COUNT (1 << ADC_CHANNEL_AVG_BITS)
-#define ADC_BUF_LEN (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
+// --- PWM Configuration ---
+#define PWM_TIMER_PERIOD      ((uint16_t)240) // Results in 100 kHz PWM frequency
+#define DITHER_TABLE_SIZE     8               // 3 bits of dithering (must be power of 2)
+#define DITHER_BITS           3               // log2(DITHER_TABLE_SIZE)
 
-// turn on calibration mode
-#define CALIBRATION_MODE false
+// --- ADC Configuration ---
+#define ADC_CHANNEL_COUNT     6
+#define ADC_CHANNEL_AVG_BITS  7
+#define ADC_SAMPLE_COUNT      (1 << ADC_CHANNEL_AVG_BITS)
+#define ADC_BUF_LEN           (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
 
-// conversion factor for converting ADC values to voltage with 200k and 5.1k resistors at 12 bit resolution of 3.3V
-#define VOLT_IN_RAW_LOW 950.603760
-#define VOLT_IN_RAW_HIGH 2684.238525
-#define VOLT_OUT_RAW_LOW 891.904358
-#define VOLT_OUT_RAW_HIGH 2729.892090
-#define VOLT_REFERENCE_LOW 10.0f
-#define VOLT_REFERENCE_HIGH 30.0f
+// --- Sensor Calibration Defines (Slopes and Offsets) ---
+// V_actual = (ADC_avg - RAW_LOW) * (REF_HIGH - REF_LOW) / (RAW_HIGH - RAW_LOW) + REF_LOW
+#define VOLT_IN_RAW_LOW       950.603760f
+#define VOLT_IN_RAW_HIGH      2684.238525f
+#define VOLT_OUT_RAW_LOW      891.904358f
+#define VOLT_OUT_RAW_HIGH     2729.892090f
+#define VOLT_REFERENCE_LOW    10.0f
+#define VOLT_REFERENCE_HIGH   30.0f
 
-// conversion factor from ADC values to current in mA with 0.333333 milli-ohm resistor at 12 bit resolution of 3.3V where 1.65V is the zero current point at 200 V/V gain
-#define AMP_IN_RAW_LOW 1987.640991
-#define AMP_IN_RAW_HIGH 1674.981445
-#define AMP_OUT_RAW_LOW 1986.062378
-#define AMP_OUT_RAW_HIGH 1660.860840
-#define AMP_IN_REFERENCE_LOW 0.023f
-#define AMP_OUT_REFERENCE_LOW 0.0
-#define AMP_REFERENCE_HIGH 3.9f
+#define AMP_IN_RAW_LOW        1987.640991f
+#define AMP_IN_RAW_HIGH       1674.981445f
+#define AMP_OUT_RAW_LOW       1986.062378f
+#define AMP_OUT_RAW_HIGH      1660.860840f
+#define AMP_REFERENCE_LOW     0.0f
+#define AMP_REFERENCE_HIGH    3.9f
 
-// internal Temp sensor
-#define V_REF_INT 1.2f
-#define AVG_SLOPE (4.3f * 1000 * (4096 / V_REF_INT))
-#define V30 (1.43f * (4096 / V_REF_INT))
-
-// some max values
-#define MAX_VOLTAGE 80
-#define MAX_CURRENT 20
-#define PWM_DEAD_BAND 2 // percent
-#define MIN_VOLTAGE_IN 12
+// Internal Temp Sensor
+#define V_REF_INT             1.2f
+#define AVG_SLOPE             (4.3f * 1000 * (4096 / V_REF_INT))
+#define V30                   (1.43f * (4096 / V_REF_INT))
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 #define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
+#define map_float(x, in_min, in_max, out_min, out_max) (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// data for the dithering table
+// --- Global Controller Variables ---
+const SystemSettings_t settings = {
+    .maxInputVoltage = 80.0f,
+    .maxInputCurrent = 20.0f,
+    .minInputVoltage = 12.0f,
+    .batteryMaxVoltage = 25.2f,
+    .batteryMinVoltage = 18.0f,     // 6S Li-ion at 3.0V/cell
+    .batteryChargeCurrent = 2.0f,
+    .dutyCycleMax = 170.0f,
+    .pwmDeadBand = 2.0f,
+    .mpptMinInputVoltage = 15.0f    // Safety voltage for P&O algorithm
+};
+
+ControllerState_t state = {0};
+OperatingMode_t currentMode = MODE_OFF;
+float dutyCycle = 0.0f;
+float minDutyCycle = 0.0f;
+
+// --- Hardware-specific Variables ---
+volatile bool adcBufferFull = false;
+volatile uint16_t adc_buf[ADC_BUF_LEN];
 uint16_t ditherTableCH1[DITHER_TABLE_SIZE];
 uint16_t ditherTableCH2[DITHER_TABLE_SIZE];
-uint16_t maxDutyCycle = (TIMER_PERIOD * DITHER_TABLE_SIZE);
-uint8_t ditherBits = 3; // log2(DITHER_TABLE_SIZE)
-float dutyCycle = 0;
+const uint16_t PWM_MAX_DITHERED_VALUE = (PWM_TIMER_PERIOD * DITHER_TABLE_SIZE);
 
-// data for the ADC
-volatile uint16_t adc_buf[ADC_BUF_LEN];
+// --- PID Controller Instances ---
+PID_t pid_CV = { .Kp = 0.1, .Ki = 0.0, .Kd = 0.0001, .maxIntegral = 1, .minOutput = 0, .maxOutput = settings.dutyCycleMax};
+PID_t pid_CC = { .Kp = 0.1, .Ki = 0.0, .Kd = 0.0001, .maxIntegral = 1, .minOutput = 0, .maxOutput = settings.dutyCycleMax};
 
-// data read from Sensors
-float voltIn = 100;
-float voltOut = 100;
-float AmpIn = 100;
-float AmpOut = 100;
-float tempMofets = 0;
-float tempMCU = 0;
-float wattIn = 0;
-float wattOut = 0;
-volatile bool bufferFull = false;
-
-uint16_t REC = 2;
-const float currentCharging = 2;
-const float voltageBatteryMax = 25.2;
-const float voltageBatteryMin = 3 * 6;
-const float maxInputVoltage = 80;
-const float maxInputCurrent = 20;
-
-// safety check Variables
-bool overCurrentIn = false;
-bool overCurrentOut = false;
-bool overVoltageIn = false;
-bool overVoltageOut = false;
-bool underVoltageIn = false;
-bool underVoltageOut = false;
-uint8_t ERR = 0;
-
-typedef struct
-{
-  float Kp;
-  float Ki;
-  float Kd;
-  float previousError;
-  float integral;
-  float setPoint;
-  float *input;
-  float *output;
-  float maxIntegral;
-  float minOutput;
-  float maxOutput;
-} PID;
-
-float dutyCycleConstantVoltage = 200;
-float dutyCycleConstantCurrent = 200;
-float dutyCycleMPPT = 0;
-float minDutyCycle = 0;
-const float maxDutyCyclePercent = 170;
-
-PID constantVoltage = {0.1, 0, 0.0001, 0, 0, voltageBatteryMax, &voltOut, &dutyCycle, 1, 0, maxDutyCyclePercent};
-PID constantCurrent = {0.1, 0, 0.0001, 0, 0, currentCharging, &AmpOut, &dutyCycle, 1, 0, maxDutyCyclePercent};
-// PID constantVoltage = {0.1, 0.0001, 0.0001, 0, 0, 0, &voltOut, &dutyCycleConstantVoltage, 100, 0, 200};
-// PID constantCurrent = {2.0, 0.0001, 0.00001, 0, 0, 0, &AmpOut, &dutyCycleConstantCurrent, 1, 0, 200};
-
-// --- State Machine for Global MPPT Sweep ---
-typedef enum
-{
-  MPPT_TRACKING,
-  MPPT_SWEEPING
-} MPPT_State_t;
-
-volatile MPPT_State_t mpptState = MPPT_TRACKING; // Start in normal tracking mode
-
-// --- Sweep Configuration ---
+// --- MPPT Sweep State Variables ---
+MpptSubState_t mpptSubState = MPPT_STATE_TRACKING;
 const uint32_t SWEEP_INTERVAL_SECONDS = 300; // Sweep every 5 minutes
-const float SWEEP_STEP_SIZE = 1.0;           // How big are the duty cycle steps during a sweep
+const float SWEEP_DUTY_STEP = 1.0f;
 uint32_t sweepTriggerCounter = 0;
-
-// --- Variables to store sweep results ---
-float sweepDutyCycle = 0;
-float sweepMaxPower = 0;
-float sweepBestDutyCycle = 0;
+float sweepMaxPower = 0.0f;
+float sweepBestDutyCycle = 0.0f;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+// Core Logic
+void runStateMachine(void);
+void updateStatusFlags(void);
+void calculateMinDutyCycle(void);
+void printDebugInfo(void);
+
+// Hardware Control
 void setPWM(float dutyCyclePct);
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
+void readSensors(void);
+void calibrateSensors(void);
 
-void readSensors();
-void calibrateSensors();
-
-// void constantVoltage(float voltage);
-// void constantCurrent(float current);
-void computePID(PID *pid);
-
-void runMPPTAlgorithm();
-void mpptPerturbAndObserve();
-
-void Charging_Algorithm();
+// Control Algorithms
+void computePID(PID_t *pid);
+void runMpptAlgorithm(void);
+void mpptPerturbAndObserve(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+// Empty
 /* USER CODE END 0 */
 
 /**
- * @brief  The application entry point.
- * @retval int
- */
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
   /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -243,150 +243,76 @@ int main(void)
   MX_ADC_Init();
   MX_TIM3_Init();
   MX_TIM6_Init();
+  
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
-  // HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
-  // HAL_TIMEx_PWMN_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
+  // --- Initialize PID Controllers ---
+  pid_CV.setPoint = settings.batteryMaxVoltage;
+  pid_CV.input = &state.voltOut;
+  pid_CV.output = &dutyCycle;
+  
+  pid_CC.setPoint = settings.batteryChargeCurrent;
+  pid_CC.input = &state.ampOut;
+  pid_CC.output = &dutyCycle;
 
+  // --- Start PWM and ADC ---
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-
   HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
 
-  HAL_TIM_Base_Start(&htim6);
-  __HAL_TIM_GET_COUNTER(&htim6);
-
-  // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-  // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-
-  // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-  // __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-
-  dutyCycle = 0;
-  setPWM(dutyCycle);
-
+  // --- Initial State ---
+  setPWM(0);
+  currentMode = MODE_OFF;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    if (bufferFull) // if the buffer is full, process the data
+    if (adcBufferFull)
     {
-      static uint16_t counter = 0;
-      bufferFull = false;
-      static uint16_t previousTime = 0;
-      uint16_t time = __HAL_TIM_GET_COUNTER(&htim6);
-      uint16_t timeDiff = 0;
-      if (time < previousTime)
-      {
-        timeDiff = (0xFFFF - previousTime) + time + 1;
-      }
-      else
-      {
-        timeDiff = time - previousTime;
-      }
-      previousTime = time;
+      static uint32_t loopCounter = 0;
+      adcBufferFull = false;
 
-      // read the sensor values
+      // 1. Acquire Data
       readSensors();
 
-      // read the sensor RAW values for calibration
-      if (CALIBRATION_MODE)
-        calibrateSensors();
-
-      if (counter % 32 == 0)
-      {
-        if (REC > 0)
-        {
-          REC--;
-        }
-        if (!CALIBRATION_MODE)
-          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycle, minDutyCycle, wattOut / wattIn * 100);
+      if (CALIBRATION_MODE) {
+          calibrateSensors();
+          setPWM(100); // Set to passthrough for calibration
+          continue; // Skip main logic
       }
-
-      // calculate the minimum duty cycle to avoid reverse current
-      if (voltOut < voltIn) // Buck mode
+      
+      // 2. Run Control Logic at a slower rate than ADC updates
+      if(loopCounter % ADC_UPDATE_DIVIDER == 0)
       {
-        minDutyCycle = voltOut / voltIn * 100;
-        minDutyCycle = minDutyCycle - (100 / minDutyCycle) + 1;
-      }
-      else // boost mode
-      {
-        minDutyCycle = 198 - voltIn / voltOut * 100;
-      }
+          // 2a. Perform calculations and update status
+          calculateMinDutyCycle();
+          updateStatusFlags();
 
-      // safety checks
-      underVoltageIn = voltIn < MIN_VOLTAGE_IN;
-      underVoltageOut = voltOut < voltageBatteryMin;
-      overVoltageIn = voltIn > maxInputVoltage;
-      overVoltageOut = voltOut > (voltageBatteryMax - 0.05);
-      overCurrentIn = AmpIn > maxInputCurrent;
-      overCurrentOut = AmpOut > (currentCharging - 0.1);
+          // 2b. Run the core state machine to determine mode and duty cycle
+          runStateMachine();
 
-      // safety check to see if Input Voltage is high enough
-      if (overCurrentIn || overVoltageIn)
-      {
-        ERR = 1; // set Error counter to 1
-      }
-      else if (underVoltageIn)
-      {
-        REC = 3; // set Recovery counter to 3
-      }
-      if (overCurrentOut || overVoltageOut)
-      {
-        // If we are in CC or CV mode, reset the sweep timer and stay in tracking
-        sweepTriggerCounter = 0;
-        mpptState = MPPT_TRACKING; // Ensure we are in tracking mode
-
-        if (overCurrentOut)
-          computePID(&constantCurrent);
-        if (overVoltageOut)
-          computePID(&constantVoltage);
-      }
-      else if (counter % 8 == 0) // Run MPPT logic at a regular interval
-      {
-        // --- Sweep Trigger Logic ---
-        if (mpptState == MPPT_TRACKING)
-        {
-          sweepTriggerCounter++;
-
-          // Assuming the ADC callback happens roughly 200 times/sec,
-          // and we run this block every 4 cycles (50 times/sec)
-          const uint32_t calls_per_second = 50;
-          if (sweepTriggerCounter > (SWEEP_INTERVAL_SECONDS * calls_per_second))
-          {
-            // Time to start a sweep!
-            mpptState = MPPT_SWEEPING;
-            sweepTriggerCounter = 0;
-
-            // Initialize sweep variables
-            sweepMaxPower = 0;
-            sweepBestDutyCycle = minDutyCycle;
-            sweepDutyCycle = minDutyCycle; // Start sweep from the bottom
+          // 2c. Final safety clamp on the duty cycle
+          dutyCycle = constrain(dutyCycle, minDutyCycle, settings.dutyCycleMax);
+          
+          // 2d. Override duty cycle if system is OFF or in FAULT
+          if(currentMode == MODE_OFF || currentMode == MODE_FAULT) {
+              dutyCycle = 0;
           }
-        }
 
-        // --- Run the main MPPT state machine ---
-        runMPPTAlgorithm();
+          // 2e. Set the physical PWM output
+          setPWM(dutyCycle);
+      }
+      
+      // 3. Optional Debugging Output
+      if (loopCounter % DEBUG_PRINT_INTERVAL == 0) {
+        printDebugInfo();
       }
 
-      dutyCycle = constrain(dutyCycle, minDutyCycle, maxDutyCyclePercent);
-
-      if (CALIBRATION_MODE)
-        dutyCycle = 100;
-      if (REC > 0 || ERR > 0)
-        dutyCycle = 0;
-
-      setPWM(dutyCycle);
-      counter++;
-      timeDiff++; // just here so the compiler doesn't complain about unused variable
+      loopCounter++;
     }
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -395,364 +321,407 @@ int main(void)
 }
 
 /**
- * @brief System Clock Configuration
- * @retval None
- */
+  * @brief System Clock Configuration (Auto-generated by CubeMX)
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-
-  /** Initializes the RCC Oscillators according to the specified parameters
-   * in the RCC_OscInitTypeDef structure.
-   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Initializes the CPU, AHB and APB buses clocks
-   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) Error_Handler();
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI48;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) Error_Handler();
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
   PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
-
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) Error_Handler();
 }
 
 /* USER CODE BEGIN 4 */
-// needed for printf
-int _write(int file, char *ptr, int len)
+
+//==============================================================================
+// Core Logic Functions
+//==============================================================================
+
+/**
+ * @brief Main state machine, determines the operating mode based on system status.
+ */
+void runStateMachine(void)
 {
-  static uint8_t rc = USBD_OK;
+    // --- State Transition Logic ---
+    // Highest priority: Fault conditions
+    if (state.overVoltageIn || state.overCurrentIn || state.underVoltageOut) {
+        currentMode = MODE_FAULT;
+    }
+    // Next priority: System OFF condition (e.g. no sun)
+    else if (state.underVoltageIn) {
+        currentMode = MODE_OFF;
+    }
+    // Otherwise, determine charging mode
+    else {
+        if (state.overVoltageOut) {
+            currentMode = MODE_CONSTANT_VOLTAGE;
+        } else if (state.overCurrentOut) {
+            currentMode = MODE_CONSTANT_CURRENT;
+        } else {
+            currentMode = MODE_MPPT;
+        }
+    }
 
-  do
-  {
-    rc = CDC_Transmit_FS((uint8_t *)ptr, len);
-  } while (USBD_BUSY == rc);
+    // --- State Action Logic ---
+    switch (currentMode)
+    {
+        case MODE_MPPT:
+            runMpptAlgorithm();
+            break;
 
-  if (USBD_FAIL == rc)
-  {
-    /// NOTE: Should never reach here.
-    /// TODO: Handle this error.
-    return 0;
-  }
-  return len;
-}
+        case MODE_CONSTANT_CURRENT:
+            computePID(&pid_CC);
+            // Reset MPPT sweep when not in use
+            mpptSubState = MPPT_STATE_TRACKING;
+            sweepTriggerCounter = 0;
+            break;
 
-void SerialPrint(char msg[])
-{
-  CDC_Transmit_FS((uint8_t *)msg, strlen(msg));
-}
+        case MODE_CONSTANT_VOLTAGE:
+            computePID(&pid_CV);
+            // Reset MPPT sweep when not in use
+            mpptSubState = MPPT_STATE_TRACKING;
+            sweepTriggerCounter = 0;
+            break;
 
-void setPWM(float dutyCyclePct)
-{
-  // float timerPeriod = TIMER_PERIOD;
-  float timerPeriod = maxDutyCycle;
-  float CH1Value = 0;
-  float CH2Value = 0;
-
-  if (dutyCyclePct < PWM_DEAD_BAND)
-  {
-    dutyCyclePct = 0;
-  }
-  else if (dutyCyclePct > maxDutyCyclePercent - PWM_DEAD_BAND)
-  {
-    dutyCyclePct = maxDutyCyclePercent - PWM_DEAD_BAND;
-  }
-  else if (dutyCyclePct < 100 && dutyCyclePct > 100 - PWM_DEAD_BAND)
-  {
-    // dutyCyclePct = 100 - PWM_DEAD_BAND;
-    dutyCyclePct = 100;
-  }
-  else if (dutyCyclePct > 100 && dutyCyclePct < 100 + PWM_DEAD_BAND)
-  {
-    // dutyCyclePct = 100 + PWM_DEAD_BAND;
-    dutyCyclePct = 100;
-  }
-
-  if (dutyCyclePct == 0)
-  { // Turn Off
-    CH1Value = 0;
-    CH2Value = 0;
-    updateDitherTable(ditherTableCH2, (uint16_t)roundf(CH2Value));
-    updateDitherTable(ditherTableCH1, (uint16_t)roundf(CH1Value));
-  }
-  else if (dutyCyclePct == 100)
-  {                         // Just Passthrough
-    CH1Value = timerPeriod; // 100% duty cycle for the high side Mosfet of the BOOST side
-    CH2Value = timerPeriod; // 100% duty cycle for the BUCK side
-    updateDitherTable(ditherTableCH2, (uint16_t)roundf(CH2Value));
-    updateDitherTable(ditherTableCH1, (uint16_t)roundf(CH1Value));
-  }
-  else if (dutyCyclePct < 100)
-  {                                              // Buck mode
-    CH1Value = timerPeriod;                      // 100% duty cycle for the high side Mosfet of the BOOST side
-    CH2Value = dutyCyclePct / 100 * timerPeriod; // duty cycle for the BUCK side
-    // update the dithering tables in reverse order to avoid problems when switching from boost to buck mode
-    updateDitherTable(ditherTableCH2, (uint16_t)roundf(CH2Value));
-    updateDitherTable(ditherTableCH1, (uint16_t)roundf(CH1Value));
-    return;
-  }
-  else if (dutyCyclePct > 100)
-  {                                                        // Boost mode
-    CH1Value = (200 - dutyCyclePct) / 100 * (timerPeriod); // duty cycle for the high side Mosfet of the BOOST side, but inverted logic (lower duty cycle = higher voltage)
-    CH2Value = timerPeriod;                                // 100% duty cycle for the BUCK side
-    updateDitherTable(ditherTableCH1, (uint16_t)roundf(CH1Value));
-    updateDitherTable(ditherTableCH2, (uint16_t)roundf(CH2Value));
-  }
+        case MODE_FAULT:
+            // Actions for fault are handled by the main loop (PWM=0)
+            // Could add fault-specific recovery logic here if needed
+            break;
+            
+        case MODE_OFF:
+            // Actions for OFF are handled by the main loop (PWM=0)
+            // Reset trackers and counters
+            mpptSubState = MPPT_STATE_TRACKING;
+            sweepTriggerCounter = 0;
+            pid_CC.integral = 0;
+            pid_CV.integral = 0;
+            break;
+    }
 }
 
 /**
- * @brief Updates the dithering table with the desired duty cycle in tics
+ * @brief Updates all boolean status flags in the ControllerState struct.
+ */
+void updateStatusFlags(void)
+{
+    state.underVoltageIn  = state.voltIn < settings.minInputVoltage;
+    state.underVoltageOut = state.voltOut < settings.batteryMinVoltage;
+    state.overVoltageIn   = state.voltIn > settings.maxInputVoltage;
+    state.overVoltageOut  = state.voltOut > settings.batteryMaxVoltage;
+    state.overCurrentIn   = state.ampIn > settings.maxInputCurrent;
+    state.overCurrentOut  = state.ampOut > settings.batteryChargeCurrent;
+}
+
+/**
+ * @brief Calculates the minimum duty cycle to prevent reverse current.
+ * This creates a theoretical floor for the duty cycle.
+ */
+void calculateMinDutyCycle(void)
+{
+    if (state.voltIn <= 0) { // Avoid division by zero
+        minDutyCycle = 0;
+        return;
+    }
+
+    // Buck mode: D = Vout / Vin. Our scale is 0-100 for buck.
+    if (state.voltOut < state.voltIn) {
+        minDutyCycle = (state.voltOut / state.voltIn) * 100.0f;
+    } 
+    // Boost mode: D_boost = 1 - (Vin / Vout). Our scale is 100-200.
+    // Duty = 100 + (1 - D_boost)*100 = 200 - (Vin/Vout)*100
+    else {
+        minDutyCycle = 200.0f - (state.voltIn / state.voltOut) * 100.0f;
+    }
+    // Ensure it's within a safe, practical range
+    minDutyCycle = constrain(minDutyCycle, 0, settings.dutyCycleMax);
+}
+
+//==============================================================================
+// Control Algorithm Functions
+//==============================================================================
+
+/**
+ * @brief Generic PID controller computation.
+ */
+void computePID(PID_t *pid)
+{
+  float error = pid->setPoint - *pid->input;
+  pid->integral += error;
+  pid->integral = constrain(pid->integral, -pid->maxIntegral, pid->maxIntegral);
+
+  float derivative = error - pid->previousError;
+
+  *pid->output += pid->Kp * error + pid->Ki * pid->integral + pid->Kd * derivative;
+  
+  pid->previousError = error;
+}
+
+/**
+ * @brief State machine for MPPT, handling both P&O tracking and periodic sweeps.
+ */
+void runMpptAlgorithm(void)
+{
+    // --- Sweep Trigger Logic ---
+    if (mpptSubState == MPPT_STATE_TRACKING) {
+        sweepTriggerCounter++;
+        
+        // Assuming this function is called at a fixed rate, calculate trigger point
+        const uint32_t calls_per_second = (1000000 / 500) / ADC_UPDATE_DIVIDER; // Approx based on timers
+        if (sweepTriggerCounter > (SWEEP_INTERVAL_SECONDS * calls_per_second))
+        {
+            mpptSubState = MPPT_STATE_SWEEPING;
+            sweepTriggerCounter = 0;
+            sweepMaxPower = 0.0f;
+            dutyCycle = minDutyCycle; // Start sweep from the bottom
+            sweepBestDutyCycle = dutyCycle;
+        }
+    }
+
+    // --- Sub-State Action Logic ---
+    switch (mpptSubState)
+    {
+        case MPPT_STATE_TRACKING:
+            mpptPerturbAndObserve();
+            break;
+
+        case MPPT_STATE_SWEEPING:
+            // Check if power at the current sweep step is a new maximum
+            if (state.wattIn > sweepMaxPower) {
+                sweepMaxPower = state.wattIn;
+                sweepBestDutyCycle = dutyCycle;
+            }
+
+            // Increment duty cycle for the next step
+            dutyCycle += SWEEP_DUTY_STEP;
+
+            // Check if sweep is finished
+            if (dutyCycle > settings.dutyCycleMax) {
+                dutyCycle = sweepBestDutyCycle; // Jump to the best point found
+                mpptSubState = MPPT_STATE_TRACKING; // Return to normal tracking
+            }
+            break;
+    }
+}
+
+/**
+ * @brief Core Perturb and Observe (P&O) hill-climbing algorithm.
+ */
+void mpptPerturbAndObserve(void)
+{
+    static float previousWattIn = 0.0f;
+    static bool direction = true; // true = increase duty, false = decrease
+
+    // Safety check to prevent panel voltage collapse
+    if (state.voltIn < settings.mpptMinInputVoltage) {
+        dutyCycle -= 1.0f; // Force a rapid reduction in load
+        previousWattIn = state.wattIn; // Reset tracker
+        return;
+    }
+
+    const float POWER_CHANGE_THRESHOLD = 0.05f; // 50mW
+    float powerChange = state.wattIn - previousWattIn;
+
+    if (fabs(powerChange) > POWER_CHANGE_THRESHOLD) {
+        if (powerChange < 0) {
+            direction = !direction; // Power dropped, reverse direction
+        }
+    }
+
+    const float PO_STEP_SIZE = 0.3f;
+    if (direction) {
+        dutyCycle += PO_STEP_SIZE;
+    } else {
+        dutyCycle -= PO_STEP_SIZE;
+    }
+    
+    previousWattIn = state.wattIn;
+}
+
+
+//==============================================================================
+// Hardware Abstraction & Driver Functions
+//==============================================================================
+
+/**
+ * @brief Sets the PWM duty cycles for the buck-boost converter.
+ * @param dutyCyclePct A value from 0-200.
+ *        0-100: Buck mode (duty applied to CH2)
+ *        100: Passthrough
+ *        100-200: Boost mode (duty applied to CH1)
+ */
+void setPWM(float dutyCyclePct)
+{
+    uint16_t ch1_val, ch2_val;
+
+    // Apply deadband near 0 and max
+    if (dutyCyclePct < settings.pwmDeadBand) dutyCyclePct = 0;
+    if (dutyCyclePct > settings.dutyCycleMax - settings.pwmDeadBand) dutyCyclePct = settings.dutyCycleMax;
+
+    // Apply deadband around the 100% passthrough point
+    if (fabs(dutyCyclePct - 100.0f) < settings.pwmDeadBand) {
+        dutyCyclePct = 100.0f;
+    }
+
+    if (dutyCyclePct <= 100.0f) // Buck or Passthrough Mode
+    {
+        ch1_val = PWM_MAX_DITHERED_VALUE; // Boost high-side MOSFET is fully ON
+        ch2_val = (uint16_t)roundf( (dutyCyclePct / 100.0f) * PWM_MAX_DITHERED_VALUE );
+    }
+    else // Boost Mode
+    {
+        // Duty cycle is inverted for boost high-side MOSFET
+        float boost_duty = 200.0f - dutyCyclePct;
+        ch1_val = (uint16_t)roundf( (boost_duty / 100.0f) * PWM_MAX_DITHERED_VALUE );
+        ch2_val = PWM_MAX_DITHERED_VALUE; // Buck MOSFET is fully ON
+    }
+
+    updateDitherTable(ditherTableCH1, ch1_val);
+    updateDitherTable(ditherTableCH2, ch2_val);
+}
+
+/**
+ * @brief Updates a dither table to achieve higher PWM resolution.
  */
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle)
 {
-  if (desiredDutyCycle > maxDutyCycle)
-  {
-    desiredDutyCycle = maxDutyCycle;
-  }
+    desiredDutyCycle = constrain(desiredDutyCycle, 0, PWM_MAX_DITHERED_VALUE);
+    
+    uint16_t baseDutyCycle = desiredDutyCycle >> DITHER_BITS;
+    uint16_t ditherIndex = desiredDutyCycle & (DITHER_TABLE_SIZE - 1);
 
-  uint16_t baseDutyCycle = desiredDutyCycle >> ditherBits;           // Upper 7 bits for base duty cycle
-  uint16_t DitherIndex = desiredDutyCycle & ((1 << ditherBits) - 1); // Lower 3 bits for dither index
-
-  for (uint16_t table_index = 0; table_index < DITHER_TABLE_SIZE; table_index++)
-  {
-    if (table_index < DitherIndex)
-    {
-      pDitherTable[table_index] = baseDutyCycle + 1;
+    for (uint16_t i = 0; i < DITHER_TABLE_SIZE; i++) {
+        pDitherTable[i] = (i < ditherIndex) ? (baseDutyCycle + 1) : baseDutyCycle;
     }
-    else
-    {
-      pDitherTable[table_index] = baseDutyCycle;
-    }
-  }
 }
-
-// Called when first half of buffer is filled
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
-{
-  bufferFull = true;
-}
-
-// Called when buffer is completely filled
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
-{
-  // bufferFull = true;
-}
-
-void readSensors()
-{
-  // temporary variables
-  uint32_t voltIn_temp = 0;
-  uint32_t voltOut_temp = 0;
-  int32_t AmpIn_temp = 0;
-  int32_t AmpOut_temp = 0;
-  uint32_t tempMofets_temp = 0;
-  uint32_t tempMCU_temp = 0;
-  // sum the values of the ADC buffer
-  for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
-  {
-    voltIn_temp += adc_buf[i];
-    voltOut_temp += adc_buf[i + 2];
-    AmpIn_temp += adc_buf[i + 1];
-    AmpOut_temp += adc_buf[i + 3];
-    tempMofets_temp += adc_buf[i + 4];
-    tempMCU_temp += adc_buf[i + 5];
-  }
-  // calculate average and convert to real values
-  voltIn = (((((float)voltIn_temp / ADC_SAMPLE_COUNT) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  voltOut = (((((float)voltOut_temp / ADC_SAMPLE_COUNT) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  AmpIn = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_IN_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_IN_REFERENCE_LOW;
-  AmpOut = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_OUT_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_OUT_REFERENCE_LOW;
-  tempMofets = (float)(tempMofets_temp >> ADC_CHANNEL_AVG_BITS);
-  tempMCU = (V30 - (float)(tempMCU_temp >> ADC_CHANNEL_AVG_BITS)) / AVG_SLOPE + 30;
-  wattIn = voltIn * AmpIn;
-  wattOut = voltOut * AmpOut;
-}
-
-void calibrateSensors()
-{
-  static float voltInRaw = 0;
-  static float voltOutRaw = 0;
-  static float AmpInRaw = 0;
-  static float AmpOutRaw = 0;
-  static uint16_t counter = 0;
-
-  // constants
-  const float alpha = 0.999;
-
-  // temporary variables
-  uint32_t voltIn_temp = 0;
-  uint32_t voltOut_temp = 0;
-  int32_t AmpIn_temp = 0;
-  int32_t AmpOut_temp = 0;
-  uint32_t tempMofets_temp = 0;
-  uint32_t tempMCU_temp = 0;
-
-  // sum the values of the ADC buffer
-  for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
-  {
-    voltIn_temp += adc_buf[i];
-    voltOut_temp += adc_buf[i + 2];
-    AmpIn_temp += adc_buf[i + 1];
-    AmpOut_temp += adc_buf[i + 3];
-    tempMofets_temp += adc_buf[i + 4];
-    tempMCU_temp += adc_buf[i + 5];
-  }
-
-  voltInRaw = voltInRaw * alpha + ((float)voltIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  voltOutRaw = voltOutRaw * alpha + ((float)voltOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  AmpInRaw = AmpInRaw * alpha + ((float)AmpIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  AmpOutRaw = AmpOutRaw * alpha + ((float)AmpOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-
-  if (counter % 64 == 0)
-  {
-    printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\n", voltInRaw, voltOutRaw, AmpInRaw, AmpOutRaw);
-  }
-  counter++;
-}
-
-void computePID(PID *pid)
-{
-  float error = pid->setPoint - *pid->input;
-  float integral = pid->integral + error;
-  float derivative = error - pid->previousError;
-
-  integral = constrain(integral, -pid->maxIntegral, pid->maxIntegral); // limit the integral term to prevent windup
-
-  *pid->output += pid->Kp * error + pid->Ki * integral + pid->Kd * derivative;
-  //*pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput); // limit the output to the PWM range
-
-  pid->previousError = error;
-  pid->integral = integral;
-}
-
-void mpptPerturbAndObserve(void)
-{
-  // The entire contents of your working computeMPPT function go here
-  static float previousWattIn = 0;
-  static bool direction = true; // true = increase duty cycle, false = decrease
-
-  const float MIN_INPUT_VOLTAGE_MPPT = 15.0;
-  if (voltIn < MIN_INPUT_VOLTAGE_MPPT)
-  {
-    dutyCycle -= 1.0;
-    dutyCycle = constrain(dutyCycle, 0, maxDutyCyclePercent);
-    previousWattIn = wattIn;
-    return;
-  }
-
-  float powerChange = wattIn - previousWattIn;
-  const float POWER_THRESHOLD = 0.05;
-
-  if (fabs(powerChange) > POWER_THRESHOLD)
-  {
-    if (powerChange < 0)
-    {
-      direction = !direction;
-    }
-  }
-
-  const float STEP_SIZE = 0.4;
-
-  if (direction)
-  {
-    dutyCycle += STEP_SIZE;
-  }
-  else
-  {
-    dutyCycle -= STEP_SIZE;
-  }
-
-  dutyCycle = constrain(dutyCycle, minDutyCycle, maxDutyCyclePercent);
-  previousWattIn = wattIn;
-}
-
-void runMPPTAlgorithm(void)
-{
-  switch (mpptState)
-  {
-  case MPPT_TRACKING:
-    // Perform normal, fast P&O tracking
-    mpptPerturbAndObserve();
-    break;
-
-  case MPPT_SWEEPING:
-    // Set the duty cycle for the current step of the sweep
-    dutyCycle = sweepDutyCycle;
-
-    // Give the system a moment to stabilize before measuring power
-    // (In this code, the next loop iteration provides this delay)
-
-    // Check if the current power is the highest we've seen so far
-    if (wattIn > sweepMaxPower)
-    {
-      sweepMaxPower = wattIn;
-      sweepBestDutyCycle = sweepDutyCycle;
-    }
-
-    // Move to the next duty cycle step
-    sweepDutyCycle += SWEEP_STEP_SIZE;
-
-    // Check if the sweep is finished
-    if (sweepDutyCycle > maxDutyCyclePercent)
-    {
-      // Sweep is done! Jump to the best duty cycle found.
-      dutyCycle = sweepBestDutyCycle;
-
-      // Return to normal tracking mode
-      mpptState = MPPT_TRACKING;
-    }
-    break;
-  }
-}
-
-/* USER CODE END 4 */
 
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
+ * @brief Reads all sensor values from the ADC buffer and populates the global state struct.
  */
+void readSensors(void)
+{
+    uint32_t voltIn_raw = 0, voltOut_raw = 0, ampIn_raw = 0, ampOut_raw = 0, tempMcu_raw = 0;
+
+    for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT) {
+        voltIn_raw  += adc_buf[i];
+        ampIn_raw   += adc_buf[i + 1];
+        voltOut_raw += adc_buf[i + 2];
+        ampOut_raw  += adc_buf[i + 3];
+        // tempMosfets_raw += adc_buf[i + 4]; // Placeholder
+        tempMcu_raw += adc_buf[i + 5];
+    }
+    
+    float v_in_avg  = (float)voltIn_raw  / ADC_SAMPLE_COUNT;
+    float v_out_avg = (float)voltOut_raw / ADC_SAMPLE_COUNT;
+    float a_in_avg  = (float)ampIn_raw   / ADC_SAMPLE_COUNT;
+    float a_out_avg = (float)ampOut_raw  / ADC_SAMPLE_COUNT;
+    float t_mcu_avg = (float)tempMcu_raw / ADC_SAMPLE_COUNT;
+
+    state.voltIn = map_float(v_in_avg, VOLT_IN_RAW_LOW, VOLT_IN_RAW_HIGH, VOLT_REFERENCE_LOW, VOLT_REFERENCE_HIGH);
+    state.voltOut= map_float(v_out_avg, VOLT_OUT_RAW_LOW, VOLT_OUT_RAW_HIGH, VOLT_REFERENCE_LOW, VOLT_REFERENCE_HIGH);
+    state.ampIn  = map_float(a_in_avg, AMP_IN_RAW_LOW, AMP_IN_RAW_HIGH, AMP_REFERENCE_LOW, AMP_REFERENCE_HIGH);
+    state.ampOut = map_float(a_out_avg, AMP_OUT_RAW_LOW, AMP_OUT_RAW_HIGH, AMP_REFERENCE_LOW, AMP_REFERENCE_HIGH);
+    
+    // Clamp negative currents to zero as they are often noise around the zero-point
+    state.ampIn  = (state.ampIn < 0) ? 0.0f : state.ampIn;
+    state.ampOut = (state.ampOut < 0) ? 0.0f : state.ampOut;
+    
+    state.wattIn = state.voltIn * state.ampIn;
+    state.wattOut = state.voltOut * state.ampOut;
+    
+    state.tempMCU = (V30 - t_mcu_avg) / AVG_SLOPE + 30.0f;
+}
+
+/**
+ * @brief Prints raw, averaged ADC values for calibration purposes.
+ */
+void calibrateSensors(void)
+{
+    // Uses a simple IIR filter to get a very stable reading for calibration
+    static float v_in_filt=0, v_out_filt=0, a_in_filt=0, a_out_filt=0;
+    const float alpha = 0.001f;
+    
+    uint32_t v_in_raw=0, v_out_raw=0, a_in_raw=0, a_out_raw=0;
+    for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT) {
+        v_in_raw += adc_buf[i]; a_in_raw += adc_buf[i+1];
+        v_out_raw += adc_buf[i+2]; a_out_raw += adc_buf[i+3];
+    }
+    
+    v_in_filt = v_in_filt*(1-alpha) + ((float)v_in_raw/ADC_SAMPLE_COUNT)*alpha;
+    v_out_filt= v_out_filt*(1-alpha) + ((float)v_out_raw/ADC_SAMPLE_COUNT)*alpha;
+    a_in_filt = a_in_filt*(1-alpha) + ((float)a_in_raw/ADC_SAMPLE_COUNT)*alpha;
+    a_out_filt= a_out_filt*(1-alpha) + ((float)a_out_raw/ADC_SAMPLE_COUNT)*alpha;
+    
+    static uint32_t cal_counter = 0;
+    if(cal_counter++ % 256 == 0) {
+      printf("CALIBRATION -- Vin: %.2f\tVout: %.2f\tAin: %.2f\tAout: %.2f\n", v_in_filt, v_out_filt, a_in_filt, a_out_filt);
+    }
+}
+
+
+//==============================================================================
+// System & Utility Functions
+//==============================================================================
+/**
+ * @brief Called by HAL when ADC buffer is half full.
+ */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc) {
+  adcBufferFull = true;
+}
+/**
+ * @brief Called by HAL when ADC buffer is full. Also flag for processing.
+ */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+  // Can be used as well, but HalfCplt gives lower latency.
+  // adcBufferFull = true; 
+}
+
+/**
+ * @brief Retargets printf to USB CDC (Virtual COM Port).
+ */
+int _write(int file, char *ptr, int len)
+{
+  static uint8_t rc = USBD_OK;
+  do {
+    rc = CDC_Transmit_FS((uint8_t *)ptr, len);
+  } while (USBD_BUSY == rc);
+  return (USBD_FAIL == rc) ? 0 : len;
+}
+
+/**
+ * @brief Prints system status information over serial.
+ */
+void printDebugInfo(void)
+{
+    if (CALIBRATION_MODE) return;
+
+    printf("Vin:%.2f Vout:%.2f Ain:%.2f Aout:%.2f Win:%.2f Wout:%.2f Eff:%.1f D:%.1f M:%d\r\n",
+        state.voltIn, state.voltOut, state.ampIn, state.ampOut, state.wattIn, state.wattOut,
+        (state.wattIn > 0.1) ? (state.wattOut / state.wattIn * 100.0f) : 0.0f,
+        dutyCycle, currentMode);
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+  while (1) {}
 }
 
 #ifdef USE_FULL_ASSERT
-/**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
+void assert_failed(uint8_t *file, uint32_t line){}
 #endif /* USE_FULL_ASSERT */
+
+/* USER CODE END 4 */
