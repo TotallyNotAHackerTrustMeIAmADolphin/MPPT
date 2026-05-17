@@ -9,3 +9,6 @@ https://controllerstech.com/stm32-adc-multiple-channels/
 
 printf on USB
 https://github.com/alexeykosinov/Redirect-printf-to-USB-VCP-on-STM32H7-MCU
+
+last gemini session:
+gemini --resume b7e22c3c-7b6f-40f0-870f-18ae916c3dbc

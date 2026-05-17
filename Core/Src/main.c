@@ -115,7 +115,7 @@ float tempMofets = 0;
 float tempMCU = 0;
 float wattIn = 0;
 float wattOut = 0;
-volatile bool bufferFull = false;
+volatile uint8_t bufferFull = 0; // 0: idle, 1: first half, 2: second half
 
 uint16_t REC = 2;
 const float currentCharging = 2;
@@ -186,8 +186,8 @@ void SystemClock_Config(void);
 void setPWM(float dutyCyclePct);
 void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
 
-void readSensors();
-void calibrateSensors();
+void readSensors(uint16_t offset);
+void calibrateSensors(uint16_t offset);
 
 // void constantVoltage(float voltage);
 // void constantCurrent(float current);
@@ -275,10 +275,12 @@ int main(void)
   while (1)
   {
 
-    if (bufferFull) // if the buffer is full, process the data
+    if (bufferFull != 0) // if the buffer is full, process the data
     {
+      uint16_t offset = (bufferFull == 2) ? (ADC_BUF_LEN / 2) : 0;
+      bufferFull = 0;
+
       static uint16_t counter = 0;
-      bufferFull = false;
       static uint16_t previousTime = 0;
       uint16_t time = __HAL_TIM_GET_COUNTER(&htim6);
       uint16_t timeDiff = 0;
@@ -293,11 +295,11 @@ int main(void)
       previousTime = time;
 
       // read the sensor values
-      readSensors();
+      readSensors(offset);
 
       // read the sensor RAW values for calibration
       if (CALIBRATION_MODE)
-        calibrateSensors();
+        calibrateSensors(offset);
 
       if (counter % 32 == 0)
       {
@@ -306,19 +308,25 @@ int main(void)
           REC--;
         }
         if (!CALIBRATION_MODE)
-          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycle, minDutyCycle, wattOut / wattIn * 100);
+          printf("Vin:%f\tVout:%f\tAin:%f\tAout:%f\tWin:%f\tWout:%f\tdA:%f\tdV:%f\tdP:%f\n", voltIn, voltOut, AmpIn, AmpOut, wattIn, wattOut, dutyCycle, minDutyCycle, (wattIn > 0.01f) ? (wattOut / wattIn * 100) : 0.0f);
       }
 
       // calculate the minimum duty cycle to avoid reverse current
-      if (voltOut < voltIn) // Buck mode
+      if (voltOut < voltIn && voltIn > 0.1f) // Buck mode
       {
         minDutyCycle = voltOut / voltIn * 100;
         minDutyCycle = minDutyCycle - (100 / minDutyCycle) + 1;
       }
-      else // boost mode
+      else if (voltOut > 0.1f) // boost mode
       {
         minDutyCycle = 198 - voltIn / voltOut * 100;
       }
+      else 
+      {
+        minDutyCycle = 0;
+      }
+      
+      minDutyCycle = constrain(minDutyCycle, 0, maxDutyCyclePercent);
 
       // safety checks
       underVoltageIn = voltIn < MIN_VOLTAGE_IN;
@@ -547,16 +555,16 @@ void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle)
 // Called when first half of buffer is filled
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
 {
-  bufferFull = true;
+  bufferFull = 1;
 }
 
 // Called when buffer is completely filled
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-  // bufferFull = true;
+  bufferFull = 2;
 }
 
-void readSensors()
+void readSensors(uint16_t offset)
 {
   // temporary variables
   uint32_t voltIn_temp = 0;
@@ -565,8 +573,10 @@ void readSensors()
   int32_t AmpOut_temp = 0;
   uint32_t tempMofets_temp = 0;
   uint32_t tempMCU_temp = 0;
+
+  uint16_t end = offset + (ADC_BUF_LEN / 2);
   // sum the values of the ADC buffer
-  for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
+  for (int i = offset; i < end; i += ADC_CHANNEL_COUNT)
   {
     voltIn_temp += adc_buf[i];
     voltOut_temp += adc_buf[i + 2];
@@ -575,18 +585,22 @@ void readSensors()
     tempMofets_temp += adc_buf[i + 4];
     tempMCU_temp += adc_buf[i + 5];
   }
+
+  // We are processing half the samples per call
+  float samples = (float)ADC_SAMPLE_COUNT / 2.0f;
+
   // calculate average and convert to real values
-  voltIn = (((((float)voltIn_temp / ADC_SAMPLE_COUNT) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  voltOut = (((((float)voltOut_temp / ADC_SAMPLE_COUNT) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
-  AmpIn = (((((float)AmpIn_temp / ADC_SAMPLE_COUNT) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_IN_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_IN_REFERENCE_LOW;
-  AmpOut = (((((float)AmpOut_temp / ADC_SAMPLE_COUNT) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_OUT_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_OUT_REFERENCE_LOW;
-  tempMofets = (float)(tempMofets_temp >> ADC_CHANNEL_AVG_BITS);
-  tempMCU = (V30 - (float)(tempMCU_temp >> ADC_CHANNEL_AVG_BITS)) / AVG_SLOPE + 30;
+  voltIn = (((((float)voltIn_temp / samples) - VOLT_IN_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW)) + VOLT_REFERENCE_LOW;
+  voltOut = (((((float)voltOut_temp / samples) - VOLT_OUT_RAW_LOW) * (VOLT_REFERENCE_HIGH - VOLT_REFERENCE_LOW)) / (VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW)) + VOLT_REFERENCE_LOW;
+  AmpIn = (((((float)AmpIn_temp / samples) - AMP_IN_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_IN_REFERENCE_LOW)) / (AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW)) + AMP_IN_REFERENCE_LOW;
+  AmpOut = (((((float)AmpOut_temp / samples) - AMP_OUT_RAW_LOW) * (AMP_REFERENCE_HIGH - AMP_OUT_REFERENCE_LOW)) / (AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW)) + AMP_OUT_REFERENCE_LOW;
+  tempMofets = (float)(tempMofets_temp / (ADC_SAMPLE_COUNT / 2));
+  tempMCU = (V30 - (float)(tempMCU_temp / (ADC_SAMPLE_COUNT / 2))) / AVG_SLOPE + 30;
   wattIn = voltIn * AmpIn;
   wattOut = voltOut * AmpOut;
 }
 
-void calibrateSensors()
+void calibrateSensors(uint16_t offset)
 {
   static float voltInRaw = 0;
   static float voltOutRaw = 0;
@@ -602,24 +616,22 @@ void calibrateSensors()
   uint32_t voltOut_temp = 0;
   int32_t AmpIn_temp = 0;
   int32_t AmpOut_temp = 0;
-  uint32_t tempMofets_temp = 0;
-  uint32_t tempMCU_temp = 0;
 
+  uint16_t end = offset + (ADC_BUF_LEN / 2);
   // sum the values of the ADC buffer
-  for (int i = 0; i < ADC_BUF_LEN; i += ADC_CHANNEL_COUNT)
+  for (int i = offset; i < end; i += ADC_CHANNEL_COUNT)
   {
     voltIn_temp += adc_buf[i];
     voltOut_temp += adc_buf[i + 2];
     AmpIn_temp += adc_buf[i + 1];
     AmpOut_temp += adc_buf[i + 3];
-    tempMofets_temp += adc_buf[i + 4];
-    tempMCU_temp += adc_buf[i + 5];
   }
 
-  voltInRaw = voltInRaw * alpha + ((float)voltIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  voltOutRaw = voltOutRaw * alpha + ((float)voltOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  AmpInRaw = AmpInRaw * alpha + ((float)AmpIn_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
-  AmpOutRaw = AmpOutRaw * alpha + ((float)AmpOut_temp / ADC_SAMPLE_COUNT) * (1 - alpha);
+  float samples = (float)ADC_SAMPLE_COUNT / 2.0f;
+  voltInRaw = voltInRaw * alpha + ((float)voltIn_temp / samples) * (1 - alpha);
+  voltOutRaw = voltOutRaw * alpha + ((float)voltOut_temp / samples) * (1 - alpha);
+  AmpInRaw = AmpInRaw * alpha + ((float)AmpIn_temp / samples) * (1 - alpha);
+  AmpOutRaw = AmpOutRaw * alpha + ((float)AmpOut_temp / samples) * (1 - alpha);
 
   if (counter % 64 == 0)
   {
@@ -637,7 +649,7 @@ void computePID(PID *pid)
   integral = constrain(integral, -pid->maxIntegral, pid->maxIntegral); // limit the integral term to prevent windup
 
   *pid->output += pid->Kp * error + pid->Ki * integral + pid->Kd * derivative;
-  //*pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput); // limit the output to the PWM range
+  *pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput); // limit the output to the PWM range
 
   pid->previousError = error;
   pid->integral = integral;
@@ -743,9 +755,7 @@ void Error_Handler(void)
 #ifdef USE_FULL_ASSERT
 /**
  * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
+ * @headroom: assert_param error line source number
  * @retval None
  */
 void assert_failed(uint8_t *file, uint32_t line)
