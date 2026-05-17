@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPPT Controller Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>MPPT Controller Dashboard</h1>
+        <button id="connectBtn">Connect to Device</button>
+        <span id="status" class="disconnected">Disconnected</span>
+    </header>
+
+    <main>
+        <section id="telemetry">
+            <h2>Real-time Telemetry</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Input</h3>
+                    <div class="value"><span id="Vin_mV">0</span> mV</div>
+                    <div class="value"><span id="Ain_mA">0</span> mA</div>
+                    <div class="value"><span id="Win_mW">0</span> mW</div>
+                </div>
+                <div class="card">
+                    <h3>Output</h3>
+                    <div class="value"><span id="Vout_mV">0</span> mV</div>
+                    <div class="value"><span id="Aout_mA">0</span> mA</div>
+                    <div class="value"><span id="Wout_mW">0</span> mW</div>
+                </div>
+                <div class="card">
+                    <h3>System</h3>
+                    <div class="label">Efficiency</div>
+                    <div class="value"><span id="eff">0</span> %</div>
+                    <div class="label">Temperature</div>
+                    <div class="value"><span id="temp_C">0</span> °C</div>
+                    <div class="label">Duty Cycle</div>
+                    <div class="value"><span id="duty">0</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="limits">
+            <h2>Device Limits</h2>
+            <form id="limitsForm">
+                <div class="form-group">
+                    <label>Max Battery Voltage (mV):</label>
+                    <input type="number" id="limit_Vmax" value="25200">
+                    <button type="button" onclick="sendLimit('SET_V_MAX', 'limit_Vmax')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Min Battery Voltage (mV):</label>
+                    <input type="number" id="limit_Vmin" value="18000">
+                    <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Max Charging Current (mA):</label>
+                    <input type="number" id="limit_Imax" value="2000">
+                    <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Max Input Voltage (mV):</label>
+                    <input type="number" id="limit_VinMax" value="80000">
+                    <button type="button" onclick="sendLimit('SET_IN_V_MAX', 'limit_VinMax')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Max Input Current (mA):</label>
+                    <input type="number" id="limit_AinMax" value="20000">
+                    <button type="button" onclick="sendLimit('SET_IN_I_MAX', 'limit_AinMax')">Update</button>
+                </div>
+                <button type="button" id="saveLimitsBtn" class="primary">Save Limits to EEPROM</button>
+            </form>
+        </section>
+
+        <section id="calibration">
+            <h2>Calibration</h2>
+            <div class="button-group">
+                <button id="calEnterBtn">Enter Calibration Mode</button>
+                <button id="calExitBtn">Exit Calibration Mode</button>
+            </div>
+            <div id="calControls" style="display: none;">
+                <div class="button-group">
+                    <button onclick="sendCommand('CMD:CAL_MODE_V')">Mode: Voltage</button>
+                    <button onclick="sendCommand('CMD:CAL_MODE_I')">Mode: Current</button>
+                </div>
+                <div class="form-group">
+                    <label>Reference Value (mV/mA):</label>
+                    <input type="number" id="calRefValue" value="10000">
+                </div>
+                <div class="button-group">
+                    <button onclick="sendCal('LOW')">Record Low Point</button>
+                    <button onclick="sendCal('HIGH')">Record High Point</button>
+                </div>
+                <button id="calSaveBtn" class="primary">Save Calibration to EEPROM</button>
+            </div>
+        </section>
+
+        <section id="terminal">
+            <h2>Serial Log</h2>
+            <div id="log"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

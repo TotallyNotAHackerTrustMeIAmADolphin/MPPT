@@ -149,11 +149,17 @@ int64_t powerOut_uW = 0;
 volatile uint8_t bufferFull = 0; // 0: idle, 1: first half, 2: second half
 
 uint16_t REC = 2;
-const int32_t currentCharging_mA = 2000;
-const int32_t voltageBatteryMax_mV = 25200;
-const int32_t voltageBatteryMin_mV = 3000 * 6;
-const int32_t maxInputVoltage_mV = 80000;
-const int32_t maxInputCurrent_mA = 20000;
+// --- Device Limits ---
+typedef struct
+{
+  int32_t batteryMax_mV;
+  int32_t batteryMin_mV;
+  int32_t chargingCurrent_mA;
+  int32_t inputVoltageMax_mV;
+  int32_t inputCurrentMax_mA;
+} DeviceLimits;
+
+DeviceLimits limits = {25200, 18000, 2000, 80000, 20000};
 
 // safety check Variables
 bool overCurrentIn = false;
@@ -185,8 +191,8 @@ int32_t dutyCycleMPPT = 0;
 int32_t minDutyCycle_ticks = 0;
 const int32_t maxDutyCycle_ticks = (MAX_DUTY_CYCLE_TICKS * 170) / 100; // 170% of 1.0
 
-PID constantVoltage = {100, 0, 10, 0, 0, voltageBatteryMax_mV, &voltageOut_mV, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
-PID constantCurrent = {100, 0, 10, 0, 0, currentCharging_mA, &currentOut_mA, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
+PID constantVoltage = {100, 0, 10, 0, 0, 0, &voltageOut_mV, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
+PID constantCurrent = {100, 0, 10, 0, 0, 0, &currentOut_mA, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
 
 
 // --- State Machine for Global MPPT Sweep ---
@@ -343,9 +349,8 @@ int main(void)
               efficiency = (pOut_mW * 100) / pIn_mW;
           }
 
-          printf("Vin:%ldmV\tVout:%ldmV\tAin:%ldmA\tAout:%ldmA\tWin:%ldmW\tWout:%ldmW\tduty:%ld\tm duty:%ld\tEff:%ld%%\tTemp:%ldC\n", 
-                 voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, pIn_mW, pOut_mW, dutyCycle_ticks, minDutyCycle_ticks, 
-                 efficiency, tempMCU_C_x100 / 100);
+          printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%ld,\"temp_C\":%ld}\n", 
+                 voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, pIn_mW, pOut_mW, dutyCycle_ticks, efficiency, tempMCU_C_x100 / 100);
         }
       }
 
@@ -368,11 +373,11 @@ int main(void)
 
       // safety checks
       underVoltageIn = voltageIn_mV < MIN_VOLTAGE_IN_MV;
-      underVoltageOut = voltageOut_mV < voltageBatteryMin_mV;
-      overVoltageIn = voltageIn_mV > MAX_VOLTAGE_MV;
-      overVoltageOut = voltageOut_mV > (voltageBatteryMax_mV - 50);
-      overCurrentIn = currentIn_mA > maxInputCurrent_mA;
-      overCurrentOut = currentOut_mA > (currentCharging_mA - 100);
+      underVoltageOut = voltageOut_mV < limits.batteryMin_mV;
+      overVoltageIn = voltageIn_mV > limits.inputVoltageMax_mV;
+      overVoltageOut = voltageOut_mV > (limits.batteryMax_mV - 50);
+      overCurrentIn = currentIn_mA > limits.inputCurrentMax_mA;
+      overCurrentOut = currentOut_mA > (limits.chargingCurrent_mA - 100);
 
       // safety check to see if Input Voltage is high enough
       if (overCurrentIn || overVoltageIn)
@@ -808,6 +813,8 @@ void runMPPTAlgorithm(void)
 void loadSettings(void)
 {
   if (EE_Init() != HAL_OK) return;
+  
+  // Load Calibration
   uint16_t *pCal = (uint16_t *)&cal;
   for (uint16_t i = 0; i < 16; i++)
   {
@@ -817,14 +824,40 @@ void loadSettings(void)
       pCal[i] = val;
     }
   }
+
+  // Load Device Limits (starting at virtual address 20)
+  uint16_t *pLimits = (uint16_t *)&limits;
+  for (uint16_t i = 0; i < 10; i++)
+  {
+    uint16_t val;
+    if (EE_ReadVariable(i + 20, &val) == 0)
+    {
+      pLimits[i] = val;
+    }
+  }
+  
+  // Update PID setpoints after loading
+  constantVoltage.setPoint = limits.batteryMax_mV;
+  constantCurrent.setPoint = limits.chargingCurrent_mA;
 }
 
 void saveSettings(void)
 {
+  // Save Calibration
   uint16_t *pCal = (uint16_t *)&cal;
   for (uint16_t i = 0; i < 16; i++)
   {
     EE_WriteVariable(i + 1, pCal[i]);
+  }
+}
+
+void saveLimits(void)
+{
+  // Save Device Limits (starting at virtual address 20)
+  uint16_t *pLimits = (uint16_t *)&limits;
+  for (uint16_t i = 0; i < 10; i++)
+  {
+    EE_WriteVariable(i + 20, pLimits[i]);
   }
 }
 
@@ -893,9 +926,41 @@ void handleSerialCommands(void)
           saveSettings();
           printf("ACK:CAL_SAVE_OK\n");
         }
+        else if (strncmp(cmdBuffer, "CMD:SET_V_MAX:", 14) == 0)
+        {
+          limits.batteryMax_mV = atoi(cmdBuffer + 14);
+          constantVoltage.setPoint = limits.batteryMax_mV;
+          printf("ACK:SET_V_MAX_OK:%ld\n", limits.batteryMax_mV);
+        }
+        else if (strncmp(cmdBuffer, "CMD:SET_V_MIN:", 14) == 0)
+        {
+          limits.batteryMin_mV = atoi(cmdBuffer + 14);
+          printf("ACK:SET_V_MIN_OK:%ld\n", limits.batteryMin_mV);
+        }
+        else if (strncmp(cmdBuffer, "CMD:SET_I_MAX:", 14) == 0)
+        {
+          limits.chargingCurrent_mA = atoi(cmdBuffer + 14);
+          constantCurrent.setPoint = limits.chargingCurrent_mA;
+          printf("ACK:SET_I_MAX_OK:%ld\n", limits.chargingCurrent_mA);
+        }
+        else if (strncmp(cmdBuffer, "CMD:SET_IN_V_MAX:", 17) == 0)
+        {
+          limits.inputVoltageMax_mV = atoi(cmdBuffer + 17);
+          printf("ACK:SET_IN_V_MAX_OK:%ld\n", limits.inputVoltageMax_mV);
+        }
+        else if (strncmp(cmdBuffer, "CMD:SET_IN_I_MAX:", 17) == 0)
+        {
+          limits.inputCurrentMax_mA = atoi(cmdBuffer + 17);
+          printf("ACK:SET_IN_I_MAX_OK:%ld\n", limits.inputCurrentMax_mA);
+        }
+        else if (strcmp(cmdBuffer, "CMD:LIMITS_SAVE") == 0)
+        {
+          saveLimits();
+          printf("ACK:LIMITS_SAVE_OK\n");
+        }
         else if (strcmp(cmdBuffer, "CMD:HELP") == 0)
         {
-          printf("Commands: CMD:CAL_ENTER, CMD:CAL_EXIT, CMD:CAL_MODE_I, CMD:CAL_MODE_V, CMD:CAL_I_LOW:<mA>, CMD:CAL_I_HIGH:<mA>, CMD:CAL_V_LOW:<mV>, CMD:CAL_V_HIGH:<mV>, CMD:CAL_SAVE\n");
+          printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, SET_IN_V_MAX:<mV>, SET_IN_I_MAX:<mA>, LIMITS_SAVE\n");
         }
         
         cmdIdx = 0;
