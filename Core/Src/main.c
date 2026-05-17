@@ -299,9 +299,19 @@ int main(void)
           REC--;
         }
         if (!CALIBRATION_MODE)
-          printf("Vin_mV:%ld\tVout_mV:%ld\tAin_mA:%ld\tAout_mA:%ld\tWin_uW:%lld\tWout_uW:%lld\tduty:%ld\tmin_duty:%ld\tEff_pct:%ld\tTemp:%ld\n", 
-                 voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, powerIn_uW, powerOut_uW, dutyCycle_ticks, minDutyCycle_ticks, 
-                 (powerIn_uW > 10000) ? (int32_t)(powerOut_uW * 100 / powerIn_uW) : 0, tempMCU_C_x100 / 100);
+        {
+          // Convert uW to mW for easier display and to fit in 32-bit for printf
+          int32_t pIn_mW = (int32_t)(powerIn_uW / 1000);
+          int32_t pOut_mW = (int32_t)(powerOut_uW / 1000);
+          int32_t efficiency = 0;
+          if (pIn_mW > 10) {
+              efficiency = (pOut_mW * 100) / pIn_mW;
+          }
+
+          printf("Vin:%ldmV\tVout:%ldmV\tAin:%ldmA\tAout:%ldmA\tWin:%ldmW\tWout:%ldmW\tduty:%ld\tm duty:%ld\tEff:%ld%%\tTemp:%ldC\n", 
+                 voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, pIn_mW, pOut_mW, dutyCycle_ticks, minDutyCycle_ticks, 
+                 efficiency, tempMCU_C_x100 / 100);
+        }
       }
 
       // calculate the minimum duty cycle to avoid reverse current
@@ -590,7 +600,8 @@ void readSensors(uint16_t offset)
   tempMofets_C_x100 = (int32_t)((int64_t)tempMofets_temp * 100 / (ADC_SAMPLE_COUNT / 2));
   
   int32_t mcu_adc_avg = tempMCU_temp / (ADC_SAMPLE_COUNT / 2);
-  tempMCU_C_x100 = (int32_t)((((int64_t)V30_MV - (mcu_adc_avg * 3300 / 4096)) * 1000 / (int32_t)(AVG_SLOPE_X1000 / 100)) + 3000);
+  int32_t mcu_v_sense_mv = (mcu_adc_avg * 3300) / 4096;
+  tempMCU_C_x100 = (int32_t)((((int64_t)V30_MV - mcu_v_sense_mv) * 1000) / 43 + 3000);
 
   // Power in uW (mV * mA = uW)
   powerIn_uW = (int64_t)voltageIn_mV * currentIn_mA;
@@ -660,7 +671,7 @@ void mpptPerturbAndObserve(void)
   static int64_t previousPowerIn_uW = 0;
   static bool direction = true; 
 
-  const int32_t MIN_INPUT_VOLTAGE_MPPT_MV = 15000;
+  const int32_t MIN_INPUT_VOLTAGE_MPPT_MV = 14000; // Set to 14V floor
   if (voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV)
   {
     dutyCycle_ticks -= 19; 
