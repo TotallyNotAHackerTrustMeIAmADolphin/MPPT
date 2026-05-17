@@ -29,17 +29,7 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 - **MPPT Algorithms:** 
   - **Perturb & Observe (P&O):** Fast, real-time tracking of the maximum power point.
   - **Global Sweep:** Periodically scans the entire power curve to find the true peak in partial shading conditions.
-- **USB DFU Auto-Reset:** Supports the **"1200 bps touch"** mechanism. Opening the serial port at 1200 baud automatically triggers a software jump to the STM32's built-in DFU bootloader, eliminating the need for manual BOOT0 pin toggling.
 - **Safety Engine:** Built-in protection for Over-Voltage (OV), Over-Current (OC), and Under-Voltage (UV).
-
----
-
-## 🔄 USB DFU Auto-Reset Procedure
-This firmware allows for seamless updates over USB. To enter the bootloader without using the BOOT0 pin:
-1. Ensure the board is running the firmware.
-2. Briefly open the serial port at **1200 baud** (e.g., `pio device monitor -b 1200`).
-3. The board will reset and reappear as an "STM32 BOOTLOADER" DFU device.
-4. Run your upload command (`pio run -t upload`).
 
 ---
 
