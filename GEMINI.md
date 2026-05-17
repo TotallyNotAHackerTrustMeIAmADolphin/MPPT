@@ -4,12 +4,13 @@
 This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) solar charge controller. It is built for the **STM32F072RBT6** MCU (Nucleo-F072RB board) using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
 
 ### Key Features
-- **High-Frequency PWM**: 100 kHz PWM frequency.
-- **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution (0-1920 ticks).
+- **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
+- **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks) for maximum performance on Cortex-M0.
-- **DMA-based ADC**: Samples 6 channels with **Ping-Pong buffering** for zero-latency, race-condition-free processing.
+- **DMA-based ADC**: Samples 6 channels with Ping-Pong (Half-Buffer/Full-Buffer) processing for zero-latency measurement.
 - **PID Control**: Custom integer-based PID implementation for voltage/current regulation.
 - **USB Communication**: USB CDC (Virtual COM Port) for telemetry and debugging.
+- **Supply-Aware MPPT Sweep**: Automatically scans the power curve every 300s. Includes intelligent early-termination logic that stops the sweep if the source voltage sags below a safety floor (14V), jumping back to the best-discovered duty cycle to maintain stability.
 
 ## Technologies & Architecture
 - **MCU**: STM32F072RBT6 (ARM Cortex-M0)
