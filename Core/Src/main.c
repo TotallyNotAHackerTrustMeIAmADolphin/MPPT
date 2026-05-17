@@ -37,6 +37,7 @@
 #include <stdlib.h>
 
 #include "pidautotuner.h"
+#include "eeprom.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,22 +59,48 @@
 // turn on calibration mode
 #define CALIBRATION_MODE false
 
-// conversion factor for converting ADC values to voltage with 200k and 5.1k resistors at 12 bit resolution of 3.3V
-#define VOLT_IN_RAW_LOW 950.603760
-#define VOLT_IN_RAW_HIGH 2684.238525
-#define VOLT_OUT_RAW_LOW 891.904358
-#define VOLT_OUT_RAW_HIGH 2729.892090
-#define VOLT_REFERENCE_LOW_MV 10000
-#define VOLT_REFERENCE_HIGH_MV 30000
+// --- Calibration Settings ---
+typedef struct
+{
+  uint16_t vInRawLow;
+  uint16_t vInRealLow_mV;
+  uint16_t vInRawHigh;
+  uint16_t vInRealHigh_mV;
 
-// conversion factor from ADC values to current in mA with 0.333333 milli-ohm resistor at 12 bit resolution of 3.3V where 1.65V is the zero current point at 200 V/V gain
-#define AMP_IN_RAW_LOW 1987.640991
-#define AMP_IN_RAW_HIGH 1674.981445
-#define AMP_OUT_RAW_LOW 1986.062378
-#define AMP_OUT_RAW_HIGH 1660.860840
-#define AMP_IN_REFERENCE_LOW_MA 23
-#define AMP_OUT_REFERENCE_LOW_MA 0
-#define AMP_REFERENCE_HIGH_MA 3900
+  uint16_t vOutRawLow;
+  uint16_t vOutRealLow_mV;
+  uint16_t vOutRawHigh;
+  uint16_t vOutRealHigh_mV;
+
+  uint16_t aInRawLow;
+  uint16_t aInRealLow_mA;
+  uint16_t aInRawHigh;
+  uint16_t aInRealHigh_mA;
+
+  uint16_t aOutRawLow;
+  uint16_t aOutRealLow_mA;
+  uint16_t aOutRawHigh;
+  uint16_t aOutRealHigh_mA;
+} CalibrationSettings;
+
+// Defaults based on previous hardcoded values
+CalibrationSettings cal = {
+    951, 10000, 2684, 30000,
+    892, 10000, 2730, 30000,
+    1988, 23, 1675, 3900,
+    1986, 0, 1661, 3900
+};
+
+// Global flags for Serial UI
+bool isCalibrating = false;
+bool cal_HS_ON = false;
+char cmdBuffer[64];
+uint8_t cmdIdx = 0;
+
+uint32_t vInRawSum = 0;
+uint32_t vOutRawSum = 0;
+uint32_t aInRawSum = 0;
+uint32_t aOutRawSum = 0;
 
 // internal Temp sensor
 #define V_REF_INT_X1000 1200 // 1.2V * 1000
@@ -198,6 +225,10 @@ void computePID(PID *pid);
 void runMPPTAlgorithm();
 void mpptPerturbAndObserve();
 
+void loadSettings(void);
+void saveSettings(void);
+void handleSerialCommands(void);
+
 void Charging_Algorithm();
 /* USER CODE END PFP */
 
@@ -260,12 +291,15 @@ int main(void)
   dutyCycle_ticks = 0;
   setPWM(dutyCycle_ticks);
 
+  loadSettings();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    handleSerialCommands();
 
     if (bufferFull != 0) // if a half-buffer is ready
     {
@@ -362,37 +396,54 @@ int main(void)
       }
       else if (counter % 8 == 0) // Run MPPT logic at a regular interval
       {
-        // --- Sweep Trigger Logic ---
-        if (mpptState == MPPT_TRACKING)
+        if (!isCalibrating)
         {
-          sweepTriggerCounter++;
-
-          // Assuming the ADC callback happens roughly 200 times/sec,
-          // and we run this block every 4 cycles (50 times/sec)
-          const uint32_t calls_per_second = 50;
-          if (sweepTriggerCounter > (SWEEP_INTERVAL_SECONDS * calls_per_second))
+          // --- Sweep Trigger Logic ---
+          if (mpptState == MPPT_TRACKING)
           {
-            // Time to start a sweep!
-            mpptState = MPPT_SWEEPING;
-            sweepTriggerCounter = 0;
+            sweepTriggerCounter++;
 
-            // Initialize sweep variables
-            sweepMaxPower_uW = 0;
-            sweepBestDutyCycle = minDutyCycle_ticks;
-            sweepDutyCycle = minDutyCycle_ticks; // Start sweep from the bottom
+            // Assuming the ADC callback happens roughly 200 times/sec,
+            // and we run this block every 4 cycles (50 times/sec)
+            const uint32_t calls_per_second = 50;
+            if (sweepTriggerCounter > (SWEEP_INTERVAL_SECONDS * calls_per_second))
+            {
+              // Time to start a sweep!
+              mpptState = MPPT_SWEEPING;
+              sweepTriggerCounter = 0;
+
+              // Initialize sweep variables
+              sweepMaxPower_uW = 0;
+              sweepBestDutyCycle = minDutyCycle_ticks;
+              sweepDutyCycle = minDutyCycle_ticks; // Start sweep from the bottom
+            }
           }
-        }
 
-        // --- Run the main MPPT state machine ---
-        runMPPTAlgorithm();
+          // --- Run the main MPPT state machine ---
+          runMPPTAlgorithm();
+        }
       }
 
-      dutyCycle_ticks = constrain(dutyCycle_ticks, minDutyCycle_ticks, maxDutyCycle_ticks);
+      if (isCalibrating)
+      {
+        if (cal_HS_ON)
+        {
+          dutyCycle_ticks = maxDutyCycle; // Both HS ON
+        }
+        else
+        {
+          dutyCycle_ticks = 0; // ALL OFF
+        }
+      }
+      else
+      {
+        dutyCycle_ticks = constrain(dutyCycle_ticks, minDutyCycle_ticks, maxDutyCycle_ticks);
 
-      if (CALIBRATION_MODE)
-        dutyCycle_ticks = maxDutyCycle;
-      if (REC > 0 || ERR > 0)
-        dutyCycle_ticks = 0;
+        if (CALIBRATION_MODE)
+          dutyCycle_ticks = maxDutyCycle;
+        if (REC > 0 || ERR > 0)
+          dutyCycle_ticks = 0;
+      }
 
       setPWM(dutyCycle_ticks);
       counter++;
@@ -574,6 +625,11 @@ void readSensors(uint16_t offset)
 
   uint16_t end = offset + (ADC_BUF_LEN / 2);
   // sum the values of the ADC buffer
+  vInRawSum = 0;
+  vOutRawSum = 0;
+  aInRawSum = 0;
+  aOutRawSum = 0;
+
   for (int i = offset; i < end; i += ADC_CHANNEL_COUNT)
   {
     voltIn_temp += adc_buf[i];
@@ -582,21 +638,26 @@ void readSensors(uint16_t offset)
     AmpOut_temp += adc_buf[i + 3];
     tempMofets_temp += adc_buf[i + 4];
     tempMCU_temp += adc_buf[i + 5];
+
+    vInRawSum += adc_buf[i];
+    vOutRawSum += adc_buf[i+2];
+    aInRawSum += adc_buf[i+1];
+    aOutRawSum += adc_buf[i+3];
   }
 
   // Integer scaling for Voltages (mV)
   int64_t v_in_avg_x1000 = ((int64_t)voltIn_temp * 1000) / (ADC_SAMPLE_COUNT / 2);
-  voltageIn_mV = (int32_t)(((v_in_avg_x1000 - (int64_t)(VOLT_IN_RAW_LOW * 1000)) * (VOLT_REFERENCE_HIGH_MV - VOLT_REFERENCE_LOW_MV)) / (int32_t)((VOLT_IN_RAW_HIGH - VOLT_IN_RAW_LOW) * 1000)) + VOLT_REFERENCE_LOW_MV;
+  voltageIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal.vInRawLow * 1000) * ((int32_t)cal.vInRealHigh_mV - (int32_t)cal.vInRealLow_mV) / ((int32_t)cal.vInRawHigh - (int32_t)cal.vInRawLow) / 1000 + cal.vInRealLow_mV);
 
   int64_t v_out_avg_x1000 = ((int64_t)voltOut_temp * 1000) / (ADC_SAMPLE_COUNT / 2);
-  voltageOut_mV = (int32_t)(((v_out_avg_x1000 - (int64_t)(VOLT_OUT_RAW_LOW * 1000)) * (VOLT_REFERENCE_HIGH_MV - VOLT_REFERENCE_LOW_MV)) / (int32_t)((VOLT_OUT_RAW_HIGH - VOLT_OUT_RAW_LOW) * 1000)) + VOLT_REFERENCE_LOW_MV;
+  voltageOut_mV = (int32_t)((v_out_avg_x1000 - (int64_t)cal.vOutRawLow * 1000) * ((int32_t)cal.vOutRealHigh_mV - (int32_t)cal.vOutRealLow_mV) / ((int32_t)cal.vOutRawHigh - (int32_t)cal.vOutRawLow) / 1000 + cal.vOutRealLow_mV);
 
   // Integer scaling for Currents (mA)
   int64_t a_in_avg_x1000 = ((int64_t)AmpIn_temp * 1000) / (ADC_SAMPLE_COUNT / 2);
-  currentIn_mA = (int32_t)(((a_in_avg_x1000 - (int64_t)(AMP_IN_RAW_LOW * 1000)) * (AMP_REFERENCE_HIGH_MA - AMP_IN_REFERENCE_LOW_MA)) / (int32_t)((AMP_IN_RAW_HIGH - AMP_IN_RAW_LOW) * 1000)) + AMP_IN_REFERENCE_LOW_MA;
+  currentIn_mA = (int32_t)((a_in_avg_x1000 - (int64_t)cal.aInRawLow * 1000) * ((int32_t)cal.aInRealHigh_mA - (int32_t)cal.aInRealLow_mA) / ((int32_t)cal.aInRawHigh - (int32_t)cal.aInRawLow) / 1000 + cal.aInRealLow_mA);
 
   int64_t a_out_avg_x1000 = ((int64_t)AmpOut_temp * 1000) / (ADC_SAMPLE_COUNT / 2);
-  currentOut_mA = (int32_t)(((a_out_avg_x1000 - (int64_t)(AMP_OUT_RAW_LOW * 1000)) * (AMP_REFERENCE_HIGH_MA - AMP_OUT_REFERENCE_LOW_MA)) / (int32_t)((AMP_OUT_RAW_HIGH - AMP_OUT_RAW_LOW) * 1000)) + AMP_OUT_REFERENCE_LOW_MA;
+  currentOut_mA = (int32_t)((a_out_avg_x1000 - (int64_t)cal.aOutRawLow * 1000) * ((int32_t)cal.aOutRealHigh_mA - (int32_t)cal.aOutRealLow_mA) / ((int32_t)cal.aOutRawHigh - (int32_t)cal.aOutRawLow) / 1000 + cal.aOutRealLow_mA);
 
   tempMofets_C_x100 = (int32_t)((int64_t)tempMofets_temp * 100 / (ADC_SAMPLE_COUNT / 2));
   
@@ -741,6 +802,109 @@ void runMPPTAlgorithm(void)
       mpptState = MPPT_TRACKING;
     }
     break;
+  }
+}
+
+void loadSettings(void)
+{
+  if (EE_Init() != HAL_OK) return;
+  uint16_t *pCal = (uint16_t *)&cal;
+  for (uint16_t i = 0; i < 16; i++)
+  {
+    uint16_t val;
+    if (EE_ReadVariable(i + 1, &val) == 0)
+    {
+      pCal[i] = val;
+    }
+  }
+}
+
+void saveSettings(void)
+{
+  uint16_t *pCal = (uint16_t *)&cal;
+  for (uint16_t i = 0; i < 16; i++)
+  {
+    EE_WriteVariable(i + 1, pCal[i]);
+  }
+}
+
+void handleSerialCommands(void)
+{
+  while (CDC_Available())
+  {
+    uint8_t c = CDC_Read();
+    if (c == '\n' || c == '\r')
+    {
+      if (cmdIdx > 0)
+      {
+        cmdBuffer[cmdIdx] = 0;
+        
+        if (strcmp(cmdBuffer, "CMD:CAL_ENTER") == 0)
+        {
+          isCalibrating = true;
+          printf("ACK:CAL_ENTER_OK\n");
+        }
+        else if (strcmp(cmdBuffer, "CMD:CAL_EXIT") == 0)
+        {
+          isCalibrating = false;
+          cal_HS_ON = false;
+          printf("ACK:CAL_EXIT_OK\n");
+        }
+        else if (strcmp(cmdBuffer, "CMD:CAL_MODE_I") == 0)
+        {
+          cal_HS_ON = true;
+          printf("ACK:CAL_MODE_I_OK\n");
+        }
+        else if (strcmp(cmdBuffer, "CMD:CAL_MODE_V") == 0)
+        {
+          cal_HS_ON = false;
+          printf("ACK:CAL_MODE_V_OK\n");
+        }
+        else if (strncmp(cmdBuffer, "CMD:CAL_I_LOW:", 14) == 0)
+        {
+          cal.aInRawLow = (uint16_t)(aInRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.aOutRawLow = (uint16_t)(aOutRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.aInRealLow_mA = cal.aOutRealLow_mA = (uint16_t)atoi(cmdBuffer + 14);
+          printf("ACK:CAL_I_LOW_OK:%d,%d\n", cal.aInRawLow, cal.aOutRawLow);
+        }
+        else if (strncmp(cmdBuffer, "CMD:CAL_I_HIGH:", 15) == 0)
+        {
+          cal.aInRawHigh = (uint16_t)(aInRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.aOutRawHigh = (uint16_t)(aOutRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.aInRealHigh_mA = cal.aOutRealHigh_mA = (uint16_t)atoi(cmdBuffer + 15);
+          printf("ACK:CAL_I_HIGH_OK:%d,%d\n", cal.aInRawHigh, cal.aOutRawHigh);
+        }
+        else if (strncmp(cmdBuffer, "CMD:CAL_V_LOW:", 14) == 0)
+        {
+          cal.vInRawLow = (uint16_t)(vInRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.vOutRawLow = (uint16_t)(vOutRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.vInRealLow_mV = cal.vOutRealLow_mV = (uint16_t)atoi(cmdBuffer + 14);
+          printf("ACK:CAL_V_LOW_OK:%d,%d\n", cal.vInRawLow, cal.vOutRawLow);
+        }
+        else if (strncmp(cmdBuffer, "CMD:CAL_V_HIGH:", 15) == 0)
+        {
+          cal.vInRawHigh = (uint16_t)(vInRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.vOutRawHigh = (uint16_t)(vOutRawSum / (ADC_SAMPLE_COUNT / 2));
+          cal.vInRealHigh_mV = cal.vOutRealHigh_mV = (uint16_t)atoi(cmdBuffer + 15);
+          printf("ACK:CAL_V_HIGH_OK:%d,%d\n", cal.vInRawHigh, cal.vOutRawHigh);
+        }
+        else if (strcmp(cmdBuffer, "CMD:CAL_SAVE") == 0)
+        {
+          saveSettings();
+          printf("ACK:CAL_SAVE_OK\n");
+        }
+        else if (strcmp(cmdBuffer, "CMD:HELP") == 0)
+        {
+          printf("Commands: CMD:CAL_ENTER, CMD:CAL_EXIT, CMD:CAL_MODE_I, CMD:CAL_MODE_V, CMD:CAL_I_LOW:<mA>, CMD:CAL_I_HIGH:<mA>, CMD:CAL_V_LOW:<mV>, CMD:CAL_V_HIGH:<mV>, CMD:CAL_SAVE\n");
+        }
+        
+        cmdIdx = 0;
+      }
+    }
+    else if (cmdIdx < 63)
+    {
+      cmdBuffer[cmdIdx++] = c;
+    }
   }
 }
 

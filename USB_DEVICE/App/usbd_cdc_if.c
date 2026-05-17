@@ -31,7 +31,10 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+#define RX_BUFFER_SIZE 256
+uint8_t rx_buffer[RX_BUFFER_SIZE];
+volatile uint32_t rx_head = 0;
+volatile uint32_t rx_tail = 0;
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -259,7 +262,15 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+  for (uint32_t i = 0; i < *Len; i++) {
+      uint32_t next_head = (rx_head + 1) % RX_BUFFER_SIZE;
+      if (next_head != rx_tail) {
+          rx_buffer[rx_head] = Buf[i];
+          rx_head = next_head;
+      }
+  }
+
+  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &UserRxBufferFS[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
   /* USER CODE END 6 */
@@ -291,7 +302,16 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
+int CDC_Available(void) {
+    return (rx_head != rx_tail);
+}
 
+uint8_t CDC_Read(void) {
+    if (rx_head == rx_tail) return 0;
+    uint8_t data = rx_buffer[rx_tail];
+    rx_tail = (rx_tail + 1) % RX_BUFFER_SIZE;
+    return data;
+}
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**
