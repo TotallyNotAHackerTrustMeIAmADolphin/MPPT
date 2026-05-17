@@ -110,9 +110,6 @@ int32_t dutyCycle_ticks = 0;
 // data for the ADC
 volatile uint16_t adc_buf[ADC_BUF_LEN];
 
-// Magic value for DFU jump, preserved across reset in .noinit section
-volatile uint32_t dfu_magic __attribute__((section(".noinit")));
-
 // data read from Sensors
 int32_t voltageIn_mV = 100000;
 int32_t voltageOut_mV = 100000;
@@ -163,6 +160,7 @@ const int32_t maxDutyCycle_ticks = (MAX_DUTY_CYCLE_TICKS * 170) / 100; // 170% o
 
 PID constantVoltage = {100, 0, 10, 0, 0, voltageBatteryMax_mV, &voltageOut_mV, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
 PID constantCurrent = {100, 0, 10, 0, 0, currentCharging_mA, &currentOut_mA, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
+
 
 // --- State Machine for Global MPPT Sweep ---
 typedef enum
@@ -215,52 +213,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  if (dfu_magic == 0xDEADBEEF)
-  {
-    dfu_magic = 0;
-    
-    // Immediate LED Signal
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin = GPIO_PIN_10;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
 
-    __disable_irq();
-    
-    // Disable SysTick
-    SysTick->CTRL = 0;
-    SysTick->LOAD = 0;
-    SysTick->VAL = 0;
-
-    // Reset Peripherals
-    HAL_DeInit();
-    HAL_RCC_DeInit();
-
-    // Clear NVIC
-    NVIC->ICER[0] = 0xFFFFFFFF;
-    NVIC->ICPR[0] = 0xFFFFFFFF;
-
-    // Remap
-    __HAL_RCC_SYSCFG_CLK_ENABLE();
-    __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
-    
-    void (*SysMemBootJump)(void);
-    uint32_t addr = 0x1FFFC800;
-    
-    SysMemBootJump = (void (*)(void)) (*((uint32_t *)(addr + 4)));
-    __set_MSP(*(uint32_t *)addr);
-    
-    // Re-enable interrupts just before jump (some bootloaders need this)
-    __enable_irq();
-    
-    SysMemBootJump();
-    
-    while (1); 
-  }
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -795,8 +748,6 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

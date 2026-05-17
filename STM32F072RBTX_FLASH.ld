@@ -51,16 +51,6 @@ MEMORY
 /* Sections */
 SECTIONS
 {
-  .noinit (NOLOAD) :
-  {
-    . = ALIGN(4);
-    _snoinit = .;
-    *(.noinit)
-    *(.noinit*)
-    . = ALIGN(4);
-    _enoinit = .;
-  } >RAM
-
   /* The startup code into "FLASH" Rom type memory */
   .isr_vector :
   {

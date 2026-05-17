@@ -10,10 +10,5 @@ https://controllerstech.com/stm32-adc-multiple-channels/
 printf on USB
 https://github.com/alexeykosinov/Redirect-printf-to-USB-VCP-on-STM32H7-MCU
 
-DFU Auto-Reset (1200 bps touch):
-Status: Jump reached but enumeration fails (suspect BOOT0 pin check inside bootloader).
-Key Fixes: Linker .noinit section, SysTick/NVIC clear, memory remap to 0.
-Current flag addr: dfu_magic in .noinit
-
 last gemini session:
 gemini --resume b7e22c3c-7b6f-40f0-870f-18ae916c3dbc
