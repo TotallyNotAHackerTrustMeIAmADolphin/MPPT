@@ -174,6 +174,7 @@ volatile MPPT_State_t mpptState = MPPT_TRACKING; // Start in normal tracking mod
 // --- Sweep Configuration ---
 const uint32_t SWEEP_INTERVAL_SECONDS = 300; // Sweep every 5 minutes
 const int32_t SWEEP_STEP_SIZE_TICKS = 19;     // ~1.0% step
+const int32_t MIN_INPUT_VOLTAGE_MPPT_MV = 14000; // Tracking floor for MPPT logic
 uint32_t sweepTriggerCounter = 0;
 
 // --- Variables to store sweep results ---
@@ -407,7 +408,7 @@ int main(void)
 
 /**
  * @brief System Clock Configuration
- * @retval None
+ * @retval int
  */
 void SystemClock_Config(void)
 {
@@ -716,6 +717,15 @@ void runMPPTAlgorithm(void)
 
   case MPPT_SWEEPING:
     dutyCycle_ticks = sweepDutyCycle;
+
+    // Supply-Aware Termination: Check if we are pulling the voltage down too far
+    if (voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) 
+    {
+      // Supply is sagging! Terminate sweep early.
+      dutyCycle_ticks = sweepBestDutyCycle;
+      mpptState = MPPT_TRACKING;
+      break;
+    }
 
     if (powerIn_uW > sweepMaxPower_uW)
     {
