@@ -47,7 +47,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // PWM Stuff
-#define TIMER_PERIOD ((uint16_t)240) // 100 kHz PWM frequency
 #define DITHER_TABLE_SIZE 8          // 3 bits of dithering, has to be a power of 2
 
 // ADC Stuff
@@ -81,10 +80,14 @@
 #define AVG_SLOPE_X1000 4300 // 4.3mV/C * 1000
 #define V30_MV 1430           // 1.43V * 1000
 
+// Dynamic PWM Limits
+#define MAX_DUTY_CYCLE_TICKS (TIMER_PERIOD * DITHER_TABLE_SIZE)
+#define PWM_DEAD_BAND_TICKS ((MAX_DUTY_CYCLE_TICKS * 2) / 100) // 2% of range
+#define ABSOLUTE_MAX_TICKS (MAX_DUTY_CYCLE_TICKS * 2)          // 200% (Boost max)
+
 // some max values
 #define MAX_VOLTAGE_MV 80000
 #define MAX_CURRENT_MA 20000
-#define PWM_DEAD_BAND_TICKS 38 // ~2% of 1920
 #define MIN_VOLTAGE_IN_MV 12000
 
 /* USER CODE END PD */
@@ -100,7 +103,7 @@
 // data for the dithering table
 uint16_t ditherTableCH1[DITHER_TABLE_SIZE];
 uint16_t ditherTableCH2[DITHER_TABLE_SIZE];
-uint16_t maxDutyCycle = (TIMER_PERIOD * DITHER_TABLE_SIZE);
+uint16_t maxDutyCycle = MAX_DUTY_CYCLE_TICKS;
 uint8_t ditherBits = 3; // log2(DITHER_TABLE_SIZE)
 int32_t dutyCycle_ticks = 0;
 
@@ -149,14 +152,15 @@ typedef struct
   int32_t maxOutput;
 } PID;
 
-int32_t dutyCycleConstantVoltage = 3840;
-int32_t dutyCycleConstantCurrent = 3840;
+int32_t dutyCycleConstantVoltage = MAX_DUTY_CYCLE_TICKS;
+int32_t dutyCycleConstantCurrent = MAX_DUTY_CYCLE_TICKS;
 int32_t dutyCycleMPPT = 0;
 int32_t minDutyCycle_ticks = 0;
-const int32_t maxDutyCycle_ticks = 3264; // 170% of 1920
+const int32_t maxDutyCycle_ticks = (MAX_DUTY_CYCLE_TICKS * 170) / 100; // 170% of 1.0
 
 PID constantVoltage = {100, 0, 10, 0, 0, voltageBatteryMax_mV, &voltageOut_mV, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
 PID constantCurrent = {100, 0, 10, 0, 0, currentCharging_mA, &currentOut_mA, &dutyCycle_ticks, 1000000, 0, maxDutyCycle_ticks};
+
 
 // --- State Machine for Global MPPT Sweep ---
 typedef enum

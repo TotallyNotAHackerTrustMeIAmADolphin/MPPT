@@ -197,6 +197,21 @@ for include_entry in tool_chain.findall(".//option[@superClass='com.st.stm32cube
     # print(inc_dir)
     inc_dir = "-I" + inc_dir
     include_dirs.append(inc_dir)
+
+# Automatic extraction of Timer Period from .ioc file
+try:
+    with open('MPPT.ioc', 'r') as ioc_file:
+        for line in ioc_file:
+            if 'TIM1.Period=' in line:
+                period_val = int(line.split('=')[1].strip())
+                # Period in register is N-1, so we add 1
+                timer_period = period_val + 1
+                include_dirs.append("-DTIMER_PERIOD=%d" % timer_period)
+                print("%s: Extracted TIMER_PERIOD=%d from MPPT.ioc" % (log_name, timer_period))
+                break
+except Exception as e:
+    print("%s: Warning - Could not extract timer period from .ioc: %s" % (log_name, str(e)))
+
 if not include_dirs:
     raise SCons.Errors.BuildError(
         errstr="%s Error: Cannot read include directories from project file "
