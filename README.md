@@ -67,12 +67,22 @@ pio device monitor
 ---
 
 ## 📊 Telemetry & Debugging
-Real-time telemetry is provided via **USB CDC (Virtual COM Port)**. Connect your Nucleo board via USB and use the PlatformIO monitor to see:
+Real-time telemetry and configuration are provided via **USB CDC (Virtual COM Port)**.
+
+### 🌐 Web Dashboard
+The easiest way to monitor and configure the controller is via the **Web Serial Dashboard**:
+👉 **[Live Dashboard](https://totallynotahackertrustmeiamadolphin.github.io/MPPT/)**
+
+*Requires a Chrome or Edge browser. Allows for real-time telemetry visualization, limit configuration, and sensor calibration.*
+
+### Serial Protocol
+The firmware emits machine-readable **JSON packets** at 115200 baud:
 - `Vin_mV / Vout_mV`: Input and Output Voltages.
 - `Ain_mA / Aout_mA`: Input and Output Currents.
-- `Win_uW / Wout_uW`: Calculated Input/Output Power.
-- `Eff_pct`: System efficiency.
-- `duty / min_duty`: Current PWM tick values.
+- `Win_mW / Wout_mW`: Calculated Input/Output Power.
+- `eff`: System efficiency percentage.
+- `temp_C`: MCU internal temperature.
+- `duty`: Current PWM tick values.
 
 ---
 
