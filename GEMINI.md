@@ -6,11 +6,10 @@ This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) s
 ### Key Features
 - **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
-- **DMA-based ADC**: Samples 6 channels (Input/Output Voltage/Current, Internal Temp, NTC) with averaging.
-- **PID Control**: Custom PID implementation for voltage/current regulation.
-- **PID Auto-Tuning**: Ziegler-Nichols/relay method auto-tuner (`pidautotuner.h`).
+- **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks) for maximum performance on Cortex-M0.
+- **DMA-based ADC**: Samples 6 channels with Ping-Pong buffering for zero-latency processing.
+- **PID Control**: Custom integer-based PID implementation for voltage/current regulation.
 - **USB Communication**: USB CDC (Virtual COM Port) for telemetry and debugging.
-- **Safety Protections**: Over-voltage, under-voltage, and over-current checks.
 
 ## Technologies & Architecture
 - **MCU**: STM32F072RBT6 (ARM Cortex-M0)
@@ -40,10 +39,11 @@ pio device monitor
 ```
 
 ## Development Conventions
-- **CubeMX Compatibility**: The code structure follows the STM32CubeMX standard. Always place manual code within `/* USER CODE BEGIN */` and `/* USER CODE END */` blocks to prevent overwriting if the `.ioc` file is regenerated.
-- **Floating Point**: Calculations use `float`. Note that STM32F0 does not have a hardware FPU, so performance should be monitored.
-- **Telemetry**: The project redirects or prepares for `printf` over USB CDC for real-time monitoring.
-- **Hardware Abstraction**: Uses HAL drivers for peripherals (ADC, TIM, USB, etc.).
+- **CubeMX Compatibility**: Always place manual code within `/* USER CODE BEGIN */` and `/* USER CODE END */` blocks.
+- **Fixed-Point Arithmetic**: NEVER use `float` or `double`. Use 32-bit millivolts (`_mV`) and milliamps (`_mA`), and 64-bit microwatts (`_uW`) for power.
+- **PWM Logic**: PWM is managed in raw dithered ticks (0-1920 for 0-100%).
+- **Telemetry**: Use integer format specifiers (`%ld`, `%lld`) in `printf`.
+- **Hardware Abstraction**: Uses HAL drivers for peripherals.
 
 ## Key Files
 - `platformio.ini`: Project configuration, includes specific toolchain and upload settings.
