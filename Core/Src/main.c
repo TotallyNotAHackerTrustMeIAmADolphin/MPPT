@@ -330,27 +330,35 @@ int main(void)
       readSensors(offset);
 
       // read the sensor RAW values for calibration
-      if (CALIBRATION_MODE)
+      if (CALIBRATION_MODE || isCalibrating)
+      {
         calibrateSensors(offset);
+      }
 
-      if (counter % 32 == 0)
+      if (counter % 20 == 0) // ~10Hz assuming 200Hz loop
       {
         if (REC > 0)
         {
           REC--;
         }
-        if (!CALIBRATION_MODE)
-        {
-          // Convert uW to mW for easier display and to fit in 32-bit for printf
-          int32_t pIn_mW = (int32_t)(powerIn_uW / 1000);
-          int32_t pOut_mW = (int32_t)(powerOut_uW / 1000);
-          int32_t efficiency = 0;
-          if (pIn_mW > 10) {
-              efficiency = (pOut_mW * 100) / pIn_mW;
-          }
+        
+        // Convert uW to mW for easier display and to fit in 32-bit for printf
+        int32_t pIn_mW = (int32_t)(powerIn_uW / 1000);
+        int32_t pOut_mW = (int32_t)(powerOut_uW / 1000);
+        int32_t efficiency = 0;
+        if (pIn_mW > 10) {
+            efficiency = (pOut_mW * 100) / pIn_mW;
+        }
 
-          printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%ld,\"temp_C\":%ld}\n", 
-                 voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, pIn_mW, pOut_mW, dutyCycle_ticks, efficiency, tempMCU_C_x100 / 100);
+        printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%ld,\"temp_C\":%ld}\n", 
+               voltageIn_mV, voltageOut_mV, currentIn_mA, currentOut_mA, pIn_mW, pOut_mW, dutyCycle_ticks, efficiency, tempMCU_C_x100 / 100);
+
+        if (isCalibrating)
+        {
+          // Send raw values for the web dashboard to show during calibration
+          printf("{\"type\":\"cal_raw\",\"Vin_raw\":%ld,\"Vout_raw\":%ld,\"Ain_raw\":%ld,\"Aout_raw\":%ld}\n",
+                 vInRawSum / (ADC_SAMPLE_COUNT / 2), vOutRawSum / (ADC_SAMPLE_COUNT / 2),
+                 aInRawSum / (ADC_SAMPLE_COUNT / 2), aOutRawSum / (ADC_SAMPLE_COUNT / 2));
         }
       }
 

@@ -92,7 +92,16 @@
                     <button onclick="sendCal('LOW')">Record Low Point</button>
                     <button onclick="sendCal('HIGH')">Record High Point</button>
                 </div>
-                <button id="calSaveBtn" class="primary">Save Calibration to EEPROM</button>
+                <div class="card" style="margin-top: 15px; background: rgba(0,0,0,0.2);">
+                    <h4>Live RAW ADC Values</h4>
+                    <div style="display: flex; justify-content: space-around; font-family: monospace;">
+                        <div>Vin: <span id="Vin_raw">0</span></div>
+                        <div>Vout: <span id="Vout_raw">0</span></div>
+                        <div>Ain: <span id="Ain_raw">0</span></div>
+                        <div>Aout: <span id="Aout_raw">0</span></div>
+                    </div>
+                </div>
+                <button id="calSaveBtn" class="primary" style="margin-top: 15px;">Save Calibration to EEPROM</button>
             </div>
         </section>
 

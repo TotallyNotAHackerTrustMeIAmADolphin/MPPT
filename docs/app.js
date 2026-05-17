@@ -103,16 +103,21 @@ async function readLoop() {
 }
 
 function processLine(line) {
-    appendToLog(line);
+    if (!line.startsWith('{')) {
+        appendToLog(line);
+    }
     
     if (line.startsWith('{')) {
         try {
             const data = JSON.parse(line);
             if (data.type === 'telemetry') {
                 updateTelemetryUI(data);
+            } else if (data.type === 'cal_raw') {
+                updateCalibrationUI(data);
             }
         } catch (e) {
             console.error('JSON parse error:', e);
+            appendToLog(line);
         }
     } else if (line.startsWith('ACK:')) {
         handleAck(line);
@@ -121,6 +126,17 @@ function processLine(line) {
 
 function updateTelemetryUI(data) {
     for (const key in data) {
+        if (key === 'type') continue;
+        const el = document.getElementById(key);
+        if (el) {
+            el.textContent = data[key];
+        }
+    }
+}
+
+function updateCalibrationUI(data) {
+    for (const key in data) {
+        if (key === 'type') continue;
         const el = document.getElementById(key);
         if (el) {
             el.textContent = data[key];
