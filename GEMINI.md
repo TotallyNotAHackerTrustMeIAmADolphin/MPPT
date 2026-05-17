@@ -8,8 +8,9 @@ This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) s
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks) for maximum performance on Cortex-M0.
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong buffering for zero-latency processing.
-- **PID Control**: Custom integer-based PID implementation for voltage/current regulation.
-- **USB Communication**: USB CDC (Virtual COM Port) for telemetry and debugging.
+- **PID Control:** Custom integer-based PID implementation for voltage/current regulation.
+- **USB DFU Auto-Reset:** Intercepts 1200 bps baud rate requests to automatically jump to the system memory bootloader.
+- **USB Communication:** USB CDC (Virtual COM Port) for telemetry and debugging.
 
 ## Technologies & Architecture
 - **MCU**: STM32F072RBT6 (ARM Cortex-M0)
