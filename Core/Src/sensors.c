@@ -18,6 +18,12 @@ static volatile uint8_t bufferFull = 0;
 static Measurements_t measurements;
 static uint32_t vInRawSum, vOutRawSum, aInRawSum, aOutRawSum;
 
+/* Filter states for software low-pass filtering (EMA) */
+static int32_t f_vIn_mV = 0;
+static int32_t f_vOut_mV = 0;
+static int32_t f_aIn_mA = 0;
+static int32_t f_aOut_mA = 0;
+
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
     HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
@@ -70,25 +76,37 @@ void SENSORS_Process(uint16_t offset) {
 
     // Scaling for Voltages (mV)
     int64_t v_in_avg_x1000 = ((int64_t)voltIn_temp * 1000) / samples_per_half;
-    measurements.voltageIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal->vInRawLow * 1000) * 
+    int32_t raw_vIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal->vInRawLow * 1000) * 
         ((int32_t)cal->vInRealHigh_mV - (int32_t)cal->vInRealLow_mV) / 
         ((int32_t)cal->vInRawHigh - (int32_t)cal->vInRawLow) / 1000 + cal->vInRealLow_mV);
 
     int64_t v_out_avg_x1000 = ((int64_t)voltOut_temp * 1000) / samples_per_half;
-    measurements.voltageOut_mV = (int32_t)((v_out_avg_x1000 - (int64_t)cal->vOutRawLow * 1000) * 
+    int32_t raw_vOut_mV = (int32_t)((v_out_avg_x1000 - (int64_t)cal->vOutRawLow * 1000) * 
         ((int32_t)cal->vOutRealHigh_mV - (int32_t)cal->vOutRealLow_mV) / 
         ((int32_t)cal->vOutRawHigh - (int32_t)cal->vOutRawLow) / 1000 + cal->vOutRealLow_mV);
 
     // Scaling for Currents (mA)
     int64_t a_in_avg_x1000 = ((int64_t)AmpIn_temp * 1000) / samples_per_half;
-    measurements.currentIn_mA = (int32_t)((a_in_avg_x1000 - (int64_t)cal->aInRawLow * 1000) * 
+    int32_t raw_aIn_mA = (int32_t)((a_in_avg_x1000 - (int64_t)cal->aInRawLow * 1000) * 
         ((int32_t)cal->aInRealHigh_mA - (int32_t)cal->aInRealLow_mA) / 
         ((int32_t)cal->aInRawHigh - (int32_t)cal->aInRawLow) / 1000 + cal->aInRealLow_mA);
 
     int64_t a_out_avg_x1000 = ((int64_t)AmpOut_temp * 1000) / samples_per_half;
-    measurements.currentOut_mA = (int32_t)((a_out_avg_x1000 - (int64_t)cal->aOutRawLow * 1000) * 
+    int32_t raw_aOut_mA = (int32_t)((a_out_avg_x1000 - (int64_t)cal->aOutRawLow * 1000) * 
         ((int32_t)cal->aOutRealHigh_mA - (int32_t)cal->aOutRealLow_mA) / 
         ((int32_t)cal->aOutRawHigh - (int32_t)cal->aOutRawLow) / 1000 + cal->aOutRealLow_mA);
+
+    // Apply EMA Filtering (Software Low-Pass Filter)
+    // Shift of 2 for voltage (alpha=0.25), shift of 3 for current (alpha=0.125)
+    f_vIn_mV += (raw_vIn_mV - f_vIn_mV) >> 2;
+    f_vOut_mV += (raw_vOut_mV - f_vOut_mV) >> 2;
+    f_aIn_mA += (raw_aIn_mA - f_aIn_mA) >> 3;
+    f_aOut_mA += (raw_aOut_mA - f_aOut_mA) >> 3;
+
+    measurements.voltageIn_mV = f_vIn_mV;
+    measurements.voltageOut_mV = f_vOut_mV;
+    measurements.currentIn_mA = f_aIn_mA;
+    measurements.currentOut_mA = f_aOut_mA;
 
     measurements.tempMosfets_C_x100 = (int32_t)((int64_t)tempMofets_temp * 100 / samples_per_half);
     
