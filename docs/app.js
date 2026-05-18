@@ -195,9 +195,9 @@ function updateLimitsUI(data) {
         clearInterval(syncInterval);
         syncInterval = null;
     }
-    if (data.Vmax) document.getElementById('limit_Vmax').value = data.Vmax;
-    if (data.Vmin) document.getElementById('limit_Vmin').value = data.Vmin;
-    if (data.Imax) document.getElementById('limit_Imax').value = data.Imax;
+    if (data.Vmax) document.getElementById('limit_Vmax').value = (data.Vmax / 1000).toFixed(2);
+    if (data.Vmin) document.getElementById('limit_Vmin').value = (data.Vmin / 1000).toFixed(2);
+    if (data.Imax) document.getElementById('limit_Imax').value = (data.Imax / 1000).toFixed(2);
     appendToLog('Limits fetched from device');
 }
 
@@ -237,12 +237,14 @@ async function sendCommand(cmd) {
 
 window.sendLimit = async (cmdPrefix, inputId) => {
     const value = document.getElementById(inputId).value;
-    await sendCommand(`CMD:${cmdPrefix}:${value}`);
+    const valueInt = Math.round(parseFloat(value) * 1000);
+    await sendCommand(`CMD:${cmdPrefix}:${valueInt}`);
 };
 
 window.sendCal = async (point) => {
     const ref = document.getElementById('calRefValue').value;
-    await sendCommand(`CMD:CAL_${calControls.querySelector('button.active')?.textContent.includes('Voltage') ? 'V' : 'I'}_${point}:${ref}`);
+    const refInt = Math.round(parseFloat(ref) * 1000);
+    await sendCommand(`CMD:CAL_${calControls.querySelector('button.active')?.textContent.includes('Voltage') ? 'V' : 'I'}_${point}:${refInt}`);
 };
 
 // Use a simpler approach for cal buttons

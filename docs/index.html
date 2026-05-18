@@ -56,18 +56,18 @@
             <h2>Device Limits</h2>
             <form id="limitsForm">
                 <div class="form-group">
-                    <label>Max Battery Voltage (mV):</label>
-                    <input type="number" id="limit_Vmax" value="25200">
+                    <label>Max Battery Voltage (V):</label>
+                    <input type="number" step="0.01" id="limit_Vmax" value="25.20">
                     <button type="button" onclick="sendLimit('SET_V_MAX', 'limit_Vmax')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Min Battery Voltage (mV):</label>
-                    <input type="number" id="limit_Vmin" value="18000">
+                    <label>Min Battery Voltage (V):</label>
+                    <input type="number" step="0.01" id="limit_Vmin" value="18.00">
                     <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Max Charging Current (mA):</label>
-                    <input type="number" id="limit_Imax" value="2000">
+                    <label>Max Charging Current (A):</label>
+                    <input type="number" step="0.01" id="limit_Imax" value="2.00">
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
                 </div>
                 <button type="button" id="saveLimitsBtn" class="primary">Save Limits to EEPROM</button>
@@ -86,8 +86,9 @@
                     <button onclick="sendCommand('CMD:CAL_MODE_I')">Mode: Current</button>
                 </div>
                 <div class="form-group">
-                    <label>Reference Value (mV/mA):</label>
-                    <input type="number" id="calRefValue" value="10000">
+                    <label>Reference Value (V/A):</label>
+                    <input type="number" step="0.01" id="calRefValue" value="10.00">
+                </div>
                 </div>
                 <div class="button-group">
                     <button onclick="sendCal('LOW')">Record Low Point</button>
