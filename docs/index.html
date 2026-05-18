@@ -115,6 +115,17 @@
                 </div>
 
                 <div id="wizard-step-4" class="wizard-step" style="display: none;">
+                    <h2>Safety: Change Wiring</h2>
+                    <p class="alert info"><b>STOP!</b> Before proceeding to current calibration, you MUST change your wiring.</p>
+                    <p>1. <b>Disconnect</b> the bridge between Input and Output terminals.</p>
+                    <p>2. Connect your power supply to the <b>Input</b> terminals.</p>
+                    <p>3. Connect your electronic load to the <b>Output</b> terminals.</p>
+                    <p>The MOSFETs are currently <b>OFF</b> for your safety.</p>
+                    <button onclick="wizEnableCurrentMode()" class="primary">Wiring is Ready - Enable Pass-through</button>
+                    <button onclick="wizBack(3)" class="secondary">Back</button>
+                </div>
+
+                <div id="wizard-step-5" class="wizard-step" style="display: none;">
                     <h2>Step 3: Current Calibration (Low Point)</h2>
                     <p>Connect supply to <b>Input</b> and an electronic load to <b>Output</b>.</p>
                     <p>The device is now in <b>Pass-through mode</b> (High-side MOSFETs ON).</p>
@@ -131,6 +142,22 @@
                 </div>
 
                 <div id="wizard-step-5" class="wizard-step" style="display: none;">
+                    <h2>Step 3: Current Calibration (Low Point)</h2>
+                    <p>Connect supply to <b>Input</b> and an electronic load to <b>Output</b>.</p>
+                    <p>The device is now in <b>Pass-through mode</b> (High-side MOSFETs ON).</p>
+                    <p>Set your load to exactly <b>0.50 A</b> (or close to it).</p>
+                    <div class="form-group">
+                        <label>Measured Multimeter Current (A):</label>
+                        <input type="number" step="0.001" id="wiz_I_low" value="0.500">
+                    </div>
+                    <div class="live-raw">
+                        Ain Raw: <span id="wiz_Ain_raw">0</span> | Aout Raw: <span id="wiz_Aout_raw">0</span>
+                    </div>
+                    <button onclick="wizRecord('I_LOW')" class="primary">Record & Next</button>
+                    <button onclick="wizClose()" class="secondary">Abort</button>
+                </div>
+
+                <div id="wizard-step-6" class="wizard-step" style="display: none;">
                     <h2>Step 4: Current Calibration (High Point)</h2>
                     <p>Increase your load to exactly <b>2.00 A</b> (or close to it).</p>
                     <div class="form-group">
@@ -141,10 +168,10 @@
                         Ain Raw: <span id="wiz_Ain_raw_2">0</span> | Aout Raw: <span id="wiz_Aout_raw_2">0</span>
                     </div>
                     <button onclick="wizRecord('I_HIGH')" class="primary">Record & Next</button>
-                    <button onclick="wizBack(4)" class="secondary">Back</button>
+                    <button onclick="wizBack(5)" class="secondary">Back</button>
                 </div>
 
-                <div id="wizard-step-6" class="wizard-step" style="display: none;">
+                <div id="wizard-step-7" class="wizard-step" style="display: none;">
                     <h2>Calibration Complete!</h2>
                     <p>All points have been recorded. Click below to save these values to the device's EEPROM and exit calibration mode.</p>
                     <button onclick="wizFinish()" class="primary">Save & Exit</button>

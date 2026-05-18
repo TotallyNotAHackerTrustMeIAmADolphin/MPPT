@@ -278,6 +278,11 @@ window.wizClose = async () => {
     }
 };
 
+window.wizEnableCurrentMode = async () => {
+    await sendCommand('CMD:CAL_MODE_I');
+    wizNext(currentWizStep);
+};
+
 window.wizRecord = async (point) => {
     let inputId, cmdPrefix, multiplier;
     
@@ -294,11 +299,6 @@ window.wizRecord = async (point) => {
     const value = document.getElementById(inputId).value;
     const valueInt = Math.round(parseFloat(value) * multiplier);
     await sendCommand(`${cmdPrefix}:${valueInt}`);
-
-    // Special case: After V_HIGH, switch to Current Mode
-    if (point === 'V_HIGH') {
-        await sendCommand('CMD:CAL_MODE_I');
-    }
 
     wizNext(currentWizStep);
 };
