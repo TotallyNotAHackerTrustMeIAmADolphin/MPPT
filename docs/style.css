@@ -142,6 +142,24 @@ input[type="number"] {
     color: white;
 }
 
+#state-badge {
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 10px;
+    background-color: #444;
+}
+
+.state-idle { background-color: #666 !important; }
+.state-mppt { background-color: var(--primary-color) !important; }
+.state-sweeping { background-color: var(--accent-color) !important; }
+.state-cv { background-color: #9c27b0 !important; }
+.state-cc { background-color: #ff9800 !important; }
+.state-fault { background-color: var(--error-color) !important; }
+.state-recovery { background-color: #795548 !important; }
+
 #log {
     background-color: #000;
     color: #00ff00;

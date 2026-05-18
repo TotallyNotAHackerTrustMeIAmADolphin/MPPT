@@ -46,6 +46,7 @@ async function connect() {
         inputStream = decoder.readable;
 
         reader = inputStream.getReader();
+        document.getElementById('state-badge').style.display = 'inline-block';
         readLoop();
     } catch (err) {
         console.error('Connection failed:', err);
@@ -71,6 +72,7 @@ async function disconnect() {
 
     status.textContent = 'Disconnected';
     status.className = 'disconnected';
+    document.getElementById('state-badge').style.display = 'none';
     connectBtn.textContent = 'Connect to Device';
 }
 
@@ -127,6 +129,20 @@ function processLine(line) {
 function updateTelemetryUI(data) {
     for (const key in data) {
         if (key === 'type') continue;
+        
+        if (key === 'state') {
+            const badge = document.getElementById('state-badge');
+            if (badge) {
+                badge.textContent = data[key];
+                // Reset classes except base
+                badge.className = '';
+                // The style.css doesn't have a base class for the badge, it uses ID #state-badge
+                // but we use class for the colors.
+                badge.classList.add('state-' + data[key].toLowerCase());
+            }
+            continue;
+        }
+
         const el = document.getElementById(key);
         if (el) {
             el.textContent = data[key];
