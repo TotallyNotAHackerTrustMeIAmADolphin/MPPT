@@ -27,11 +27,12 @@ void COMMS_Init(void) {
 
 void COMMS_SendTelemetry(const Measurements_t *m) {
     // Basic telemetry
-    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\"}\n",
+    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\",\"fault_reason\":\"%s\"}\n",
            m->voltageIn_mV, m->voltageOut_mV, m->currentIn_mA, m->currentOut_mA,
            m->powerIn_mW, m->powerOut_mW, POWER_PWM_Get(), 
            m->efficiency_x100 / 100, m->tempMCU_C_x100 / 100,
-           CONTROLLER_GetStateString());
+           CONTROLLER_GetStateString(),
+           CONTROLLER_GetFaultReasonString());
 
     // Calibration raw data if active
     if (SETTINGS_IsCalibrating()) {
@@ -112,11 +113,14 @@ void COMMS_HandleCommands(void) {
                 } else if (strncmp(cmdBuffer, "CMD:SET_IN_I_MAX:", 17) == 0) {
                     limits->inputCurrentMax_mA = atoi(cmdBuffer + 17);
                     printf("ACK:SET_IN_I_MAX_OK:%ld\n", limits->inputCurrentMax_mA);
+                } else if (strcmp(cmdBuffer, "CMD:RESET_FAULT") == 0) {
+                    CONTROLLER_ResetFault();
+                    printf("ACK:RESET_FAULT_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:LIMITS_SAVE") == 0) {
                     SETTINGS_SaveLimits();
                     printf("ACK:LIMITS_SAVE_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
-                    printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, SET_IN_V_MAX:<mV>, SET_IN_I_MAX:<mA>, LIMITS_SAVE\n");
+                    printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, SET_IN_V_MAX:<mV>, SET_IN_I_MAX:<mA>, LIMITS_SAVE, RESET_FAULT\n");
                 }
                 
                 cmdIdx = 0;

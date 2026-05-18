@@ -22,9 +22,10 @@ static int32_t sweepBestDutyCycle = 0;
 int32_t MPPT_PerturbAndObserve(const Measurements_t *m) {
     int32_t currentDuty = POWER_PWM_Get();
 
-    // Supply-Aware Protection
+    // Supply-Aware Protection (Brownout prevention)
     if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
-        currentDuty -= 19;
+        currentDuty -= 38; // Back off faster to prevent source collapse
+        if (currentDuty < 0) currentDuty = 0;
         previousPowerIn_uW = m->powerIn_uW;
         return currentDuty;
     }

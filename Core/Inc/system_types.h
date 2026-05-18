@@ -26,6 +26,21 @@ typedef enum
 } SystemState_t;
 
 /**
+ * @brief Specific reasons for a system fault
+ */
+typedef enum
+{
+  FAULT_REASON_NONE,
+  FAULT_REASON_INPUT_OV,    // Input Over-voltage
+  FAULT_REASON_INPUT_UV,    // Input Under-voltage
+  FAULT_REASON_INPUT_OC,    // Input Over-current
+  FAULT_REASON_OUTPUT_OV,   // Output Over-voltage
+  FAULT_REASON_OUTPUT_OC,   // Output Over-current (Hard Hardware Limit)
+  FAULT_REASON_BACKFLOW,    // Reverse current detected
+  FAULT_REASON_OVERTEMP     // Overtemperature detected
+} FaultReason_t;
+
+/**
  * @brief PID Controller state and configuration
  */
 typedef struct

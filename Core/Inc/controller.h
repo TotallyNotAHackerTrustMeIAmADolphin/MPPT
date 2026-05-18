@@ -37,4 +37,14 @@ SystemState_t CONTROLLER_GetState(void);
  */
 const char* CONTROLLER_GetStateString(void);
 
+/**
+ * @brief Returns a string representation of the current fault reason.
+ */
+const char* CONTROLLER_GetFaultReasonString(void);
+
+/**
+ * @brief Resets the current fault and returns the system to IDLE.
+ */
+void CONTROLLER_ResetFault(void);
+
 #endif /* __CONTROLLER_H */

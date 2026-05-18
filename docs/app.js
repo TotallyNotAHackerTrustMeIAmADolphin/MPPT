@@ -9,6 +9,8 @@ let outputStream;
 const connectBtn = document.getElementById('connectBtn');
 const status = document.getElementById('status');
 const log = document.getElementById('log');
+const resetFaultBtn = document.getElementById('resetFaultBtn');
+const faultReasonSpan = document.getElementById('fault-reason');
 
 // Calibration buttons
 const calEnterBtn = document.getElementById('calEnterBtn');
@@ -134,14 +136,22 @@ function updateTelemetryUI(data) {
             const badge = document.getElementById('state-badge');
             if (badge) {
                 badge.textContent = data[key];
-                // Reset classes except base
                 badge.className = '';
-                // The style.css doesn't have a base class for the badge, it uses ID #state-badge
-                // but we use class for the colors.
                 badge.classList.add('state-' + data[key].toLowerCase());
+            }
+
+            if (data[key] === 'FAULT') {
+                resetFaultBtn.style.display = 'inline-block';
+                faultReasonSpan.style.display = 'inline-block';
+                faultReasonSpan.textContent = data.fault_reason || 'UNKNOWN';
+            } else {
+                resetFaultBtn.style.display = 'none';
+                faultReasonSpan.style.display = 'none';
             }
             continue;
         }
+
+        if (key === 'fault_reason') continue;
 
         const el = document.getElementById(key);
         if (el) {
@@ -199,6 +209,7 @@ calEnterBtn.addEventListener('click', () => sendCommand('CMD:CAL_ENTER'));
 calExitBtn.addEventListener('click', () => sendCommand('CMD:CAL_EXIT'));
 calSaveBtn.addEventListener('click', () => sendCommand('CMD:CAL_SAVE'));
 saveLimitsBtn.addEventListener('click', () => sendCommand('CMD:LIMITS_SAVE'));
+resetFaultBtn.addEventListener('click', () => sendCommand('CMD:RESET_FAULT'));
 
 // Minimal state for cal mode
 const calModeButtons = calControls.querySelectorAll('.button-group:first-child button');
