@@ -49,6 +49,10 @@ async function connect() {
 
         reader = inputStream.getReader();
         document.getElementById('state-badge').style.display = 'inline-block';
+        
+        // Fetch current limits on connect
+        setTimeout(() => sendCommand('CMD:GET_LIMITS'), 500);
+        
         readLoop();
     } catch (err) {
         console.error('Connection failed:', err);
@@ -118,6 +122,8 @@ function processLine(line) {
                 updateTelemetryUI(data);
             } else if (data.type === 'cal_raw') {
                 updateCalibrationUI(data);
+            } else if (data.type === 'limits') {
+                updateLimitsUI(data);
             }
         } catch (e) {
             console.error('JSON parse error:', e);
@@ -152,28 +158,33 @@ function updateTelemetryUI(data) {
         }
 
         if (key === 'fault_reason') continue;
-
-        if (key === 'V_limit') {
-            const input = document.getElementById('limit_Vmax');
-            if (input && document.activeElement !== input) {
-                input.value = data[key];
-            }
-            continue;
-        }
-
-        if (key === 'I_limit') {
-            const input = document.getElementById('limit_Imax');
-            if (input && document.activeElement !== input) {
-                input.value = data[key];
-            }
-            continue;
-        }
+        if (key === 'V_limit' || key === 'I_limit') continue;
 
         const el = document.getElementById(key);
         if (el) {
-            el.textContent = data[key];
+            let val = data[key];
+            if (key.endsWith('_mV')) {
+                el.textContent = (val / 1000).toFixed(2) + ' V';
+            } else if (key.endsWith('_mA')) {
+                el.textContent = (val / 1000).toFixed(2) + ' A';
+            } else if (key.endsWith('_mW')) {
+                el.textContent = (val / 1000).toFixed(2) + ' W';
+            } else if (key === 'eff') {
+                el.textContent = val + ' %';
+            } else if (key === 'temp_C') {
+                el.textContent = val + ' °C';
+            } else {
+                el.textContent = val;
+            }
         }
     }
+}
+
+function updateLimitsUI(data) {
+    if (data.Vmax) document.getElementById('limit_Vmax').value = data.Vmax;
+    if (data.Vmin) document.getElementById('limit_Vmin').value = data.Vmin;
+    if (data.Imax) document.getElementById('limit_Imax').value = data.Imax;
+    appendToLog('Limits fetched from device');
 }
 
 function updateCalibrationUI(data) {

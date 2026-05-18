@@ -64,16 +64,6 @@
                     <input type="number" id="limit_Imax" value="2000">
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
                 </div>
-                <div class="form-group">
-                    <label>Max Input Voltage (mV):</label>
-                    <input type="number" id="limit_VinMax" value="80000">
-                    <button type="button" onclick="sendLimit('SET_IN_V_MAX', 'limit_VinMax')">Update</button>
-                </div>
-                <div class="form-group">
-                    <label>Max Input Current (mA):</label>
-                    <input type="number" id="limit_AinMax" value="20000">
-                    <button type="button" onclick="sendLimit('SET_IN_I_MAX', 'limit_AinMax')">Update</button>
-                </div>
                 <button type="button" id="saveLimitsBtn" class="primary">Save Limits to EEPROM</button>
             </form>
         </section>

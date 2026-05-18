@@ -100,6 +100,8 @@ void COMMS_HandleCommands(void) {
                     cal->vInRealHigh_mV = cal->vOutRealHigh_mV = (uint16_t)atoi(cmdBuffer + 15);
                     printf("ACK:CAL_V_HIGH_OK:%d,%d\n", cal->vInRawHigh, cal->vOutRawHigh);
                 } else if (strcmp(cmdBuffer, "CMD:CAL_SAVE") == 0) {
+                    POWER_PWM_Set(0);
+                    HAL_Delay(10);
                     SETTINGS_SaveCalibration();
                     printf("ACK:CAL_SAVE_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MAX:", 14) == 0) {
@@ -111,20 +113,19 @@ void COMMS_HandleCommands(void) {
                 } else if (strncmp(cmdBuffer, "CMD:SET_I_MAX:", 14) == 0) {
                     limits->chargingCurrent_mA = atoi(cmdBuffer + 14);
                     printf("ACK:SET_I_MAX_OK:%ld\n", limits->chargingCurrent_mA);
-                } else if (strncmp(cmdBuffer, "CMD:SET_IN_V_MAX:", 17) == 0) {
-                    limits->inputVoltageMax_mV = atoi(cmdBuffer + 17);
-                    printf("ACK:SET_IN_V_MAX_OK:%ld\n", limits->inputVoltageMax_mV);
-                } else if (strncmp(cmdBuffer, "CMD:SET_IN_I_MAX:", 17) == 0) {
-                    limits->inputCurrentMax_mA = atoi(cmdBuffer + 17);
-                    printf("ACK:SET_IN_I_MAX_OK:%ld\n", limits->inputCurrentMax_mA);
+                } else if (strcmp(cmdBuffer, "CMD:GET_LIMITS") == 0) {
+                    printf("{\"type\":\"limits\",\"Vmax\":%ld,\"Vmin\":%ld,\"Imax\":%ld}\n",
+                           limits->batteryMax_mV, limits->batteryMin_mV, limits->chargingCurrent_mA);
                 } else if (strcmp(cmdBuffer, "CMD:RESET_FAULT") == 0) {
                     CONTROLLER_ResetFault();
                     printf("ACK:RESET_FAULT_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:LIMITS_SAVE") == 0) {
+                    POWER_PWM_Set(0);
+                    HAL_Delay(10);
                     SETTINGS_SaveLimits();
                     printf("ACK:LIMITS_SAVE_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
-                    printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, SET_IN_V_MAX:<mV>, SET_IN_I_MAX:<mA>, LIMITS_SAVE, RESET_FAULT\n");
+                    printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, LIMITS_SAVE, RESET_FAULT, GET_LIMITS\n");
                 }
                 
                 cmdIdx = 0;

@@ -21,9 +21,20 @@ static DeviceLimits_t limits = {25200, 18000, 2000, 80000, 20000};
 static bool isCalibrating = false;
 static bool calHighSideOn = false;
 
+#define SETTINGS_SIGNATURE 0xABCD
+
 void SETTINGS_Init(void) {
     if (EE_Init() != HAL_OK) return;
   
+    uint16_t signature;
+    if (EE_ReadVariable(0, &signature) != 0 || signature != SETTINGS_SIGNATURE) {
+        // EEPROM is empty or invalid, keep defaults and save them
+        SETTINGS_SaveCalibration();
+        SETTINGS_SaveLimits();
+        EE_WriteVariable(0, SETTINGS_SIGNATURE);
+        return;
+    }
+
     // Load Calibration (virtual addresses 1-16)
     uint16_t *pCal = (uint16_t *)&cal;
     for (uint16_t i = 0; i < 16; i++) {

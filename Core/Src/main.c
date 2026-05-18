@@ -154,10 +154,12 @@ void SystemClock_Config(void)
 int _write(int file, char *ptr, int len)
 {
   static uint8_t rc = USBD_OK;
+  uint32_t timeout = 0;
 
   do
   {
     rc = CDC_Transmit_FS((uint8_t *)ptr, len);
+    if (++timeout > 1000000) break; // Timeout to prevent blocking without host
   } while (USBD_BUSY == rc);
 
   if (USBD_FAIL == rc)
