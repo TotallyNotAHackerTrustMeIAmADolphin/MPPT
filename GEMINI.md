@@ -43,3 +43,4 @@ pio device monitor -b 115200
 - `Core/Src/eeprom.c`: ST EEPROM Emulation storage layer.
 - `STM32F072RBTX_FLASH.ld`: Linker script (modified to reserve last 4KB for EEPROM).
 - `setup_cubemx_env_auto.py`: Automated build environment bridge.
+- `hardware/`: Directory containing hardware design files and documentation.
