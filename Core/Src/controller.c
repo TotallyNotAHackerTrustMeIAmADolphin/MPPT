@@ -39,11 +39,11 @@ static void transitionTo(SystemState_t newState) {
             MPPT_StartTracking(SENSORS_GetMeasurements());
             break;
         case STATE_CV:
-            pidCV.integral = 0;
+            pidCV.integral = (int64_t)targetDuty_ticks * 1000;
             pidCV.previousError = 0;
             break;
         case STATE_CC:
-            pidCC.integral = 0;
+            pidCC.integral = (int64_t)targetDuty_ticks * 1000;
             pidCC.previousError = 0;
             break;
         case STATE_IDLE:
@@ -127,6 +127,10 @@ void CONTROLLER_UpdateHighRate(void) {
     switch (currentState) {
         case STATE_FAULT:
             targetDuty_ticks = 0;
+            // Auto-recovery from brownout (Input Under-voltage)
+            if (currentFaultReason == FAULT_REASON_INPUT_UV && m->voltageIn_mV > MIN_VOLTAGE_IN_MV) {
+                transitionTo(STATE_IDLE);
+            }
             break;
 
         case STATE_IDLE:

@@ -79,18 +79,24 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
 void POWER_PID_Compute(PID_t *pid) {
     int32_t error = pid->setPoint - *pid->input;
     
-    // Velocity PID form (PI only for stability in power supplies)
+    // Velocity PID form (PI only)
     // delta_output = Kp * (error - previousError) + Ki * error
-    int64_t pTerm = (int64_t)pid->Kp * (error - pid->previousError);
-    int64_t iTerm = (int64_t)pid->Ki * error;
+    int64_t delta = (int64_t)pid->Kp * (error - pid->previousError) + (int64_t)pid->Ki * error;
 
-    int64_t output_change = pTerm + iTerm;
+    // Use pid->integral as a high-resolution duty cycle accumulator (x1000)
+    pid->integral += delta;
 
-    *pid->output += (int32_t)(output_change / 1000);
-    *pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput);
+    // Constrain the high-resolution accumulator to physical PWM limits
+    int64_t minScaled = (int64_t)pid->minOutput * 1000;
+    int64_t maxScaled = (int64_t)pid->maxOutput * 1000;
+    
+    if (pid->integral < minScaled) pid->integral = minScaled;
+    if (pid->integral > maxScaled) pid->integral = maxScaled;
+
+    // Update the actual duty cycle variable
+    *pid->output = (int32_t)(pid->integral / 1000);
 
     pid->previousError = error;
-    // Note: pid->integral is no longer used in velocity form
 }
 
 int32_t POWER_PWM_Get(void) {
