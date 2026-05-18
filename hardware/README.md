@@ -5,4 +5,7 @@ In V1.0 there are several issues.
 - the 12V buck converter is dying
 - XT60 PCB versions are switched polarity based on wheter they are male or female
 - the Reset button needs a pinout
-- the SWDIO/SWCLK need pull up/down
+- the SWDIO/SWCLK pull downs are wrong
+
+fixed so far in v1.1
+- R1, R3 are now correct
