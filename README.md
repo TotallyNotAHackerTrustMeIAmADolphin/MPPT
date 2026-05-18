@@ -64,6 +64,14 @@ pio run -t upload
 pio device monitor
 ```
 
+## 📐 Hardware Design
+This repository includes all necessary design files for the MPPT controller hardware in the `hardware/` directory.
+
+- **Schematics:** SVGs and PDFs available in `hardware/` and `hardware/scematic v1.0.pdf`.
+- **PCB Design:** Gerbers, BOM, and Pick-and-Place files located in `hardware/PCB manufacturing/`.
+- **3D Files:** STEP file for case/mechanical integration in `hardware/3D_PCB_STM32 MPPT_v1.1.step`.
+- **Project Files:** EasyEDA source files in `hardware/EasyEDA/`.
+
 ---
 
 ## 📊 Telemetry & Debugging
