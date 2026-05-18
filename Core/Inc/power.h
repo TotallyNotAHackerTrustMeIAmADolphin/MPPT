@@ -33,6 +33,11 @@ void POWER_PID_Compute(PID_t *pid);
 int32_t POWER_PWM_Get(void);
 
 /**
+ * @brief Returns the current duty cycle in percent multiplied by 100 (e.g. 1234 = 12.34%).
+ */
+int32_t POWER_PWM_GetDutyCycle_x100(void);
+
+/**
  * @brief Returns the maximum possible duty cycle ticks.
  */
 int32_t POWER_PWM_GetMax(void);

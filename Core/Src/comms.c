@@ -29,9 +29,9 @@ void COMMS_SendTelemetry(const Measurements_t *m) {
     const DeviceLimits_t *limits = SETTINGS_GetLimits();
     
     // Basic telemetry
-    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\",\"fault_reason\":\"%s\",\"V_limit\":%ld,\"I_limit\":%ld}\n",
+    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty_x100\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\",\"fault_reason\":\"%s\",\"V_limit\":%ld,\"I_limit\":%ld}\n",
            m->voltageIn_mV, m->voltageOut_mV, m->currentIn_mA, m->currentOut_mA,
-           m->powerIn_mW, m->powerOut_mW, POWER_PWM_Get(), 
+           m->powerIn_mW, m->powerOut_mW, POWER_PWM_GetDutyCycle_x100(), 
            m->efficiency_x100 / 100, m->tempMCU_C_x100 / 100,
            CONTROLLER_GetStateString(),
            CONTROLLER_GetFaultReasonString(),

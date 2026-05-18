@@ -173,6 +173,8 @@ function updateTelemetryUI(data) {
                 el.textContent = val + ' %';
             } else if (key === 'temp_C') {
                 el.textContent = val + ' °C';
+            } else if (key === 'duty_x100') {
+                el.textContent = (val / 100).toFixed(2) + ' %';
             } else {
                 el.textContent = val;
             }

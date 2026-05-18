@@ -96,6 +96,10 @@ int32_t POWER_PWM_Get(void) {
     return currentDutyCycle_ticks;
 }
 
+int32_t POWER_PWM_GetDutyCycle_x100(void) {
+    return (currentDutyCycle_ticks * 10000) / MAX_DUTY_CYCLE_TICKS;
+}
+
 int32_t POWER_PWM_GetMax(void) {
     return maxDutyCycle_ticks;
 }
