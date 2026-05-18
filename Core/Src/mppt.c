@@ -19,7 +19,7 @@ static int32_t sweepDutyCycle = 0;
 static int64_t sweepMaxPower_uW = 0;
 static int32_t sweepBestDutyCycle = 0;
 
-int32_t MPPT_PerturbAndObserve(const Measurements_t *m) {
+int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *limits) {
     int32_t currentDuty = POWER_PWM_Get();
 
     // Supply-Aware Protection (Brownout prevention)
@@ -30,6 +30,11 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m) {
         return currentDuty;
     }
 
+    // Regulation-Aware Protection (Soft Ceiling)
+    // If we are within 150mV of the limit, do not increase duty
+    bool nearLimit = (m->voltageOut_mV > (limits->batteryMax_mV - 150)) ||
+                     (m->currentOut_mA > (limits->chargingCurrent_mA - 100));
+
     int64_t powerChange_uW = m->powerIn_uW - previousPowerIn_uW;
 
     if (abs((int32_t)(powerChange_uW / 1000)) > (POWER_THRESHOLD_UW / 1000)) {
@@ -39,9 +44,13 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m) {
     }
 
     if (direction) {
-        currentDuty += MPPT_STEP_SIZE_TICKS;
+        // Only increase if not near limit
+        if (!nearLimit) {
+            currentDuty += MPPT_STEP_SIZE_TICKS;
+        }
     } else {
-        currentDuty -= MPPT_STEP_SIZE_TICKS;
+        // Decrease faster if near limit to stay out of CV/CC flapping
+        currentDuty -= nearLimit ? (MPPT_STEP_SIZE_TICKS * 2) : MPPT_STEP_SIZE_TICKS;
     }
 
     previousPowerIn_uW = m->powerIn_uW;

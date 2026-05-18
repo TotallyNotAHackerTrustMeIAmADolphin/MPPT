@@ -14,8 +14,8 @@
 #define SWEEP_INTERVAL_SECONDS 300
 
 // --- Hysteresis and Thresholds ---
-#define HYSTERESIS_VOLTAGE_MV 100  // 100mV drop before leaving CV
-#define HYSTERESIS_CURRENT_MA 50   // 50mA drop before leaving CC
+#define HYSTERESIS_VOLTAGE_MV 500  // 500mV drop before leaving CV
+#define HYSTERESIS_CURRENT_MA 200  // 200mA drop before leaving CC
 
 // --- Hardware Constants ---
 #define DITHER_TABLE_SIZE     8
@@ -26,7 +26,7 @@
 // --- Algorithm Constants ---
 #define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
 #define POWER_THRESHOLD_UW    50000
-#define MPPT_STEP_SIZE_TICKS  8
+#define MPPT_STEP_SIZE_TICKS  5
 #define SWEEP_STEP_SIZE_TICKS 19
 #define MIN_INPUT_VOLTAGE_MPPT_MV 14000
 

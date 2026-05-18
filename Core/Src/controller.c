@@ -71,22 +71,22 @@ void CONTROLLER_Init(void) {
     const DeviceLimits_t *limits = SETTINGS_GetLimits();
     const Measurements_t *m = SENSORS_GetMeasurements();
 
-    // Initialize PID controllers
-    pidCV.Kp = 50; pidCV.Ki = 20; pidCV.Kd = 10;
+    // Initialize PID controllers (tuned for 200Hz high-rate task using Velocity PI)
+    pidCV.Kp = 10; pidCV.Ki = 2; pidCV.Kd = 0;
     pidCV.previousError = 0; pidCV.integral = 0;
     pidCV.setPoint = limits->batteryMax_mV;
     pidCV.input = (int32_t*)&m->voltageOut_mV;
     pidCV.output = &targetDuty_ticks;
-    pidCV.maxIntegral = 50000;
+    pidCV.maxIntegral = 20000;
     pidCV.minOutput = 0;
     pidCV.maxOutput = POWER_PWM_GetMax();
 
-    pidCC.Kp = 50; pidCC.Ki = 20; pidCC.Kd = 10;
+    pidCC.Kp = 10; pidCC.Ki = 2; pidCC.Kd = 0;
     pidCC.previousError = 0; pidCC.integral = 0;
     pidCC.setPoint = limits->chargingCurrent_mA;
     pidCC.input = (int32_t*)&m->currentOut_mA;
     pidCC.output = &targetDuty_ticks;
-    pidCC.maxIntegral = 50000;
+    pidCC.maxIntegral = 20000;
     pidCC.minOutput = 0;
     pidCC.maxOutput = POWER_PWM_GetMax();
 }
@@ -189,6 +189,7 @@ void CONTROLLER_UpdateHighRate(void) {
 void CONTROLLER_Task(void) {
     uint32_t currentTick = HAL_GetTick();
     const Measurements_t *m = SENSORS_GetMeasurements();
+    const DeviceLimits_t *limits = SETTINGS_GetLimits();
 
     // 1. Telemetry (10Hz)
     if (currentTick - lastTelemetryTick >= TELEMETRY_INTERVAL_MS) {
@@ -216,7 +217,7 @@ void CONTROLLER_Task(void) {
                 if (currentTick - lastSweepTick >= (uint32_t)SWEEP_INTERVAL_SECONDS * 1000) {
                     transitionTo(STATE_SWEEPING);
                 } else {
-                    targetDuty_ticks = MPPT_PerturbAndObserve(m);
+                    targetDuty_ticks = MPPT_PerturbAndObserve(m, limits);
                 }
                 break;
 

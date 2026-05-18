@@ -78,18 +78,19 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
 
 void POWER_PID_Compute(PID_t *pid) {
     int32_t error = pid->setPoint - *pid->input;
-    int64_t integral = pid->integral + error;
-    int32_t derivative = error - pid->previousError;
+    
+    // Velocity PID form (PI only for stability in power supplies)
+    // delta_output = Kp * (error - previousError) + Ki * error
+    int64_t pTerm = (int64_t)pid->Kp * (error - pid->previousError);
+    int64_t iTerm = (int64_t)pid->Ki * error;
 
-    integral = constrain(integral, -pid->maxIntegral, pid->maxIntegral);
-
-    int64_t output_change = ((int64_t)pid->Kp * error) + ((int64_t)pid->Ki * integral) + ((int64_t)pid->Kd * derivative);
+    int64_t output_change = pTerm + iTerm;
 
     *pid->output += (int32_t)(output_change / 1000);
     *pid->output = constrain(*pid->output, pid->minOutput, pid->maxOutput);
 
     pid->previousError = error;
-    pid->integral = integral;
+    // Note: pid->integral is no longer used in velocity form
 }
 
 int32_t POWER_PWM_Get(void) {
