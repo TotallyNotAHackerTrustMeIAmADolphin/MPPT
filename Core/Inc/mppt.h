@@ -31,4 +31,10 @@ int32_t MPPT_RunSweep(const Measurements_t *m, bool *isFinished);
  */
 void MPPT_ResetSweep(void);
 
+/**
+ * @brief Initializes the P&O tracking baseline with the current power measurement.
+ * @param m Pointer to current measurements.
+ */
+void MPPT_StartTracking(const Measurements_t *m);
+
 #endif /* __MPPT_H */

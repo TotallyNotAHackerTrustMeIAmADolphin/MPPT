@@ -37,10 +37,12 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
 
     int64_t powerChange_uW = m->powerIn_uW - previousPowerIn_uW;
 
+    // Accumulation Logic: Only update baseline and direction if change > threshold
     if (abs((int32_t)(powerChange_uW / 1000)) > (POWER_THRESHOLD_UW / 1000)) {
         if (powerChange_uW < 0) {
             direction = !direction;
         }
+        previousPowerIn_uW = m->powerIn_uW;
     }
 
     if (direction) {
@@ -53,7 +55,6 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
         currentDuty -= nearLimit ? (MPPT_STEP_SIZE_TICKS * 2) : MPPT_STEP_SIZE_TICKS;
     }
 
-    previousPowerIn_uW = m->powerIn_uW;
     return currentDuty;
 }
 
@@ -85,4 +86,8 @@ void MPPT_ResetSweep(void) {
     sweepDutyCycle = 0; // Will be initialized by controller to minDuty
     sweepMaxPower_uW = 0;
     sweepBestDutyCycle = 0;
+}
+
+void MPPT_StartTracking(const Measurements_t *m) {
+    previousPowerIn_uW = m->powerIn_uW;
 }

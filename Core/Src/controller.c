@@ -35,6 +35,9 @@ static void transitionTo(SystemState_t newState) {
         case STATE_SWEEPING:
             MPPT_ResetSweep();
             break;
+        case STATE_MPPT:
+            MPPT_StartTracking(SENSORS_GetMeasurements());
+            break;
         case STATE_CV:
             pidCV.integral = 0;
             pidCV.previousError = 0;
