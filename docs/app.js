@@ -12,15 +12,13 @@ const status = document.getElementById('status');
 const log = document.getElementById('log');
 const resetFaultBtn = document.getElementById('resetFaultBtn');
 const faultReasonSpan = document.getElementById('fault-reason');
-
-// Calibration buttons
-const calEnterBtn = document.getElementById('calEnterBtn');
-const calExitBtn = document.getElementById('calExitBtn');
-const calControls = document.getElementById('calControls');
-const calSaveBtn = document.getElementById('calSaveBtn');
+const startCalBtn = document.getElementById('startCalBtn');
+const wizardContainer = document.getElementById('wizard-container');
 
 // Limits buttons
 const saveLimitsBtn = document.getElementById('saveLimitsBtn');
+
+let currentWizStep = 1;
 
 connectBtn.addEventListener('click', async () => {
     if (port) {
@@ -203,21 +201,30 @@ function updateLimitsUI(data) {
 }
 
 function updateCalibrationUI(data) {
-    for (const key in data) {
-        if (key === 'type') continue;
-        const el = document.getElementById(key);
-        if (el) {
-            el.textContent = data[key];
-        }
+    // Route raw ADC values to wizard if open
+    if (wizardContainer.style.display === 'flex') {
+        const vinEl = document.getElementById('wiz_Vin_raw');
+        const voutEl = document.getElementById('wiz_Vout_raw');
+        const vinEl2 = document.getElementById('wiz_Vin_raw_2');
+        const voutEl2 = document.getElementById('wiz_Vout_raw_2');
+        const ainEl = document.getElementById('wiz_Ain_raw');
+        const aoutEl = document.getElementById('wiz_Aout_raw');
+        const ainEl2 = document.getElementById('wiz_Ain_raw_2');
+        const aoutEl2 = document.getElementById('wiz_Aout_raw_2');
+
+        if (vinEl) vinEl.textContent = data.Vin_raw;
+        if (voutEl) voutEl.textContent = data.Vout_raw;
+        if (vinEl2) vinEl2.textContent = data.Vin_raw;
+        if (voutEl2) voutEl2.textContent = data.Vout_raw;
+        if (ainEl) ainEl.textContent = data.Ain_raw;
+        if (aoutEl) aoutEl.textContent = data.Aout_raw;
+        if (ainEl2) ainEl2.textContent = data.Ain_raw;
+        if (aoutEl2) aoutEl2.textContent = data.Aout_raw;
     }
 }
 
 function handleAck(line) {
-    if (line.includes('CAL_ENTER_OK')) {
-        calControls.style.display = 'block';
-    } else if (line.includes('CAL_EXIT_OK')) {
-        calControls.style.display = 'none';
-    }
+    // Acks can be used for UI confirmation if needed
 }
 
 function appendToLog(text) {
@@ -242,26 +249,66 @@ window.sendLimit = async (cmdPrefix, inputId) => {
     await sendCommand(`CMD:${cmdPrefix}:${valueInt}`);
 };
 
-window.sendCal = async (point) => {
-    const ref = document.getElementById('calRefValue').value;
-    const refInt = Math.round(parseFloat(ref) * 1000);
-    await sendCommand(`CMD:CAL_${calControls.querySelector('button.active')?.textContent.includes('Voltage') ? 'V' : 'I'}_${point}:${refInt}`);
+// Wizard Handlers
+startCalBtn.addEventListener('click', () => {
+    if (!port) {
+        alert('Please connect to the device first.');
+        return;
+    }
+    currentWizStep = 1;
+    showStep(1);
+    wizardContainer.style.display = 'flex';
+    sendCommand('CMD:CAL_ENTER');
+    sendCommand('CMD:CAL_MODE_V');
+});
+
+function showStep(step) {
+    document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
+    document.getElementById('wizard-step-' + step).style.display = 'block';
+    currentWizStep = step;
+}
+
+window.wizNext = (step) => showStep(step + 1);
+window.wizBack = (step) => showStep(step - 1);
+
+window.wizClose = async () => {
+    if (confirm('Are you sure you want to abort calibration?')) {
+        await sendCommand('CMD:CAL_EXIT');
+        wizardContainer.style.display = 'none';
+    }
 };
 
-// Use a simpler approach for cal buttons
-calEnterBtn.addEventListener('click', () => sendCommand('CMD:CAL_ENTER'));
-calExitBtn.addEventListener('click', () => sendCommand('CMD:CAL_EXIT'));
-calSaveBtn.addEventListener('click', () => sendCommand('CMD:CAL_SAVE'));
+window.wizRecord = async (point) => {
+    let inputId, cmdPrefix, multiplier;
+    
+    if (point.startsWith('V')) {
+        inputId = point === 'V_LOW' ? 'wiz_V_low' : 'wiz_V_high';
+        cmdPrefix = 'CMD:CAL_' + point;
+        multiplier = 1000;
+    } else {
+        inputId = point === 'I_LOW' ? 'wiz_I_low' : 'wiz_I_high';
+        cmdPrefix = 'CMD:CAL_' + point;
+        multiplier = 1000;
+    }
+
+    const value = document.getElementById(inputId).value;
+    const valueInt = Math.round(parseFloat(value) * multiplier);
+    await sendCommand(`${cmdPrefix}:${valueInt}`);
+
+    // Special case: After V_HIGH, switch to Current Mode
+    if (point === 'V_HIGH') {
+        await sendCommand('CMD:CAL_MODE_I');
+    }
+
+    wizNext(currentWizStep);
+};
+
+window.wizFinish = async () => {
+    await sendCommand('CMD:CAL_SAVE');
+    await sendCommand('CMD:CAL_EXIT');
+    wizardContainer.style.display = 'none';
+    alert('Calibration saved successfully!');
+};
+
 saveLimitsBtn.addEventListener('click', () => sendCommand('CMD:LIMITS_SAVE'));
 resetFaultBtn.addEventListener('click', () => sendCommand('CMD:RESET_FAULT'));
-
-// Minimal state for cal mode
-const calModeButtons = calControls.querySelectorAll('.button-group:first-child button');
-calModeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        calModeButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    });
-});
-// Default active
-calModeButtons[0].classList.add('active');
