@@ -50,8 +50,8 @@ async function connect() {
         reader = inputStream.getReader();
         document.getElementById('state-badge').style.display = 'inline-block';
         
-        // Fetch current limits on connect
-        setTimeout(() => sendCommand('CMD:GET_LIMITS'), 500);
+        // Fetch current limits on connect (wait 2s for board to boot/enumerate if DTR resets it)
+        setTimeout(() => sendCommand('CMD:GET_LIMITS'), 2000);
         
         readLoop();
     } catch (err) {
