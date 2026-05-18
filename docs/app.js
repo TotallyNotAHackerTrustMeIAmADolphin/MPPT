@@ -5,6 +5,7 @@ let inputDone;
 let outputDone;
 let inputStream;
 let outputStream;
+let syncInterval;
 
 const connectBtn = document.getElementById('connectBtn');
 const status = document.getElementById('status');
@@ -50,8 +51,11 @@ async function connect() {
         reader = inputStream.getReader();
         document.getElementById('state-badge').style.display = 'inline-block';
         
-        // Fetch current limits on connect (wait 2s for board to boot/enumerate if DTR resets it)
-        setTimeout(() => sendCommand('CMD:GET_LIMITS'), 2000);
+        // Robust fetch: Retry every 2s until success
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(() => sendCommand('CMD:GET_LIMITS'), 2000);
+        // Also try once immediately after a short grace period
+        setTimeout(() => sendCommand('CMD:GET_LIMITS'), 500);
         
         readLoop();
     } catch (err) {
@@ -61,6 +65,10 @@ async function connect() {
 }
 
 async function disconnect() {
+    if (syncInterval) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+    }
     if (reader) {
         await reader.cancel();
         await inputDone.catch(() => {});
@@ -183,6 +191,10 @@ function updateTelemetryUI(data) {
 }
 
 function updateLimitsUI(data) {
+    if (syncInterval) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+    }
     if (data.Vmax) document.getElementById('limit_Vmax').value = data.Vmax;
     if (data.Vmin) document.getElementById('limit_Vmin').value = data.Vmin;
     if (data.Imax) document.getElementById('limit_Imax').value = data.Imax;
