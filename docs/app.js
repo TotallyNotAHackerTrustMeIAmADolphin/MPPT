@@ -166,23 +166,7 @@ function updateTelemetryUI(data) {
         }
 
         if (key === 'fault_reason') continue;
-
-        // Sync input fields with live limits from telemetry
-        if (key.endsWith('_limit')) {
-            let inputId = '';
-            if (key === 'Vmax_limit') inputId = 'limit_Vmax';
-            if (key === 'Vmin_limit') inputId = 'limit_Vmin';
-            if (key === 'Imax_limit') inputId = 'limit_Imax';
-            
-            if (inputId) {
-                const input = document.getElementById(inputId);
-                // Only update if user isn't currently typing in it
-                if (input && document.activeElement !== input) {
-                    input.value = (data[key] / 1000).toFixed(2);
-                }
-            }
-            continue;
-        }
+        if (key.endsWith('_limit')) continue;
 
         const el = document.getElementById(key);
         if (el) {
