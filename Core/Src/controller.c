@@ -72,21 +72,21 @@ void CONTROLLER_Init(void) {
     const Measurements_t *m = SENSORS_GetMeasurements();
 
     // Initialize PID controllers
-    pidCV.Kp = 100; pidCV.Ki = 0; pidCV.Kd = 10;
+    pidCV.Kp = 50; pidCV.Ki = 20; pidCV.Kd = 10;
     pidCV.previousError = 0; pidCV.integral = 0;
     pidCV.setPoint = limits->batteryMax_mV;
     pidCV.input = (int32_t*)&m->voltageOut_mV;
     pidCV.output = &targetDuty_ticks;
-    pidCV.maxIntegral = 1000000;
+    pidCV.maxIntegral = 50000;
     pidCV.minOutput = 0;
     pidCV.maxOutput = POWER_PWM_GetMax();
 
-    pidCC.Kp = 100; pidCC.Ki = 0; pidCC.Kd = 10;
+    pidCC.Kp = 50; pidCC.Ki = 20; pidCC.Kd = 10;
     pidCC.previousError = 0; pidCC.integral = 0;
     pidCC.setPoint = limits->chargingCurrent_mA;
     pidCC.input = (int32_t*)&m->currentOut_mA;
     pidCC.output = &targetDuty_ticks;
-    pidCC.maxIntegral = 1000000;
+    pidCC.maxIntegral = 50000;
     pidCC.minOutput = 0;
     pidCC.maxOutput = POWER_PWM_GetMax();
 }
@@ -134,6 +134,7 @@ void CONTROLLER_UpdateHighRate(void) {
             break;
 
         case STATE_CV:
+            pidCV.setPoint = limits->batteryMax_mV; // Keep updated from limits
             POWER_PID_Compute(&pidCV);
             
             // Input Voltage Sag Protection (Brownout prevention)
@@ -149,6 +150,7 @@ void CONTROLLER_UpdateHighRate(void) {
             break;
 
         case STATE_CC:
+            pidCC.setPoint = limits->chargingCurrent_mA; // Keep updated
             POWER_PID_Compute(&pidCC);
 
             // Input Voltage Sag Protection (Brownout prevention)

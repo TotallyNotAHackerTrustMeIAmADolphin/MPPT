@@ -153,6 +153,22 @@ function updateTelemetryUI(data) {
 
         if (key === 'fault_reason') continue;
 
+        if (key === 'V_limit') {
+            const input = document.getElementById('limit_Vmax');
+            if (input && document.activeElement !== input) {
+                input.value = data[key];
+            }
+            continue;
+        }
+
+        if (key === 'I_limit') {
+            const input = document.getElementById('limit_Imax');
+            if (input && document.activeElement !== input) {
+                input.value = data[key];
+            }
+            continue;
+        }
+
         const el = document.getElementById(key);
         if (el) {
             el.textContent = data[key];
