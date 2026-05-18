@@ -1,6 +1,6 @@
 # MPPT Controller - STM32F072 Firmware
 
-A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar charge controller, optimized for the **ARM Cortex-M0** architecture. This project implements high-frequency power conversion with advanced sensing and regulation logic.
+A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar charge controller, optimized for the **ARM Cortex-M0** architecture. This project implements high-frequency power conversion with advanced sensing, robust safety, and optimized regulation logic.
 
 ---
 
@@ -24,12 +24,16 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
   - **Power:** Microwatts (`_uW`)
   - **PWM:** Raw Dithered Ticks (`_ticks`)
 
-### 4. Advanced Control Logic
-- **Dual-Loop PID:** Integrated regulation for Constant Voltage (CV) and Constant Current (CC) charging modes.
-- **MPPT Algorithms:** 
-  - **Perturb & Observe (P&O):** Fast, real-time tracking of the maximum power point.
-  - **Global Sweep:** Periodically scans the entire power curve to find the true peak in partial shading conditions.
-- **Safety Engine:** Built-in protection for Over-Voltage (OV), Over-Current (OC), and Under-Voltage (UV).
+### 4. Advanced Control & Safety Logic
+- **Velocity PI Regulation:** Implements a mathematically stable **Velocity PI algorithm** for Constant Voltage (CV) and Constant Current (CC) modes. This eliminates double-integration instability and provides rock-solid, ripple-free regulation.
+- **Limit-Aware MPPT (P&O):** A refined Perturb & Observe algorithm with **power accumulation logic**. It accurately tracks the maximum power point on gentle slopes and intelligently "parks" the duty cycle near user limits to prevent state flapping.
+- **Stabilized Global Sweep:** Slowed-down global sweep (15s duration) ensures hardware capacitors settle, providing a near-perfect MPP baseline without voltage offsets.
+- **Hardware Safety Architecture:** Dedicated protection layer for the board:
+  - **Over-Voltage:** 80V (Vin), 60V (Vout).
+  - **Over-Current:** 20A (Input/Output).
+  - **Under-Voltage:** 12.5V (Vin) floor to protect auxiliary power.
+  - **Thermal:** 85°C internal limit.
+  - **Reverse Flow:** Active backflow detection from battery to panel.
 
 ---
 
@@ -38,6 +42,7 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 - **Framework:** STM32Cube HAL
 - **Build System:** PlatformIO
 - **GUI Config:** STM32CubeMX (`MPPT.ioc`)
+- **Headless Operation:** Fixed USB boot lockup; the board boots and regulates **autonomously** without requiring a serial connection.
 
 ---
 
@@ -57,7 +62,7 @@ This project uses a custom script, `setup_cubemx_env_auto.py`, which bridges the
 # Build the firmware
 pio run
 
-# Upload via DFU
+# Upload via Black Magic Probe (standard in platformio.ini)
 pio run -t upload
 
 # Open the serial monitor (115200 baud)
@@ -81,23 +86,22 @@ Real-time telemetry and configuration are provided via **USB CDC (Virtual COM Po
 The easiest way to monitor and configure the controller is via the **Web Serial Dashboard**:
 👉 **[Live Dashboard](https://totallynotahackertrustmeiamadolphin.github.io/MPPT/)**
 
-*Requires a Chrome or Edge browser. Allows for real-time telemetry visualization, limit configuration, and sensor calibration.*
+*Requires a Chrome or Edge browser. Displays data in standard units (**V**, **A**, **W**) and features a robust settings synchronization mechanism.*
 
 ### Serial Protocol
-The firmware emits machine-readable **JSON packets** at 115200 baud:
+The firmware emits machine-readable **JSON packets** with descriptive fault reporting:
 - `Vin_mV / Vout_mV`: Input and Output Voltages.
 - `Ain_mA / Aout_mA`: Input and Output Currents.
-- `Win_mW / Wout_mW`: Calculated Input/Output Power.
-- `eff`: System efficiency percentage.
-- `temp_C`: MCU internal temperature.
-- `duty`: Current PWM tick values.
+- `state`: IDLE, SWEEPING, MPPT, CV, CC, FAULT.
+- `fault_reason`: Descriptive hardware error (e.g., `INPUT_UNDERVOLTAGE`).
+- `duty_x100`: PWM duty cycle as a percentage with 0.01% precision.
 
 ---
 
 ## 📏 Development Conventions
 
 - **Variable Naming:** Always include the unit suffix in variable names (e.g., `currentIn_mA`).
-- **CubeMX Safety:** Always place manual code within `/* USER CODE BEGIN */` and `/* USER CODE END */` blocks to ensure it persists after regenerating the `.ioc` file.
+- **EEPROM Safety:** The board uses a **Signature Check** (`0xABCD`) to ensure safe defaults on first flash. PWM is automatically disabled during Flash writes to prevent controller crashes.
 - **Integer Math:** Perform **multiplication before division** in all scaling logic to maintain precision. Avoid `float` and `double` at all costs.
 
 ---
