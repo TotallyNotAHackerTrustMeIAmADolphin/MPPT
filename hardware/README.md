@@ -6,3 +6,6 @@ In V1.0 there are several issues.
 - XT60 PCB versions are switched polarity based on wheter they are male or female
 - the Reset button needs a pinout
 - the SWDIO/SWCLK need pull up/down
+
+fixed so far in v1.1
+- R1, R3 are now correct
