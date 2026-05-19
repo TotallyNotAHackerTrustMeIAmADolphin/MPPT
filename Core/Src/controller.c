@@ -288,3 +288,9 @@ void CONTROLLER_ResetFault(void) {
         transitionTo(STATE_IDLE);
     }
 }
+
+void CONTROLLER_Reset(void) {
+    targetDuty_ticks = 0;
+    POWER_PWM_Set(0);
+    transitionTo(STATE_IDLE);
+}

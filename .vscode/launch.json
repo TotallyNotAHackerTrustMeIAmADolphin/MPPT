@@ -19,7 +19,7 @@
             "svdPath": "/home/bashi/.platformio/platforms/ststm32/misc/svd/STM32F072x.svd",
             "preLaunchTask": {
                 "type": "PlatformIO",
-                "task": "Pre-Debug"
+                "task": "Pre-Debug (nucleo_f072rb)"
             }
         },
         {

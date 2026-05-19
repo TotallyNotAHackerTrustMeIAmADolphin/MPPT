@@ -11,14 +11,8 @@ int32_t POWER_PWM_GetMax(void) { return 240 * 8; }
 
 void setUp(void) {
     mock_duty = 500;
-    MPPT_SetNFactor(4);
-    MPPT_SetMinStep(2);
-    MPPT_SetMaxStep(20);
+    MPPT_SetStepSize(13);
     MPPT_SetThreshold(20000);
-    
-    // Reset internal static variables of mppt.c if possible, 
-    // but since they are file-static, we'll just rely on a fresh build or careful state management.
-    direction = true; 
 }
 
 void tearDown(void) {

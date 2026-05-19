@@ -130,6 +130,9 @@ $tf/
 # Guidance Automation Toolkit
 *.gpState
 
+# MPPT Project specific
+tuning_logs/
+
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper

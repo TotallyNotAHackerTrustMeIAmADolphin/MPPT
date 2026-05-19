@@ -47,4 +47,9 @@ const char* CONTROLLER_GetFaultReasonString(void);
  */
 void CONTROLLER_ResetFault(void);
 
+/**
+ * @brief Forces a system reset to IDLE state and 0% duty cycle.
+ */
+void CONTROLLER_Reset(void);
+
 #endif /* __CONTROLLER_H */

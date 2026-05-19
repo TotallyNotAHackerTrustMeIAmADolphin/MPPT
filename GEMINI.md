@@ -11,6 +11,7 @@ This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) s
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks).
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong processing for zero-latency measurement.
 - **Hardware Safety Architecture**: Mandatory hardware limits (80V Vin, 12.5V Min Vin, 20A Current) with descriptive fault reporting.
+- **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping. This allows small MPPT steps to accumulate and "walk" out of the 100% passthrough dead-band without losing state.
 - **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) for field calibration.
 - **Dynamic Tuning**: Remote parameter optimization (`CMD:TUNE_...`) supported via Python hybrid search.
 - **EEPROM Storage**: Integrated signature-checked Flash storage for persisting calibration and limits.

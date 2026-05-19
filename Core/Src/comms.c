@@ -141,8 +141,7 @@ void COMMS_HandleCommands(void) {
                     SENSORS_SetEmaShift((uint8_t)atoi(cmdBuffer + 13));
                     printf("ACK:TUNE_EMA_OK:%d\n", SENSORS_GetEmaShift());
                 } else if (strcmp(cmdBuffer, "CMD:TUNE_RESET") == 0) {
-                    POWER_PWM_Set(0);
-                    HAL_Delay(50);
+                    CONTROLLER_Reset();
                     printf("ACK:TUNE_RESET_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
                     printf("Commands: CAL_..., SET_..., TUNE_STEP, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET\n");

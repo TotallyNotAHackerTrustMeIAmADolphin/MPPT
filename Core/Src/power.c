@@ -40,35 +40,47 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
     uint32_t CH1Value = 0;
     uint32_t CH2Value = 0;
 
-    // Apply safety dead-bands and constraints
-    if (dutyCycleTicks < PWM_DEAD_BAND_TICKS) {
+    // 1. Constrain logic for state retention (Logical State)
+    if (dutyCycleTicks < 0) {
         dutyCycleTicks = 0;
-    } else if (dutyCycleTicks > maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS) {
-        dutyCycleTicks = maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS;
+    } else if (dutyCycleTicks > maxDutyCycle_ticks) {
+        dutyCycleTicks = maxDutyCycle_ticks;
     }
     
-    // Near-passthrough dead-band
-    if (dutyCycleTicks < timerPeriod && dutyCycleTicks > timerPeriod - PWM_DEAD_BAND_TICKS) {
-        dutyCycleTicks = timerPeriod;
-    } else if (dutyCycleTicks > timerPeriod && dutyCycleTicks < timerPeriod + PWM_DEAD_BAND_TICKS) {
-        dutyCycleTicks = timerPeriod;
-    }
-
+    // Save the logical state so algorithms like MPPT can "walk" through dead-bands
     currentDutyCycle_ticks = dutyCycleTicks;
 
-    if (dutyCycleTicks == 0) {
+    // 2. Hardware-specific constraints for PWM Generation
+    int32_t hardwareDuty = dutyCycleTicks;
+
+    // Apply safety dead-bands to hardware execution only
+    if (hardwareDuty < PWM_DEAD_BAND_TICKS) {
+        hardwareDuty = 0;
+    } else if (hardwareDuty > maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS) {
+        hardwareDuty = maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS;
+    }
+    
+    // Near-passthrough dead-band (prevents switching noise/instability at 100%)
+    if (hardwareDuty < timerPeriod && hardwareDuty > timerPeriod - PWM_DEAD_BAND_TICKS) {
+        hardwareDuty = timerPeriod;
+    } else if (hardwareDuty > timerPeriod && hardwareDuty < timerPeriod + PWM_DEAD_BAND_TICKS) {
+        hardwareDuty = timerPeriod;
+    }
+
+    // 3. Hardware PWM Map
+    if (hardwareDuty == 0) {
         CH1Value = 0;
         CH2Value = 0;
-    } else if (dutyCycleTicks == timerPeriod) {
+    } else if (hardwareDuty == timerPeriod) {
         CH1Value = timerPeriod;
         CH2Value = timerPeriod;
-    } else if (dutyCycleTicks < timerPeriod) {
+    } else if (hardwareDuty < timerPeriod) {
         // Buck mode: HS1 fully on, HS2 switching
         CH1Value = timerPeriod;
-        CH2Value = dutyCycleTicks;
+        CH2Value = hardwareDuty;
     } else {
         // Boost mode: HS1 switching, HS2 fully on
-        CH1Value = 2 * timerPeriod - dutyCycleTicks;
+        CH1Value = 2 * timerPeriod - hardwareDuty;
         CH2Value = timerPeriod;
     }
 
