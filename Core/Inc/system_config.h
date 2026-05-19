@@ -10,7 +10,7 @@
 
 // --- Timing Configurations ---
 #define TELEMETRY_INTERVAL_MS 100 
-#define MPPT_INTERVAL_MS      20  
+#define MPPT_INTERVAL_MS      30  
 #define SWEEP_INTERVAL_SECONDS 300
 
 // --- Hysteresis and Thresholds ---
@@ -25,15 +25,15 @@
 
 // --- Algorithm Constants ---
 #define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
-#define POWER_THRESHOLD_UW    50000
+#define POWER_THRESHOLD_UW    10000  // 10mW threshold for direction change
 #define SWEEP_STEP_SIZE_TICKS 8
 #define MIN_INPUT_VOLTAGE_MPPT_MV 14000
 
 // --- VSS Adaptive P&O Constants ---
-#define VSS_N_FACTOR          15     // Multiplier for |dP/dV| slope
-#define VSS_MIN_STEP          2      // Smallest allowed step (ticks)
-#define VSS_MAX_STEP          30     // Largest allowed step (ticks)
-#define VSS_VOLTAGE_DEADBAND  30     // mV deadband for dV noise
+#define VSS_N_FACTOR          4      // Multiplier for |dP/dV| slope
+#define VSS_MIN_STEP          1      // Smallest allowed step (ticks)
+#define VSS_MAX_STEP          25     // Largest allowed step (ticks)
+#define VSS_VOLTAGE_DEADBAND  40     // mV deadband for dV noise
 
 // --- Sensor Physics ---
 #define V_REF_INT_X1000       1200 // 1.2V * 1000
