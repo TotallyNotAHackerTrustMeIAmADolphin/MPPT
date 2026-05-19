@@ -187,7 +187,7 @@ void CONTROLLER_UpdateHighRate(void) {
 
     // Override for calibration
     if (SETTINGS_IsCalibrating()) {
-        targetDuty_ticks = SETTINGS_IsCalHighSideOn() ? POWER_PWM_GetMax() : 0;
+        targetDuty_ticks = SETTINGS_IsCalHighSideOn() ? (TIMER_PERIOD * DITHER_TABLE_SIZE) : 0;
     }
 
     POWER_PWM_Set(targetDuty_ticks);
