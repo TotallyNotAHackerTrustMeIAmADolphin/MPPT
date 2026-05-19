@@ -10,7 +10,7 @@
 
 // --- Timing Configurations ---
 #define TELEMETRY_INTERVAL_MS 100 
-#define MPPT_INTERVAL_MS      25  
+#define MPPT_INTERVAL_MS      20  
 #define SWEEP_INTERVAL_SECONDS 300
 
 // --- Hysteresis and Thresholds ---
@@ -30,10 +30,10 @@
 #define MIN_INPUT_VOLTAGE_MPPT_MV 14000
 
 // --- VSS Adaptive P&O Constants ---
-#define VSS_N_FACTOR          2      // Slightly more sensitive
+#define VSS_N_FACTOR          3      // Increase sensitivity for faster tracking
 #define VSS_MIN_STEP          1      // 1 tick micro-stepping
-#define VSS_MAX_STEP          12     // Allow slightly larger jumps
-#define VSS_VOLTAGE_DEADBAND  20     // Lower noise floor for higher sensitivity
+#define VSS_MAX_STEP          20     // Allow faster recovery jumps
+#define VSS_VOLTAGE_DEADBAND  20     // Maintain 20mV deadband
 
 // --- Sensor Physics ---
 #define V_REF_INT_X1000       1200 // 1.2V * 1000
