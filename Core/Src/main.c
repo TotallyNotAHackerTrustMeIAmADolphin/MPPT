@@ -44,16 +44,42 @@
 IWDG_HandleTypeDef hiwdg;
 
 /* USER CODE BEGIN PV */
+__attribute__((section(".noinit"))) uint32_t dfu_magic;
+__attribute__((section(".noinit"))) uint32_t dfu_magic_inv;
+#define DFU_MAGIC_VALUE 0xDEADBEEF
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_IWDG_Init(void);
 /* USER CODE BEGIN PFP */
+static void JumpToBootloader(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void JumpToBootloader(void) {
+    void (*SysMemBootJump)(void);
+
+    /* 0. Disable interrupts */
+    __disable_irq();
+
+    /* 1. Remap System Memory to 0x00000000 */
+    __HAL_RCC_SYSCFG_CLK_ENABLE();
+    __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
+
+    /* 2. Set Stack Pointer from System Memory (0x1FFFC800 for F072) */
+    /* On F072, System Memory starts at 0x1FFFC800 */
+    /* The first word is the Stack Pointer */
+    uint32_t pSysMem = 0x1FFFC800;
+    __set_MSP(*(uint32_t *)pSysMem);
+
+    /* 3. The second word is the Reset Vector */
+    SysMemBootJump = (void (*)(void)) (*(uint32_t *)(pSysMem + 4));
+
+    /* 4. Jump! */
+    SysMemBootJump();
+}
 /* USER CODE END 0 */
 
 /**
@@ -62,6 +88,15 @@ static void MX_IWDG_Init(void);
  */
 int main(void)
 {
+  /* USER CODE BEGIN 1 */
+  /* Check if we should jump to bootloader before any peripheral init */
+  if (dfu_magic == DFU_MAGIC_VALUE && dfu_magic_inv == ~DFU_MAGIC_VALUE) {
+      dfu_magic = 0;
+      dfu_magic_inv = 0;
+      JumpToBootloader();
+  }
+  /* USER CODE END 1 */
+
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */

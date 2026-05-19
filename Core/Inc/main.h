@@ -85,7 +85,9 @@ void Error_Handler(void);
 #define chipSelect_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
-
+extern uint32_t dfu_magic;
+extern uint32_t dfu_magic_inv;
+#define DFU_MAGIC_VALUE 0xDEADBEEF
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
