@@ -10,7 +10,7 @@
 
 // --- Timing Configurations ---
 #define TELEMETRY_INTERVAL_MS 100 
-#define MPPT_INTERVAL_MS      127 
+#define MPPT_INTERVAL_MS      120 
 #define SWEEP_INTERVAL_SECONDS 300
 
 // --- Hysteresis and Thresholds ---
@@ -25,10 +25,10 @@
 
 // --- Algorithm Constants ---
 #define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
-#define POWER_THRESHOLD_UW    239774 // Stable threshold for resistive peak
+#define POWER_THRESHOLD_UW    189769 // Optimal threshold for speed/stability
 #define SWEEP_STEP_SIZE_TICKS 8
 #define MIN_INPUT_VOLTAGE_MPPT_MV 18000 // 18V brownout floor
-#define MPPT_STEP_SIZE_TICKS  3      // Fixed step size (ticks)
+#define MPPT_STEP_SIZE_TICKS  13     // Tuned fixed step size (ticks)
 
 // --- Sensor Physics ---
 #define V_REF_INT_X1000       1200 // 1.2V * 1000

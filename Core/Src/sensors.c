@@ -33,7 +33,7 @@ static int32_t f_vOut_slow_fp = 0;
 static int32_t f_aIn_slow_fp = 0;
 static int32_t f_aOut_slow_fp = 0;
 
-static uint8_t ema_shift = 6; // Optimal for stability (tuned)
+static uint8_t ema_shift = 3; // Optimal for speed/stability (tuned)
 
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
