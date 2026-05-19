@@ -81,11 +81,15 @@ void SENSORS_Process(uint16_t offset) {
     const int32_t samples_per_half = ADC_SAMPLE_COUNT / 2;
 
     // 1. Initialize filters on first run to avoid slow ramp-up
-    if (f_vIn_raw_fp == 0 && voltIn_sum > 0) {
-        f_vIn_raw_fp = f_vIn_slow_fp = (int32_t)voltIn_sum << FILTER_SHIFT;
-        f_vOut_raw_fp = f_vOut_slow_fp = (int32_t)voltOut_sum << FILTER_SHIFT;
-        f_aIn_raw_fp = f_aIn_slow_fp = (int32_t)ampIn_sum << FILTER_SHIFT;
-        f_aOut_raw_fp = f_aOut_slow_fp = (int32_t)ampOut_sum << FILTER_SHIFT;
+    if ((f_vIn_raw_fp == 0 && voltIn_sum > 0) || 
+        (f_vOut_raw_fp == 0 && voltOut_sum > 0) ||
+        (f_aIn_raw_fp == 0 && ampIn_sum > 0) ||
+        (f_aOut_raw_fp == 0 && ampOut_sum > 0)) 
+    {
+        if (f_vIn_raw_fp == 0) f_vIn_raw_fp = f_vIn_slow_fp = (int32_t)voltIn_sum << FILTER_SHIFT;
+        if (f_vOut_raw_fp == 0) f_vOut_raw_fp = f_vOut_slow_fp = (int32_t)voltOut_sum << FILTER_SHIFT;
+        if (f_aIn_raw_fp == 0) f_aIn_raw_fp = f_aIn_slow_fp = (int32_t)ampIn_sum << FILTER_SHIFT;
+        if (f_aOut_raw_fp == 0) f_aOut_raw_fp = f_aOut_slow_fp = (int32_t)ampOut_sum << FILTER_SHIFT;
     }
 
     // 2. Apply High-Precision EMA filtering

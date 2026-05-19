@@ -25,6 +25,8 @@ static uint32_t lastTelemetryTick = 0;
 static PID_t pidCV;
 static PID_t pidCC;
 static int32_t targetDuty_ticks = 0;
+static uint8_t faultCounter = 0;
+#define FAULT_THRESHOLD_FRAMES 3
 
 /* Internal State Transition Logic */
 static void transitionTo(SystemState_t newState) {
@@ -50,6 +52,7 @@ static void transitionTo(SystemState_t newState) {
             break;
         case STATE_IDLE:
             currentFaultReason = FAULT_REASON_NONE;
+            faultCounter = 0;
             break;
         default:
             break;
@@ -125,8 +128,13 @@ void CONTROLLER_UpdateHighRate(void) {
     }
 
     if (newFault != FAULT_REASON_NONE) {
-        currentFaultReason = newFault;
-        transitionTo(STATE_FAULT);
+        faultCounter++;
+        if (faultCounter >= FAULT_THRESHOLD_FRAMES) {
+            currentFaultReason = newFault;
+            transitionTo(STATE_FAULT);
+        }
+    } else {
+        faultCounter = 0;
     }
 
     // 2. State-Specific High-Rate Logic
