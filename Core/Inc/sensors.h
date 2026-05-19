@@ -32,6 +32,12 @@ const Measurements_t* SENSORS_GetMeasurements(void);
 void SENSORS_GetRawSums(uint32_t *vIn, uint32_t *vOut, uint32_t *aIn, uint32_t *aOut);
 
 /**
+ * @brief Gets/Sets the EMA filter shift (Alpha = 1 / 2^shift).
+ */
+uint8_t SENSORS_GetEmaShift(void);
+void SENSORS_SetEmaShift(uint8_t shift);
+
+/**
  * @brief Checks if a new buffer half is ready for processing.
  * @return 0 if idle, 1 for first half, 2 for second half.
  */

@@ -69,13 +69,32 @@ pio run -t upload
 pio device monitor
 ```
 
+## 📈 Auto-Tuning
+The firmware supports dynamic parameter tuning over serial. A Python script is provided to automate the finding of optimal MPPT parameters (aggressiveness, step sizes, and filtering) using a hybrid machine-learning approach.
+
+```bash
+# Install dependencies
+pip install pyserial
+
+# Run the tuner (Phase 1: Random Search, Phase 2: Local Fine-Tuning)
+python scripts/tune_mppt.py --port /dev/ttyACM0
+```
+
 ## 📐 Hardware Design
 This repository includes all necessary design files for the MPPT controller hardware in the `hardware/` directory.
 
-- **Schematics:** SVGs and PDFs available in `hardware/` and `hardware/scematic v1.0.pdf`.
+- **Schematics:** SVGs and PDFs available in `hardware/schematics/`.
 - **PCB Design:** Gerbers, BOM, and Pick-and-Place files located in `hardware/PCB manufacturing/`.
-- **3D Files:** STEP file for case/mechanical integration in `hardware/3D_PCB_STM32 MPPT_v1.1.step`.
-- **Project Files:** EasyEDA source files in `hardware/EasyEDA/`.
+- **3D Files:** STEP file for case/mechanical integration in `hardware/models/`.
+- **Project Files:** EasyEDA source files in `hardware/EasyEDA/` and KiCad files in `hardware/KiCad/`.
+
+---
+
+## 🔗 Useful Links & Resources
+- **Redirect printf to USB-VCP:** [Alexey Kosinov GitHub](https://github.com/alexeykosinov/Redirect-printf-to-USB-VCP-on-STM32H7-MCU)
+- **How to use C++ with STM32 HAL:** [Bare Naked Embedded](https://barenakedembedded.com/how-to-use-cpp-with-stm32-hal/)
+- **STM32 ADC Multiple Channels:** [Controllerstech](https://controllerstech.com/stm32-adc-multiple-channels/)
+- **Send UART over USB:** [Controllerstech](https://controllerstech.com/send-and-receive-data-to-pc-without-uart-stm32-usb-com/)
 
 ---
 

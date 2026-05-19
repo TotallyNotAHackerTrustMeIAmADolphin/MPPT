@@ -33,6 +33,8 @@ static int32_t f_vOut_slow_fp = 0;
 static int32_t f_aIn_slow_fp = 0;
 static int32_t f_aOut_slow_fp = 0;
 
+static uint8_t ema_shift = 2; // Default Alpha = 0.25
+
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
     HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
@@ -88,11 +90,11 @@ void SENSORS_Process(uint16_t offset) {
 
     // 2. Apply High-Precision EMA filtering
     
-    // Fast filter: Alpha = 0.25 (shift 2) for MPPT/Control Loop (Balanced lag/stability)
-    f_vIn_raw_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_raw_fp) >> 2;
-    f_vOut_raw_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_raw_fp) >> 2;
-    f_aIn_raw_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_raw_fp) >> 2;
-    f_aOut_raw_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_raw_fp) >> 2;
+    // Fast filter: Dynamic alpha for MPPT/Control Loop
+    f_vIn_raw_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_raw_fp) >> ema_shift;
+    f_vOut_raw_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_raw_fp) >> ema_shift;
+    f_aIn_raw_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_raw_fp) >> ema_shift;
+    f_aOut_raw_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_raw_fp) >> ema_shift;
 
     // Slow filter: Alpha = 0.0625 (shift 4) for Dashboard/Calibration (high stability)
     f_vIn_slow_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_slow_fp) >> 4;
@@ -149,4 +151,14 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc) {
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
     bufferFull = 2;
+}
+
+uint8_t SENSORS_GetEmaShift(void) {
+    return ema_shift;
+}
+
+void SENSORS_SetEmaShift(uint8_t shift) {
+    if (shift > 0 && shift < 10) {
+        ema_shift = shift;
+    }
 }

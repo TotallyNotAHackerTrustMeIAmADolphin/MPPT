@@ -10,7 +10,7 @@
 
 // --- Timing Configurations ---
 #define TELEMETRY_INTERVAL_MS 100 
-#define MPPT_INTERVAL_MS      100 // Slow and stable
+#define MPPT_INTERVAL_MS      100 
 #define SWEEP_INTERVAL_SECONDS 300
 
 // --- Hysteresis and Thresholds ---
@@ -25,15 +25,16 @@
 
 // --- Algorithm Constants ---
 #define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
-#define POWER_THRESHOLD_UW    10000  // 10mW threshold for precision lock
+#define POWER_THRESHOLD_UW    20000  // 20mW threshold for input tracking
 #define SWEEP_STEP_SIZE_TICKS 8
-#define MIN_INPUT_VOLTAGE_MPPT_MV 14000
+#define MIN_INPUT_VOLTAGE_MPPT_MV 18000 // 18V brownout floor
 
 // --- VSS Adaptive P&O Constants ---
 #define VSS_N_FACTOR          4      // Balanced scaling
-#define VSS_MIN_STEP          2      // 2 ticks min step
-#define VSS_MAX_STEP          20     // 20 ticks max search
+#define VSS_MIN_STEP          8      // 8 ticks fixed step
+#define VSS_MAX_STEP          8      // Fixed step
 #define VSS_VOLTAGE_DEADBAND  20     // 20mV deadband
+
 
 
 

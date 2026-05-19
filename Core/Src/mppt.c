@@ -12,9 +12,15 @@
 
 /* Private variables */
 static int64_t previousPowerIn_uW = 0;
-static int32_t previousVoltageIn_mV = 0;
 static bool direction = true;
 static int32_t lastStep = 0;
+
+/* Dynamic Tuning Parameters (Defaults from system_config.h) */
+static int32_t vss_n_factor = VSS_N_FACTOR;
+static int32_t vss_min_step = VSS_MIN_STEP;
+static int32_t vss_max_step = VSS_MAX_STEP;
+static uint32_t pwr_threshold = POWER_THRESHOLD_UW;
+static uint32_t mppt_interval = MPPT_INTERVAL_MS;
 
 /* Sweep variables */
 static int32_t sweepDutyCycle = 0;
@@ -26,12 +32,9 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
 
     // Supply-Aware Protection (Brownout prevention)
     if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
-        currentDuty -= 38; // Back off faster to prevent source collapse
+        currentDuty -= 38; 
         if (currentDuty < 0) currentDuty = 0;
-
-        // BREAK THE TRAP: Explicitly force direction to "decrease duty/increase voltage"
-        direction = false;
-
+        direction = false; // Force direction to increase voltage
         previousPowerIn_uW = m->powerOut_uW;
         return currentDuty;
     }
@@ -41,31 +44,29 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
     int32_t dP_mW = (int32_t)(dP / 1000);
 
     // 1. Direction Logic: Only act if total change > threshold
-    if (abs(dP_mW) >= (POWER_THRESHOLD_UW / 1000)) {
+    if (abs(dP_mW) >= (int32_t)(pwr_threshold / 1000)) {
         if (dP < 0) {
-            // Power dropped significantly: Reverse!
             direction = !direction;
         }
-        // Update baseline
         previousPowerIn_uW = m->powerOut_uW;
     }
 
-    // 2. Adaptive Step Size: Proportional to dP
-    // We use a slow scaling factor because the 100ms loop allows larger settling
+    // 2. Adaptive Step Size calculation
     static int64_t lastFramePower = 0;
-    int64_t instantaneous_dP = m->powerOut_uW - lastFramePower;
-    int32_t instantaneous_dP_mW = abs((int32_t)(instantaneous_dP / 1000));
+    int64_t inst_dP = m->powerOut_uW - lastFramePower;
+    int32_t inst_dP_mW = abs((int32_t)(inst_dP / 1000));
     lastFramePower = m->powerOut_uW;
 
-    int32_t adaptiveStep = VSS_MIN_STEP;
+    int32_t adaptiveStep = vss_min_step;
 
-    if (instantaneous_dP > 0) {
-        // Power is increasing: High-gain Search mode
-        adaptiveStep = VSS_MIN_STEP + (instantaneous_dP_mW / 5);
-        if (adaptiveStep > VSS_MAX_STEP) adaptiveStep = VSS_MAX_STEP;
+    if (inst_dP > 0) {
+        // Power is increasing: Search mode
+        // Scale by N_FACTOR (higher = more aggressive)
+        adaptiveStep = vss_min_step + (inst_dP_mW * vss_n_factor) / 100;
+        if (adaptiveStep > vss_max_step) adaptiveStep = vss_max_step;
     } else {
-        // Power is flat or dropping: Micro-stepping (2 ticks)
-        adaptiveStep = VSS_MIN_STEP;
+        // Power is flat or dropping: Micro-stepping
+        adaptiveStep = vss_min_step;
     }
 
     // 3. Apply Perturbation
@@ -81,6 +82,7 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
     lastStep = adaptiveStep;
     return currentDuty;
 }
+
 
 
 int32_t MPPT_RunSweep(const Measurements_t *m, bool *isFinished) {
@@ -114,10 +116,21 @@ void MPPT_ResetSweep(void) {
 }
 
 void MPPT_StartTracking(const Measurements_t *m) {
-    previousPowerIn_uW = m->powerOut_uW;
-    previousVoltageIn_mV = m->voltageIn_mV;
+    previousPowerIn_uW = m->powerIn_uW;
 }
 
 int32_t MPPT_GetLastStep(void) {
     return lastStep;
 }
+
+void MPPT_SetNFactor(int32_t n) { vss_n_factor = n; }
+void MPPT_SetMinStep(int32_t step) { vss_min_step = step; }
+void MPPT_SetMaxStep(int32_t step) { vss_max_step = step; }
+void MPPT_SetThreshold(uint32_t uw) { pwr_threshold = uw; }
+void MPPT_SetInterval(uint32_t ms) { mppt_interval = ms; }
+
+int32_t MPPT_GetNFactor(void) { return vss_n_factor; }
+int32_t MPPT_GetMinStep(void) { return vss_min_step; }
+int32_t MPPT_GetMaxStep(void) { return vss_max_step; }
+uint32_t MPPT_GetThreshold(void) { return pwr_threshold; }
+uint32_t MPPT_GetInterval(void) { return mppt_interval; }

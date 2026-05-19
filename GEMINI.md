@@ -12,12 +12,13 @@ This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) s
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong processing for zero-latency measurement.
 - **Hardware Safety Architecture**: Mandatory hardware limits (80V Vin, 12.5V Min Vin, 20A Current) with descriptive fault reporting.
 - **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) for field calibration.
+- **Dynamic Tuning**: Remote parameter optimization (`CMD:TUNE_...`) supported via Python hybrid search.
 - **EEPROM Storage**: Integrated signature-checked Flash storage for persisting calibration and limits.
 
 ## Technologies & Architecture
 - **MCU**: STM32F072RBT6 (ARM Cortex-M0)
 - **Framework**: STM32Cube HAL
-- **Build System**: PlatformIO with a custom script (`setup_cubemx_env_auto.py`).
+- **Build System**: PlatformIO with a custom automation script (`scripts/setup_cubemx_env_auto.py`).
 - **Hardware Automation**: `TIMER_PERIOD` is automatically extracted from `MPPT.ioc` during build.
 
 ## Building and Running
@@ -48,5 +49,6 @@ pio device monitor -b 115200
 - `Core/Src/power.c`: Velocity PI regulation and PWM management.
 - `Core/Src/eeprom.c`: ST EEPROM Emulation storage layer.
 - `STM32F072RBTX_FLASH.ld`: Linker script (modified to reserve last 4KB for EEPROM).
-- `setup_cubemx_env_auto.py`: Automated build environment bridge.
+- `scripts/setup_cubemx_env_auto.py`: Automated build environment bridge.
+- `scripts/tune_mppt.py`: Hybrid machine-learning auto-tuning script.
 - `hardware/`: Directory containing hardware design files and documentation.

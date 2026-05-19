@@ -42,4 +42,17 @@ void MPPT_StartTracking(const Measurements_t *m);
  */
 int32_t MPPT_GetLastStep(void);
 
+/* Dynamic Tuning Interface */
+void MPPT_SetNFactor(int32_t n);
+void MPPT_SetMinStep(int32_t step);
+void MPPT_SetMaxStep(int32_t step);
+void MPPT_SetThreshold(uint32_t uw);
+void MPPT_SetInterval(uint32_t ms);
+
+int32_t MPPT_GetNFactor(void);
+int32_t MPPT_GetMinStep(void);
+int32_t MPPT_GetMaxStep(void);
+uint32_t MPPT_GetThreshold(void);
+uint32_t MPPT_GetInterval(void);
+
 #endif /* __MPPT_H */

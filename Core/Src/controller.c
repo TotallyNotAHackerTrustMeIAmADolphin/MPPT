@@ -211,7 +211,7 @@ void CONTROLLER_Task(void) {
     }
 
     // 2. Control Logic (Timed)
-    if (currentTick - lastMPPTTick >= MPPT_INTERVAL_MS) {
+    if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
         lastMPPTTick = currentTick;
 
         switch (currentState) {

@@ -122,8 +122,30 @@ void COMMS_HandleCommands(void) {
                     HAL_Delay(10);
                     SETTINGS_SaveLimits();
                     printf("ACK:LIMITS_SAVE_OK\n");
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_N:", 11) == 0) {
+                    MPPT_SetNFactor(atoi(cmdBuffer + 11));
+                    printf("ACK:TUNE_N_OK:%ld\n", MPPT_GetNFactor());
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_MIN:", 13) == 0) {
+                    MPPT_SetMinStep(atoi(cmdBuffer + 13));
+                    printf("ACK:TUNE_MIN_OK:%ld\n", MPPT_GetMinStep());
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_MAX:", 13) == 0) {
+                    MPPT_SetMaxStep(atoi(cmdBuffer + 13));
+                    printf("ACK:TUNE_MAX_OK:%ld\n", MPPT_GetMaxStep());
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_THRESH:", 16) == 0) {
+                    MPPT_SetThreshold((uint32_t)atoi(cmdBuffer + 16));
+                    printf("ACK:TUNE_THRESH_OK:%lu\n", MPPT_GetThreshold());
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_INT:", 13) == 0) {
+                    MPPT_SetInterval((uint32_t)atoi(cmdBuffer + 13));
+                    printf("ACK:TUNE_INT_OK:%lu\n", MPPT_GetInterval());
+                } else if (strncmp(cmdBuffer, "CMD:TUNE_EMA:", 13) == 0) {
+                    SENSORS_SetEmaShift((uint8_t)atoi(cmdBuffer + 13));
+                    printf("ACK:TUNE_EMA_OK:%d\n", SENSORS_GetEmaShift());
+                } else if (strcmp(cmdBuffer, "CMD:TUNE_RESET") == 0) {
+                    POWER_PWM_Set(0);
+                    HAL_Delay(50);
+                    printf("ACK:TUNE_RESET_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
-                    printf("Commands: CAL_ENTER, CAL_EXIT, CAL_MODE_I, CAL_MODE_V, CAL_I_LOW:<mA>, CAL_I_HIGH:<mA>, CAL_V_LOW:<mV>, CAL_V_HIGH:<mV>, CAL_SAVE, SET_V_MAX:<mV>, SET_V_MIN:<mV>, SET_I_MAX:<mA>, LIMITS_SAVE, RESET_FAULT, GET_LIMITS\n");
+                    printf("Commands: CAL_..., SET_..., TUNE_N, TUNE_MIN, TUNE_MAX, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET\n");
                 }
                 
                 cmdIdx = 0;
