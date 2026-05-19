@@ -123,14 +123,14 @@ void COMMS_HandleCommands(void) {
                     SETTINGS_SaveLimits();
                     printf("ACK:LIMITS_SAVE_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:TUNE_N:", 11) == 0) {
-                    MPPT_SetNFactor(atoi(cmdBuffer + 11));
-                    printf("ACK:TUNE_N_OK:%ld\n", MPPT_GetNFactor());
+                    // Ignored (VSS Purged)
+                    printf("ACK:TUNE_N_OK:0\n");
                 } else if (strncmp(cmdBuffer, "CMD:TUNE_MIN:", 13) == 0) {
-                    MPPT_SetMinStep(atoi(cmdBuffer + 13));
-                    printf("ACK:TUNE_MIN_OK:%ld\n", MPPT_GetMinStep());
+                    MPPT_SetStepSize(atoi(cmdBuffer + 13));
+                    printf("ACK:TUNE_MIN_OK:%ld\n", MPPT_GetStepSize());
                 } else if (strncmp(cmdBuffer, "CMD:TUNE_MAX:", 13) == 0) {
-                    MPPT_SetMaxStep(atoi(cmdBuffer + 13));
-                    printf("ACK:TUNE_MAX_OK:%ld\n", MPPT_GetMaxStep());
+                    // Ignored (VSS Purged)
+                    printf("ACK:TUNE_MAX_OK:2000\n");
                 } else if (strncmp(cmdBuffer, "CMD:TUNE_THRESH:", 16) == 0) {
                     MPPT_SetThreshold((uint32_t)atoi(cmdBuffer + 16));
                     printf("ACK:TUNE_THRESH_OK:%lu\n", MPPT_GetThreshold());
@@ -145,7 +145,7 @@ void COMMS_HandleCommands(void) {
                     HAL_Delay(50);
                     printf("ACK:TUNE_RESET_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
-                    printf("Commands: CAL_..., SET_..., TUNE_N, TUNE_MIN, TUNE_MAX, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET\n");
+                    printf("Commands: CAL_..., SET_..., TUNE_STEP, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET\n");
                 }
                 
                 cmdIdx = 0;

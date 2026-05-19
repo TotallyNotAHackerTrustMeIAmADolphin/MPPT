@@ -16,9 +16,7 @@ static bool direction = true;
 static int32_t lastStep = 0;
 
 /* Dynamic Tuning Parameters (Defaults from system_config.h) */
-static int32_t vss_n_factor = VSS_N_FACTOR;
-static int32_t vss_min_step = VSS_MIN_STEP;
-static int32_t vss_max_step = VSS_MAX_STEP;
+static int32_t mppt_step_size = MPPT_STEP_SIZE_TICKS;
 static uint32_t pwr_threshold = POWER_THRESHOLD_UW;
 static uint32_t mppt_interval = MPPT_INTERVAL_MS;
 
@@ -51,35 +49,19 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
         previousPowerIn_uW = m->powerOut_uW;
     }
 
-    // 2. Adaptive Step Size calculation
-    static int64_t lastFramePower = 0;
-    int64_t inst_dP = m->powerOut_uW - lastFramePower;
-    int32_t inst_dP_mW = abs((int32_t)(inst_dP / 1000));
-    lastFramePower = m->powerOut_uW;
-
-    int32_t adaptiveStep = vss_min_step;
-
-    if (inst_dP > 0) {
-        // Power is increasing: Search mode
-        // Scale by N_FACTOR (higher = more aggressive)
-        adaptiveStep = vss_min_step + (inst_dP_mW * vss_n_factor) / 100;
-        if (adaptiveStep > vss_max_step) adaptiveStep = vss_max_step;
-    } else {
-        // Power is flat or dropping: Micro-stepping
-        adaptiveStep = vss_min_step;
-    }
-
-    // 3. Apply Perturbation
+    // 2. Fixed Step Perturbation
     if (direction) {
-        currentDuty += adaptiveStep;
+        currentDuty += mppt_step_size;
     } else {
-        currentDuty -= adaptiveStep;
+        currentDuty -= mppt_step_size;
     }
 
-    // 4. Safety Cap: Limit MPPT to 95% duty cycle
-    if (currentDuty > 1824) currentDuty = 1824;
+    // 3. Safety Cap: Limit MPPT to 95% of the absolute maximum duty cycle
+    int32_t absoluteMax = POWER_PWM_GetMax();
+    int32_t safetyMargin = (absoluteMax * 5) / 100; // 5% margin
+    if (currentDuty > absoluteMax - safetyMargin) currentDuty = absoluteMax - safetyMargin;
 
-    lastStep = adaptiveStep;
+    lastStep = mppt_step_size;
     return currentDuty;
 }
 
@@ -123,14 +105,10 @@ int32_t MPPT_GetLastStep(void) {
     return lastStep;
 }
 
-void MPPT_SetNFactor(int32_t n) { vss_n_factor = n; }
-void MPPT_SetMinStep(int32_t step) { vss_min_step = step; }
-void MPPT_SetMaxStep(int32_t step) { vss_max_step = step; }
+void MPPT_SetStepSize(int32_t step) { mppt_step_size = step; }
 void MPPT_SetThreshold(uint32_t uw) { pwr_threshold = uw; }
 void MPPT_SetInterval(uint32_t ms) { mppt_interval = ms; }
 
-int32_t MPPT_GetNFactor(void) { return vss_n_factor; }
-int32_t MPPT_GetMinStep(void) { return vss_min_step; }
-int32_t MPPT_GetMaxStep(void) { return vss_max_step; }
+int32_t MPPT_GetStepSize(void) { return mppt_step_size; }
 uint32_t MPPT_GetThreshold(void) { return pwr_threshold; }
 uint32_t MPPT_GetInterval(void) { return mppt_interval; }

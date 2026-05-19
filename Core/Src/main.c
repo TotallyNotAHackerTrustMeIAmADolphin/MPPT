@@ -41,12 +41,14 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+IWDG_HandleTypeDef hiwdg;
 
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_IWDG_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -80,6 +82,7 @@ int main(void)
   MX_ADC_Init();
   MX_TIM3_Init();
   MX_TIM6_Init();
+  MX_IWDG_Init();
 
   /* USER CODE BEGIN 2 */
   SETTINGS_Init();
@@ -93,6 +96,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    HAL_IWDG_Refresh(&hiwdg);
     COMMS_HandleCommands();
 
     if (SENSORS_IsBufferReady()) 
@@ -111,6 +115,26 @@ int main(void)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+/**
+  * @brief IWDG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_IWDG_Init(void)
+{
+  /* IWDG clock is LSI (approx 40kHz) */
+  /* Timeout = (Prescaler * Reload) / LSI */
+  /* Timeout = (64 * 625) / 40000 = 1.0 seconds */
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_64;
+  hiwdg.Init.Window = IWDG_WINDOW_DISABLE;
+  hiwdg.Init.Reload = 625;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
