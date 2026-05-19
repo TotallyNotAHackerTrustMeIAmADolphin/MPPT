@@ -30,10 +30,10 @@
 #define MIN_INPUT_VOLTAGE_MPPT_MV 14000
 
 // --- VSS Adaptive P&O Constants ---
-#define VSS_N_FACTOR          4      // Multiplier for |dP/dV| slope
-#define VSS_MIN_STEP          1      // Smallest allowed step (ticks)
-#define VSS_MAX_STEP          25     // Largest allowed step (ticks)
-#define VSS_VOLTAGE_DEADBAND  40     // mV deadband for dV noise
+#define VSS_N_FACTOR          1      // Ultra-conservative multiplier
+#define VSS_MIN_STEP          1      // 1 tick micro-stepping
+#define VSS_MAX_STEP          8      // Max jump reduced to 8 ticks (~0.4%)
+#define VSS_VOLTAGE_DEADBAND  50     // 50mV noise floor
 
 // --- Sensor Physics ---
 #define V_REF_INT_X1000       1200 // 1.2V * 1000

@@ -37,4 +37,9 @@ void MPPT_ResetSweep(void);
  */
 void MPPT_StartTracking(const Measurements_t *m);
 
+/**
+ * @brief Returns the last calculated adaptive step size (ticks).
+ */
+int32_t MPPT_GetLastStep(void);
+
 #endif /* __MPPT_H */

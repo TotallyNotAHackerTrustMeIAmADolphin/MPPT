@@ -14,6 +14,7 @@
 static int64_t previousPowerIn_uW = 0;
 static int32_t previousVoltageIn_mV = 0;
 static bool direction = true;
+static int32_t lastStep = 0;
 
 /* Sweep variables */
 static int32_t sweepDutyCycle = 0;
@@ -63,6 +64,8 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
         currentDuty -= adaptiveStep;
     }
 
+    lastStep = adaptiveStep;
+
     return currentDuty;
 }
 
@@ -99,4 +102,8 @@ void MPPT_ResetSweep(void) {
 void MPPT_StartTracking(const Measurements_t *m) {
     previousPowerIn_uW = m->powerIn_uW;
     previousVoltageIn_mV = m->voltageIn_mV;
+}
+
+int32_t MPPT_GetLastStep(void) {
+    return lastStep;
 }
