@@ -27,6 +27,12 @@ static int32_t f_vOut_raw_fp = 0;
 static int32_t f_aIn_raw_fp = 0;
 static int32_t f_aOut_raw_fp = 0;
 
+/* Slow filters for Dashboard/Calibration UI (higher stability, more lag) */
+static int32_t f_vIn_slow_fp = 0;
+static int32_t f_vOut_slow_fp = 0;
+static int32_t f_aIn_slow_fp = 0;
+static int32_t f_aOut_slow_fp = 0;
+
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
     HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
@@ -45,12 +51,13 @@ const Measurements_t* SENSORS_GetMeasurements(void) {
 }
 
 void SENSORS_GetRawSums(uint32_t *vIn, uint32_t *vOut, uint32_t *aIn, uint32_t *aOut) {
-    // Returns the filtered sum of 64 samples
-    *vIn = (uint32_t)(f_vIn_raw_fp >> FILTER_SHIFT);
-    *vOut = (uint32_t)(f_vOut_raw_fp >> FILTER_SHIFT);
-    *aIn = (uint32_t)(f_aIn_raw_fp >> FILTER_SHIFT);
-    *aOut = (uint32_t)(f_aOut_raw_fp >> FILTER_SHIFT);
+    // Returns the SLOW filtered sum of 64 samples for UI stability
+    *vIn = (uint32_t)(f_vIn_slow_fp >> FILTER_SHIFT);
+    *vOut = (uint32_t)(f_vOut_slow_fp >> FILTER_SHIFT);
+    *aIn = (uint32_t)(f_aIn_slow_fp >> FILTER_SHIFT);
+    *aOut = (uint32_t)(f_aOut_slow_fp >> FILTER_SHIFT);
 }
+
 
 void SENSORS_Process(uint16_t offset) {
     const Calibration_t *cal = SETTINGS_GetCalibration();
@@ -73,23 +80,27 @@ void SENSORS_Process(uint16_t offset) {
 
     // 1. Initialize filters on first run to avoid slow ramp-up
     if (f_vIn_raw_fp == 0 && voltIn_sum > 0) {
-        f_vIn_raw_fp = (int32_t)voltIn_sum << FILTER_SHIFT;
-        f_vOut_raw_fp = (int32_t)voltOut_sum << FILTER_SHIFT;
-        f_aIn_raw_fp = (int32_t)ampIn_sum << FILTER_SHIFT;
-        f_aOut_raw_fp = (int32_t)ampOut_sum << FILTER_SHIFT;
+        f_vIn_raw_fp = f_vIn_slow_fp = (int32_t)voltIn_sum << FILTER_SHIFT;
+        f_vOut_raw_fp = f_vOut_slow_fp = (int32_t)voltOut_sum << FILTER_SHIFT;
+        f_aIn_raw_fp = f_aIn_slow_fp = (int32_t)ampIn_sum << FILTER_SHIFT;
+        f_aOut_raw_fp = f_aOut_slow_fp = (int32_t)ampOut_sum << FILTER_SHIFT;
     }
 
     // 2. Apply High-Precision EMA filtering
-    // f_new = f_old + (input << shift - f_old) >> alpha_shift
-    // Alpha = 1/8 (shift 3)
-    f_vIn_raw_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_raw_fp) >> 3;
-    f_vOut_raw_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_raw_fp) >> 3;
-    f_aIn_raw_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_raw_fp) >> 3;
-    f_aOut_raw_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_raw_fp) >> 3;
+    
+    // Fast filter: Alpha = 0.5 (shift 1) for MPPT/Control Loop (low lag)
+    f_vIn_raw_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_raw_fp) >> 1;
+    f_vOut_raw_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_raw_fp) >> 1;
+    f_aIn_raw_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_raw_fp) >> 1;
+    f_aOut_raw_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_raw_fp) >> 1;
 
-    // 3. Extract high-precision average (scaled by 1000 for millivolts)
-    // We have: FilteredSum * 1024. We want: (FilteredSum / samples_per_half) * 1000
-    // To stay in 64-bit space for precision:
+    // Slow filter: Alpha = 0.0625 (shift 4) for Dashboard/Calibration (high stability)
+    f_vIn_slow_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_slow_fp) >> 4;
+    f_vOut_slow_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_slow_fp) >> 4;
+    f_aIn_slow_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_slow_fp) >> 4;
+    f_aOut_slow_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_slow_fp) >> 4;
+
+    // 3. Extract high-precision average from FAST filter for control loop
     int64_t v_in_avg_x1000 = ((int64_t)f_vIn_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
     int64_t v_out_avg_x1000 = ((int64_t)f_vOut_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
     int64_t a_in_avg_x1000 = ((int64_t)f_aIn_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
