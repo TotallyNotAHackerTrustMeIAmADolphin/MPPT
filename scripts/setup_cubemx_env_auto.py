@@ -92,7 +92,7 @@ for linked_resource in project_root.findall(".//linkedResources/link"):
         virtual_dirs.append(linkedName)
         continue
     # It's a relative path?
-    m = re.match("PARENT-(\d+)-PROJECT_LOC(.*)$", linkedURI)
+    m = re.match(r"PARENT-(\d+)-PROJECT_LOC(.*)$", linkedURI)
     if m is not None:
         parent_level = int(m.group(1))
         current_dir = project_dir + "/.." * parent_level
@@ -191,7 +191,7 @@ for include_entry in tool_chain.findall(".//option[@superClass='com.st.stm32cube
     inc_dir = include_entry.get('value')
     # add project-related paths e.g., Middleware-directores
     inc_dir = re.sub(
-        '"\$\{workspace_loc:/\$\{ProjName\}(.*)}"', ws_replacement, inc_dir)
+        r'"\$\{workspace_loc:/\$\{ProjName\}(.*)}"', ws_replacement, inc_dir)
     # Fix references to Core
     inc_dir = inc_dir.replace("../", "", 1)
     # print(inc_dir)
@@ -285,7 +285,7 @@ ld_script = None
 if ld_script_entry != None:
     ld_script_entry = ld_script_entry.get("value")
     ld_script = re.search(
-        '\$\{workspace_loc:/\$\{ProjName\}/(.+)\}', ld_script_entry)
+        r'\$\{workspace_loc:/\$\{ProjName\}/(.+)\}', ld_script_entry)
 
 if ld_script_entry != None and ld_script != None:
     ld_script = ld_script.group(1)
