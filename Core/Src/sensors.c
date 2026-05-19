@@ -12,16 +12,20 @@
 #include "main.h"
 #include <string.h>
 
+/* Private constants */
+#define FILTER_SHIFT 10  // 10 bits of fractional precision for EMA
+
 /* Private variables (Encapsulated) */
 static volatile uint16_t adc_buf[ADC_BUF_LEN];
 static volatile uint8_t bufferFull = 0;
 static Measurements_t measurements;
 
 /* Filter states for software low-pass filtering (EMA) on RAW ADC values */
-static int32_t f_vIn_raw = 0;
-static int32_t f_vOut_raw = 0;
-static int32_t f_aIn_raw = 0;
-static int32_t f_aOut_raw = 0;
+/* These are scaled by (1 << FILTER_SHIFT) */
+static int32_t f_vIn_raw_fp = 0;
+static int32_t f_vOut_raw_fp = 0;
+static int32_t f_aIn_raw_fp = 0;
+static int32_t f_aOut_raw_fp = 0;
 
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
@@ -41,11 +45,11 @@ const Measurements_t* SENSORS_GetMeasurements(void) {
 }
 
 void SENSORS_GetRawSums(uint32_t *vIn, uint32_t *vOut, uint32_t *aIn, uint32_t *aOut) {
-    const int32_t samples_per_half = ADC_SAMPLE_COUNT / 2;
-    *vIn = (uint32_t)(f_vIn_raw / samples_per_half);
-    *vOut = (uint32_t)(f_vOut_raw / samples_per_half);
-    *aIn = (uint32_t)(f_aIn_raw / samples_per_half);
-    *aOut = (uint32_t)(f_aOut_raw / samples_per_half);
+    // Returns the filtered sum of 64 samples
+    *vIn = (uint32_t)(f_vIn_raw_fp >> FILTER_SHIFT);
+    *vOut = (uint32_t)(f_vOut_raw_fp >> FILTER_SHIFT);
+    *aIn = (uint32_t)(f_aIn_raw_fp >> FILTER_SHIFT);
+    *aOut = (uint32_t)(f_aOut_raw_fp >> FILTER_SHIFT);
 }
 
 void SENSORS_Process(uint16_t offset) {
@@ -67,28 +71,31 @@ void SENSORS_Process(uint16_t offset) {
 
     const int32_t samples_per_half = ADC_SAMPLE_COUNT / 2;
 
-    // 1. Initialize filters on first run
-    if (f_vIn_raw == 0 && voltIn_sum > 0) {
-        f_vIn_raw = voltIn_sum * samples_per_half;
-        f_vOut_raw = voltOut_sum * samples_per_half;
-        f_aIn_raw = ampIn_sum * samples_per_half;
-        f_aOut_raw = ampOut_sum * samples_per_half;
+    // 1. Initialize filters on first run to avoid slow ramp-up
+    if (f_vIn_raw_fp == 0 && voltIn_sum > 0) {
+        f_vIn_raw_fp = (int32_t)voltIn_sum << FILTER_SHIFT;
+        f_vOut_raw_fp = (int32_t)voltOut_sum << FILTER_SHIFT;
+        f_aIn_raw_fp = (int32_t)ampIn_sum << FILTER_SHIFT;
+        f_aOut_raw_fp = (int32_t)ampOut_sum << FILTER_SHIFT;
     }
 
-    // 2. Apply EMA filtering to RAW sums (scaled up to maintain precision)
-    // Shift of 3 (alpha = 0.125) for high stability
-    f_vIn_raw += ((int32_t)voltIn_sum - (f_vIn_raw / samples_per_half)) >> 3;
-    f_vOut_raw += ((int32_t)voltOut_sum - (f_vOut_raw / samples_per_half)) >> 3;
-    f_aIn_raw += ((int32_t)ampIn_sum - (f_aIn_raw / samples_per_half)) >> 3;
-    f_aOut_raw += ((int32_t)ampOut_sum - (f_aOut_raw / samples_per_half)) >> 3;
+    // 2. Apply High-Precision EMA filtering
+    // f_new = f_old + (input << shift - f_old) >> alpha_shift
+    // Alpha = 1/8 (shift 3)
+    f_vIn_raw_fp += (((int32_t)voltIn_sum << FILTER_SHIFT) - f_vIn_raw_fp) >> 3;
+    f_vOut_raw_fp += (((int32_t)voltOut_sum << FILTER_SHIFT) - f_vOut_raw_fp) >> 3;
+    f_aIn_raw_fp += (((int32_t)ampIn_sum << FILTER_SHIFT) - f_aIn_raw_fp) >> 3;
+    f_aOut_raw_fp += (((int32_t)ampOut_sum << FILTER_SHIFT) - f_aOut_raw_fp) >> 3;
 
-    // 3. Derived Filtered Values for internal use
-    int64_t v_in_avg_x1000 = ((int64_t)f_vIn_raw * 1000) / (samples_per_half * samples_per_half);
-    int64_t v_out_avg_x1000 = ((int64_t)f_vOut_raw * 1000) / (samples_per_half * samples_per_half);
-    int64_t a_in_avg_x1000 = ((int64_t)f_aIn_raw * 1000) / (samples_per_half * samples_per_half);
-    int64_t a_out_avg_x1000 = ((int64_t)f_aOut_raw * 1000) / (samples_per_half * samples_per_half);
+    // 3. Extract high-precision average (scaled by 1000 for millivolts)
+    // We have: FilteredSum * 1024. We want: (FilteredSum / samples_per_half) * 1000
+    // To stay in 64-bit space for precision:
+    int64_t v_in_avg_x1000 = ((int64_t)f_vIn_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
+    int64_t v_out_avg_x1000 = ((int64_t)f_vOut_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
+    int64_t a_in_avg_x1000 = ((int64_t)f_aIn_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
+    int64_t a_out_avg_x1000 = ((int64_t)f_aOut_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
 
-    // 4. Scaling to SI units (mV, mA) using filtered values
+    // 4. Scaling to SI units (mV, mA) using the high-precision filtered values
     measurements.voltageIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal->vInRawLow * 1000) * 
         ((int32_t)cal->vInRealHigh_mV - (int32_t)cal->vInRealLow_mV) / 
         ((int32_t)cal->vInRawHigh - (int32_t)cal->vInRawLow) / 1000 + cal->vInRealLow_mV);
@@ -105,7 +112,7 @@ void SENSORS_Process(uint16_t offset) {
         ((int32_t)cal->aOutRealHigh_mA - (int32_t)cal->aOutRealLow_mA) / 
         ((int32_t)cal->aOutRawHigh - (int32_t)cal->aOutRawLow) / 1000 + cal->aOutRealLow_mA);
 
-    // Temperature and Power
+    // 5. Temperature and Power (Non-filtered raw sums are fine for temperature)
     measurements.tempMosfets_C_x100 = (int32_t)((int64_t)tempMofets_sum * 100 / samples_per_half);
     
     int32_t mcu_adc_avg = tempMCU_sum / samples_per_half;
