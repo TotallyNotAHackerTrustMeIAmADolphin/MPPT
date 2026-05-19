@@ -24,6 +24,12 @@ static int32_t f_vOut_mV = 0;
 static int32_t f_aIn_mA = 0;
 static int32_t f_aOut_mA = 0;
 
+/* Filter states for RAW ADC values (used during calibration) */
+static int32_t f_vIn_raw = 0;
+static int32_t f_vOut_raw = 0;
+static int32_t f_aIn_raw = 0;
+static int32_t f_aOut_raw = 0;
+
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
     HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
@@ -42,10 +48,10 @@ const Measurements_t* SENSORS_GetMeasurements(void) {
 }
 
 void SENSORS_GetRawSums(uint32_t *vIn, uint32_t *vOut, uint32_t *aIn, uint32_t *aOut) {
-    *vIn = vInRawSum;
-    *vOut = vOutRawSum;
-    *aIn = aInRawSum;
-    *aOut = aOutRawSum;
+    *vIn = (uint32_t)(f_vIn_raw / (ADC_SAMPLE_COUNT / 2));
+    *vOut = (uint32_t)(f_vOut_raw / (ADC_SAMPLE_COUNT / 2));
+    *aIn = (uint32_t)(f_aIn_raw / (ADC_SAMPLE_COUNT / 2));
+    *aOut = (uint32_t)(f_aOut_raw / (ADC_SAMPLE_COUNT / 2));
 }
 
 void SENSORS_Process(uint16_t offset) {
@@ -56,7 +62,7 @@ void SENSORS_Process(uint16_t offset) {
 
     uint16_t end = offset + (ADC_BUF_LEN / 2);
     
-    vInRawSum = 0; vOutRawSum = 0; aInRawSum = 0; aOutRawSum = 0;
+    uint32_t vInSum = 0, vOutSum = 0, aInSum = 0, aOutSum = 0;
 
     for (int i = offset; i < end; i += ADC_CHANNEL_COUNT) {
         voltIn_temp += adc_buf[i];
@@ -66,13 +72,26 @@ void SENSORS_Process(uint16_t offset) {
         tempMofets_temp += adc_buf[i + 4];
         tempMCU_temp += adc_buf[i + 5];
 
-        vInRawSum += adc_buf[i];
-        aInRawSum += adc_buf[i + 1];
-        vOutRawSum += adc_buf[i + 2];
-        aOutRawSum += adc_buf[i + 3];
+        vInSum += adc_buf[i];
+        aInSum += adc_buf[i + 1];
+        vOutSum += adc_buf[i + 2];
+        aOutSum += adc_buf[i + 3];
     }
 
     const int32_t samples_per_half = ADC_SAMPLE_COUNT / 2;
+
+    // Apply EMA filtering to RAW sums (scaled up by samples_per_half to maintain precision)
+    // Using alpha=0.125 (shift 3) for smooth calibration values
+    f_vIn_raw += ((int32_t)vInSum - (f_vIn_raw / samples_per_half)) >> 3;
+    f_vOut_raw += ((int32_t)vOutSum - (f_vOut_raw / samples_per_half)) >> 3;
+    f_aIn_raw += ((int32_t)aInSum - (f_aIn_raw / samples_per_half)) >> 3;
+    f_aOut_raw += ((int32_t)aOutSum - (f_aOut_raw / samples_per_half)) >> 3;
+
+    // Update the raw sums used for GetRawSums
+    vInRawSum = (uint32_t)(f_vIn_raw / samples_per_half);
+    vOutRawSum = (uint32_t)(f_vOut_raw / samples_per_half);
+    aInRawSum = (uint32_t)(f_aIn_raw / samples_per_half);
+    aOutRawSum = (uint32_t)(f_aOut_raw / samples_per_half);
 
     // Scaling for Voltages (mV)
     int64_t v_in_avg_x1000 = ((int64_t)voltIn_temp * 1000) / samples_per_half;
