@@ -10,7 +10,6 @@
     <header>
         <h1>MPPT Controller Dashboard <span style="font-size: 0.4em; vertical-align: middle; opacity: 0.6;">v1.1</span></h1>
         <div style="display: flex; align-items: center;">
-            <button id="startCalBtn" style="margin-right: 10px; background-color: var(--accent-color);">Start Calibration</button>
             <button id="connectBtn">Connect to Device</button>
             <span id="status" class="disconnected" style="margin-left: 10px;">Disconnected</span>
             <span id="state-badge" style="display: none;">OFFLINE</span>
@@ -75,105 +74,101 @@
             </form>
         </section>
 
+        <section id="calibration-launch">
+            <h2>Calibration</h2>
+            <p style="font-size: 0.9em; color: #aaa; margin-bottom: 15px;">Note: Board must remain powered during each individual calibration flow.</p>
+            <div class="button-group">
+                <button id="startVoltCalBtn" class="accent">Calibrate Voltage</button>
+                <button id="startCurrCalBtn" class="accent">Calibrate Current</button>
+            </div>
+        </section>
+
         <section id="wizard-container" style="display: none;">
             <div class="wizard-card">
-                <div id="wizard-step-1" class="wizard-step">
-                    <h2>Calibration Wizard</h2>
-                    <p>This wizard will guide you through calibrating the voltage and current sensors. Please ensure you have a variable power supply and an electronic load ready.</p>
-                    <div class="alert info">Note: System safety limits are still active, but may trigger early if sensors are way out of calibration.</div>
-                    <button onclick="wizNext(1)" class="primary">Start Wizard</button>
+                <!-- Voltage Calibration Flow -->
+                <div id="step-v-1" class="wizard-step" style="display: none;">
+                    <h2>Voltage Calibration</h2>
+                    <p>Connect your power supply to <b>both the input and output</b> terminals.</p>
+                    <p>Adjust the supply to exactly <b>15.0 V</b> (or close to it).</p>
+                    <div class="alert info">Note: Ensure the bridge is solid before proceeding.</div>
+                    <button onclick="wizShowStep('v', 2)" class="primary">Next</button>
                     <button onclick="wizClose()" class="secondary">Cancel</button>
                 </div>
 
-                <div id="wizard-step-2" class="wizard-step" style="display: none;">
-                    <h2>Step 1: Voltage Calibration (Low Point)</h2>
-                    <p>Connect your power supply to <b>both the input and output</b> terminals.</p>
-                    <p>Adjust the supply to exactly <b>15.0 V</b> (or close to it).</p>
+                <div id="step-v-2" class="wizard-step" style="display: none;">
+                    <h2>Step 1: Voltage Low Point</h2>
+                    <p>Set supply to <b>~15.0 V</b> and enter the exact reading:</p>
                     <div class="form-group">
-                        <label>Measured Multimeter Voltage (V):</label>
+                        <label>Multimeter Voltage (V):</label>
                         <input type="number" step="0.001" id="wiz_V_low" value="15.000">
                     </div>
                     <div class="live-raw">
-                        Vin Raw: <span id="wiz_Vin_raw">0</span> | Vout Raw: <span id="wiz_Vout_raw">0</span>
+                        Vin Raw: <span id="wiz_Vin_raw_v1">0</span> | Vout Raw: <span id="wiz_Vout_raw_v1">0</span>
                     </div>
                     <button onclick="wizRecord('V_LOW')" class="primary">Record & Next</button>
                     <button onclick="wizClose()" class="secondary">Abort</button>
                 </div>
 
-                <div id="wizard-step-3" class="wizard-step" style="display: none;">
-                    <h2>Step 2: Voltage Calibration (High Point)</h2>
-                    <p>Increase your power supply voltage to exactly <b>24.0 V</b> (or close to it).</p>
+                <div id="step-v-3" class="wizard-step" style="display: none;">
+                    <h2>Step 2: Voltage High Point</h2>
+                    <p>Set supply to <b>~24.0 V</b> and enter the exact reading:</p>
                     <div class="form-group">
-                        <label>Measured Multimeter Voltage (V):</label>
+                        <label>Multimeter Voltage (V):</label>
                         <input type="number" step="0.001" id="wiz_V_high" value="24.000">
                     </div>
                     <div class="live-raw">
-                        Vin Raw: <span id="wiz_Vin_raw_2">0</span> | Vout Raw: <span id="wiz_Vout_raw_2">0</span>
+                        Vin Raw: <span id="wiz_Vin_raw_v2">0</span> | Vout Raw: <span id="wiz_Vout_raw_v2">0</span>
                     </div>
                     <button onclick="wizRecord('V_HIGH')" class="primary">Record & Next</button>
-                    <button onclick="wizBack(2)" class="secondary">Back</button>
+                    <button onclick="wizShowStep('v', 2)" class="secondary">Back</button>
                 </div>
 
-                <div id="wizard-step-4" class="wizard-step" style="display: none;">
-                    <h2>Safety: Change Wiring</h2>
-                    <p class="alert info"><b>STOP!</b> Before proceeding to current calibration, you MUST change your wiring.</p>
-                    <p>1. <b>Disconnect</b> the bridge between Input and Output terminals.</p>
-                    <p>2. Connect your power supply to the <b>Input</b> terminals.</p>
-                    <p>3. Connect your electronic load to the <b>Output</b> terminals.</p>
-                    <p>The MOSFETs are currently <b>OFF</b> for your safety.</p>
-                    <button onclick="wizEnableCurrentMode()" class="primary">Wiring is Ready - Enable Pass-through</button>
-                    <button onclick="wizBack(3)" class="secondary">Back</button>
+                <div id="step-v-4" class="wizard-step" style="display: none;">
+                    <h2>Voltage Calibration Complete!</h2>
+                    <p>Click below to save the voltage calibration to EEPROM.</p>
+                    <button onclick="wizFinish()" class="primary">Save & Exit</button>
                 </div>
 
-                <div id="wizard-step-5" class="wizard-step" style="display: none;">
-                    <h2>Step 3: Current Calibration (Low Point)</h2>
+                <!-- Current Calibration Flow -->
+                <div id="step-i-1" class="wizard-step" style="display: none;">
+                    <h2>Current Calibration</h2>
                     <p>Connect supply to <b>Input</b> and an electronic load to <b>Output</b>.</p>
-                    <p>The device is now in <b>Pass-through mode</b> (High-side MOSFETs ON).</p>
-                    <p>Set your load to exactly <b>0.50 A</b> (or close to it).</p>
+                    <p><b>WARNING:</b> Clicking 'Next' will activate <b>Pass-through mode</b> (MOSFETs ON).</p>
+                    <button onclick="wizEnableCurrentModeFlow()" class="primary">Next (Enable Pass-through)</button>
+                    <button onclick="wizClose()" class="secondary">Cancel</button>
+                </div>
+
+                <div id="step-i-2" class="wizard-step" style="display: none;">
+                    <h2>Step 1: Current Low Point</h2>
+                    <p>Set load to <b>~0.50 A</b> and enter the exact reading:</p>
                     <div class="form-group">
-                        <label>Measured Multimeter Current (A):</label>
+                        <label>Multimeter Current (A):</label>
                         <input type="number" step="0.001" id="wiz_I_low" value="0.500">
                     </div>
                     <div class="live-raw">
-                        Ain Raw: <span id="wiz_Ain_raw">0</span> | Aout Raw: <span id="wiz_Aout_raw">0</span>
+                        Ain Raw: <span id="wiz_Ain_raw_i1">0</span> | Aout Raw: <span id="wiz_Aout_raw_i1">0</span>
                     </div>
                     <button onclick="wizRecord('I_LOW')" class="primary">Record & Next</button>
                     <button onclick="wizClose()" class="secondary">Abort</button>
                 </div>
 
-                <div id="wizard-step-5" class="wizard-step" style="display: none;">
-                    <h2>Step 3: Current Calibration (Low Point)</h2>
-                    <p>Connect supply to <b>Input</b> and an electronic load to <b>Output</b>.</p>
-                    <p>The device is now in <b>Pass-through mode</b> (High-side MOSFETs ON).</p>
-                    <p>Set your load to exactly <b>0.50 A</b> (or close to it).</p>
+                <div id="step-i-3" class="wizard-step" style="display: none;">
+                    <h2>Step 2: Current High Point</h2>
+                    <p>Set load to <b>~2.00 A</b> and enter the exact reading:</p>
                     <div class="form-group">
-                        <label>Measured Multimeter Current (A):</label>
-                        <input type="number" step="0.001" id="wiz_I_low" value="0.500">
-                    </div>
-                    <div class="live-raw">
-                        Ain Raw: <span id="wiz_Ain_raw">0</span> | Aout Raw: <span id="wiz_Aout_raw">0</span>
-                    </div>
-                    <button onclick="wizRecord('I_LOW')" class="primary">Record & Next</button>
-                    <button onclick="wizClose()" class="secondary">Abort</button>
-                </div>
-
-                <div id="wizard-step-6" class="wizard-step" style="display: none;">
-                    <h2>Step 4: Current Calibration (High Point)</h2>
-                    <p>Increase your load to exactly <b>2.00 A</b> (or close to it).</p>
-                    <div class="form-group">
-                        <label>Measured Multimeter Current (A):</label>
+                        <label>Multimeter Current (A):</label>
                         <input type="number" step="0.001" id="wiz_I_high" value="2.000">
                     </div>
                     <div class="live-raw">
-                        Ain Raw: <span id="wiz_Ain_raw_2">0</span> | Aout Raw: <span id="wiz_Aout_raw_2">0</span>
+                        Ain Raw: <span id="wiz_Ain_raw_i2">0</span> | Aout Raw: <span id="wiz_Aout_raw_i2">0</span>
                     </div>
                     <button onclick="wizRecord('I_HIGH')" class="primary">Record & Next</button>
-                    <button onclick="wizBack(5)" class="secondary">Back</button>
+                    <button onclick="wizShowStep('i', 2)" class="secondary">Back</button>
                 </div>
 
-                <div id="wizard-step-7" class="wizard-step" style="display: none;">
-                    <h2>Calibration Complete!</h2>
-                    <p>All points have been recorded. Click below to save these values to the device's EEPROM and exit calibration mode.</p>
+                <div id="step-i-4" class="wizard-step" style="display: none;">
+                    <h2>Current Calibration Complete!</h2>
+                    <p>Click below to save the current calibration to EEPROM.</p>
                     <button onclick="wizFinish()" class="primary">Save & Exit</button>
                 </div>
             </div>

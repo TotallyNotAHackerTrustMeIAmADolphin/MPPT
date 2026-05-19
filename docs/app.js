@@ -12,12 +12,14 @@ const status = document.getElementById('status');
 const log = document.getElementById('log');
 const resetFaultBtn = document.getElementById('resetFaultBtn');
 const faultReasonSpan = document.getElementById('fault-reason');
-const startCalBtn = document.getElementById('startCalBtn');
+const startVoltCalBtn = document.getElementById('startVoltCalBtn');
+const startCurrCalBtn = document.getElementById('startCurrCalBtn');
 const wizardContainer = document.getElementById('wizard-container');
 
 // Limits buttons
 const saveLimitsBtn = document.getElementById('saveLimitsBtn');
 
+let currentWizMode = 'v'; // 'v' or 'i'
 let currentWizStep = 1;
 
 connectBtn.addEventListener('click', async () => {
@@ -203,23 +205,22 @@ function updateLimitsUI(data) {
 function updateCalibrationUI(data) {
     // Route raw ADC values to wizard if open
     if (wizardContainer.style.display === 'flex') {
-        const vinEl = document.getElementById('wiz_Vin_raw');
-        const voutEl = document.getElementById('wiz_Vout_raw');
-        const vinEl2 = document.getElementById('wiz_Vin_raw_2');
-        const voutEl2 = document.getElementById('wiz_Vout_raw_2');
-        const ainEl = document.getElementById('wiz_Ain_raw');
-        const aoutEl = document.getElementById('wiz_Aout_raw');
-        const ainEl2 = document.getElementById('wiz_Ain_raw_2');
-        const aoutEl2 = document.getElementById('wiz_Aout_raw_2');
-
-        if (vinEl) vinEl.textContent = data.Vin_raw;
-        if (voutEl) voutEl.textContent = data.Vout_raw;
-        if (vinEl2) vinEl2.textContent = data.Vin_raw;
-        if (voutEl2) voutEl2.textContent = data.Vout_raw;
-        if (ainEl) ainEl.textContent = data.Ain_raw;
-        if (aoutEl) aoutEl.textContent = data.Aout_raw;
-        if (ainEl2) ainEl2.textContent = data.Ain_raw;
-        if (aoutEl2) aoutEl2.textContent = data.Aout_raw;
+        const ids = [
+            'wiz_Vin_raw_v1', 'wiz_Vout_raw_v1',
+            'wiz_Vin_raw_v2', 'wiz_Vout_raw_v2',
+            'wiz_Ain_raw_i1', 'wiz_Aout_raw_i1',
+            'wiz_Ain_raw_i2', 'wiz_Aout_raw_i2'
+        ];
+        
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (id.includes('Vin')) el.textContent = data.Vin_raw;
+                if (id.includes('Vout')) el.textContent = data.Vout_raw;
+                if (id.includes('Ain')) el.textContent = data.Ain_raw;
+                if (id.includes('Aout')) el.textContent = data.Aout_raw;
+            }
+        });
     }
 }
 
@@ -250,37 +251,50 @@ window.sendLimit = async (cmdPrefix, inputId) => {
 };
 
 // Wizard Handlers
-startCalBtn.addEventListener('click', () => {
+startVoltCalBtn.addEventListener('click', () => {
     if (!port) {
         alert('Please connect to the device first.');
         return;
     }
+    currentWizMode = 'v';
     currentWizStep = 1;
-    showStep(1);
-    wizardContainer.style.display = 'flex';
     sendCommand('CMD:CAL_ENTER');
     sendCommand('CMD:CAL_MODE_V');
+    wizShowStep('v', 1);
+    wizardContainer.style.display = 'flex';
 });
 
-function showStep(step) {
-    document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
-    document.getElementById('wizard-step-' + step).style.display = 'block';
-    currentWizStep = step;
-}
+startCurrCalBtn.addEventListener('click', () => {
+    if (!port) {
+        alert('Please connect to the device first.');
+        return;
+    }
+    currentWizMode = 'i';
+    currentWizStep = 1;
+    sendCommand('CMD:CAL_ENTER');
+    // We don't send MODE_I yet, only after intro step
+    wizShowStep('i', 1);
+    wizardContainer.style.display = 'flex';
+});
 
-window.wizNext = (step) => showStep(step + 1);
-window.wizBack = (step) => showStep(step - 1);
+window.wizShowStep = (mode, step) => {
+    document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
+    const stepEl = document.getElementById(`step-${mode}-${step}`);
+    if (stepEl) stepEl.style.display = 'block';
+    currentWizMode = mode;
+    currentWizStep = step;
+};
+
+window.wizEnableCurrentModeFlow = async () => {
+    await sendCommand('CMD:CAL_MODE_I');
+    wizShowStep('i', 2);
+};
 
 window.wizClose = async () => {
     if (confirm('Are you sure you want to abort calibration?')) {
         await sendCommand('CMD:CAL_EXIT');
         wizardContainer.style.display = 'none';
     }
-};
-
-window.wizEnableCurrentMode = async () => {
-    await sendCommand('CMD:CAL_MODE_I');
-    wizNext(currentWizStep);
 };
 
 window.wizRecord = async (point) => {
@@ -300,7 +314,7 @@ window.wizRecord = async (point) => {
     const valueInt = Math.round(parseFloat(value) * multiplier);
     await sendCommand(`${cmdPrefix}:${valueInt}`);
 
-    wizNext(currentWizStep);
+    wizShowStep(currentWizMode, currentWizStep + 1);
 };
 
 window.wizFinish = async () => {
