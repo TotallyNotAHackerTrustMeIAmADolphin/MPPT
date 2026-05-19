@@ -77,11 +77,13 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
 }
 
 void POWER_PID_Compute(PID_t *pid) {
-    int32_t error = pid->setPoint - *pid->input;
+    int32_t input = *pid->input;
+    int32_t error = pid->setPoint - input;
     
-    // Velocity PID form (PI only)
-    // delta_output = Kp * (error - previousError) + Ki * error
-    int64_t delta = (int64_t)pid->Kp * (error - pid->previousError) + (int64_t)pid->Ki * error;
+    // Velocity PID form with Derivative-on-Input
+    // delta_output = Ki * error - Kp * (input - previousInput)
+    // This form avoids 'proportional kick' when the setpoint changes.
+    int64_t delta = (int64_t)pid->Ki * error - (int64_t)pid->Kp * (input - pid->previousInput);
 
     // Use pid->integral as a high-resolution duty cycle accumulator (x1000)
     pid->integral += delta;
@@ -97,6 +99,7 @@ void POWER_PID_Compute(PID_t *pid) {
     *pid->output = (int32_t)(pid->integral / 1000);
 
     pid->previousError = error;
+    pid->previousInput = input;
 }
 
 int32_t POWER_PWM_Get(void) {

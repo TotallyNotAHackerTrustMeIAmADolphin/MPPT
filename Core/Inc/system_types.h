@@ -49,6 +49,7 @@ typedef struct
   int32_t Ki;
   int32_t Kd;
   int32_t previousError;
+  int32_t previousInput;
   int64_t integral;
   int32_t setPoint;
   int32_t *input;      // Pointer to the measured value (e.g. voltageOut_mV)

@@ -41,10 +41,12 @@ static void transitionTo(SystemState_t newState) {
         case STATE_CV:
             pidCV.integral = (int64_t)targetDuty_ticks * 1000;
             pidCV.previousError = 0;
+            pidCV.previousInput = *pidCV.input;
             break;
         case STATE_CC:
             pidCC.integral = (int64_t)targetDuty_ticks * 1000;
             pidCC.previousError = 0;
+            pidCC.previousInput = *pidCC.input;
             break;
         case STATE_IDLE:
             currentFaultReason = FAULT_REASON_NONE;
@@ -76,7 +78,9 @@ void CONTROLLER_Init(void) {
 
     // Initialize PID controllers (tuned for 200Hz high-rate task using Velocity PI)
     pidCV.Kp = 10; pidCV.Ki = 2; pidCV.Kd = 0;
-    pidCV.previousError = 0; pidCV.integral = 0;
+    pidCV.previousError = 0; 
+    pidCV.previousInput = m->voltageOut_mV;
+    pidCV.integral = 0;
     pidCV.setPoint = limits->batteryMax_mV;
     pidCV.input = (int32_t*)&m->voltageOut_mV;
     pidCV.output = &targetDuty_ticks;
@@ -85,7 +89,9 @@ void CONTROLLER_Init(void) {
     pidCV.maxOutput = POWER_PWM_GetMax();
 
     pidCC.Kp = 10; pidCC.Ki = 2; pidCC.Kd = 0;
-    pidCC.previousError = 0; pidCC.integral = 0;
+    pidCC.previousError = 0;
+    pidCC.previousInput = m->currentOut_mA;
+    pidCC.integral = 0;
     pidCC.setPoint = limits->chargingCurrent_mA;
     pidCC.input = (int32_t*)&m->currentOut_mA;
     pidCC.output = &targetDuty_ticks;
