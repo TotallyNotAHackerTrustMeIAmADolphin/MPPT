@@ -28,36 +28,33 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
     if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
         currentDuty -= 38; // Back off faster to prevent source collapse
         if (currentDuty < 0) currentDuty = 0;
-        previousPowerIn_uW = m->powerIn_uW;
+        previousPowerIn_uW = m->powerOut_uW; // Track output power for battery
         previousVoltageIn_mV = m->voltageIn_mV;
         return currentDuty;
     }
 
-    int64_t dP = m->powerIn_uW - previousPowerIn_uW;
-    int32_t dV = m->voltageIn_mV - previousVoltageIn_mV;
-    int32_t adaptiveStep = VSS_MIN_STEP;
+    // Calculate change in Output Power (what the battery actually receives)
+    int64_t dP = m->powerOut_uW - previousPowerIn_uW;
+    int32_t dP_mW = (int32_t)(dP / 1000);
 
-    // Calculate Adaptive Step Size based on P-V Slope (|dP/dV|)
-    if (abs(dV) > VSS_VOLTAGE_DEADBAND) {
-        // Step = N * |dP / dV|
-        // To maintain precision in integer math, we work in mW/mV
-        int32_t dP_mW = (int32_t)(dP / 1000);
-        adaptiveStep = (abs(dP_mW) * VSS_N_FACTOR) / abs(dV);
-        
-        // Safety bounds
-        if (adaptiveStep < VSS_MIN_STEP) adaptiveStep = VSS_MIN_STEP;
-        if (adaptiveStep > VSS_MAX_STEP) adaptiveStep = VSS_MAX_STEP;
+    // 1. Direction Logic: Reverse if power dropped
+    // We trust the dual-stage EMA filter to handle the noise
+    if (dP < 0) {
+        direction = !direction;
     }
 
-    // Standard P&O Direction Logic
-    if (abs((int32_t)(dP / 1000)) > (POWER_THRESHOLD_UW / 1000)) {
-        if (dP < 0) {
-            direction = !direction;
-        }
-        previousPowerIn_uW = m->powerIn_uW;
-        previousVoltageIn_mV = m->voltageIn_mV;
-    }
+    // 2. Adaptive Step Size: 1 tick baseline + 1 tick per 40mW of change
+    // This is much more stable than dP/dV for low-impedance sources
+    int32_t adaptiveStep = VSS_MIN_STEP + (abs(dP_mW) / 40);
+    
+    // Safety bounds
+    if (adaptiveStep > VSS_MAX_STEP) adaptiveStep = VSS_MAX_STEP;
 
+    // 3. Always update baseline to prevent "walking" away from peak
+    previousPowerIn_uW = m->powerOut_uW;
+    previousVoltageIn_mV = m->voltageIn_mV;
+
+    // 4. Apply Perturbation
     if (direction) {
         currentDuty += adaptiveStep;
     } else {
@@ -65,7 +62,6 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
     }
 
     lastStep = adaptiveStep;
-
     return currentDuty;
 }
 
@@ -100,7 +96,7 @@ void MPPT_ResetSweep(void) {
 }
 
 void MPPT_StartTracking(const Measurements_t *m) {
-    previousPowerIn_uW = m->powerIn_uW;
+    previousPowerIn_uW = m->powerOut_uW;
     previousVoltageIn_mV = m->voltageIn_mV;
 }
 
