@@ -30,11 +30,6 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
         return currentDuty;
     }
 
-    // Regulation-Aware Protection (Soft Ceiling)
-    // If we are within 150mV of the limit, do not increase duty
-    bool nearLimit = (m->voltageOut_mV > (limits->batteryMax_mV - 150)) ||
-                     (m->currentOut_mA > (limits->chargingCurrent_mA - 100));
-
     int64_t powerChange_uW = m->powerIn_uW - previousPowerIn_uW;
 
     // Accumulation Logic: Only update baseline and direction if change > threshold
@@ -46,13 +41,9 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
     }
 
     if (direction) {
-        // Only increase if not near limit
-        if (!nearLimit) {
-            currentDuty += MPPT_STEP_SIZE_TICKS;
-        }
+        currentDuty += MPPT_STEP_SIZE_TICKS;
     } else {
-        // Decrease faster if near limit to stay out of CV/CC flapping
-        currentDuty -= nearLimit ? (MPPT_STEP_SIZE_TICKS * 2) : MPPT_STEP_SIZE_TICKS;
+        currentDuty -= MPPT_STEP_SIZE_TICKS;
     }
 
     return currentDuty;
