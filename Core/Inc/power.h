@@ -9,7 +9,10 @@
 #define __POWER_H
 
 #include "system_types.h"
+
+#ifndef NATIVE_TEST
 #include "stm32f0xx_hal.h"
+#endif
 
 /**
  * @brief Initialize the power stage and PWM timers.
