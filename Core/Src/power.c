@@ -24,15 +24,48 @@ static const int32_t maxDutyCycle_ticks = (MAX_DUTY_CYCLE_TICKS * 170) / 100;
 static void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle);
 
 void POWER_Init(void) {
-    // Start PWM with DMA for dithering
+    // Initialize dither tables to zero
+    memset(ditherTableCH1, 0, sizeof(ditherTableCH1));
+    memset(ditherTableCH2, 0, sizeof(ditherTableCH2));
+
+    // Hardware is initialized but kept in shutdown state initially
+    POWER_Shutdown();
+}
+
+void POWER_Start(void) {
+    // 1. Reset logical state
+    currentDutyCycle_ticks = 0;
+    memset(ditherTableCH1, 0, sizeof(ditherTableCH1));
+    memset(ditherTableCH2, 0, sizeof(ditherTableCH2));
+
+    // 2. Enable Main Output (MOE bit)
+    __HAL_TIM_MOE_ENABLE(&htim1);
+
+    // 3. Start PWM with DMA for dithering
     HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)ditherTableCH1, DITHER_TABLE_SIZE);
     HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)ditherTableCH2, DITHER_TABLE_SIZE);
 
-    // Start Complementary PWM outputs
+    // 4. Start Complementary PWM outputs
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
     POWER_PWM_Set(0);
+}
+
+void POWER_Shutdown(void) {
+    // 1. Force logical duty to 0
+    POWER_PWM_Set(0);
+
+    // 2. Stop DMA-driven PWM generation
+    HAL_TIM_PWM_Stop_DMA(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Stop_DMA(&htim1, TIM_CHANNEL_2);
+
+    // 3. Stop Complementary PWM outputs (Very important to stop N-channels)
+    HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+    HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+
+    // 4. Disable Main Output (MOE bit) for hardware-level safety
+    __HAL_TIM_MOE_DISABLE(&htim1);
 }
 
 void POWER_PWM_Set(int32_t dutyCycleTicks) {

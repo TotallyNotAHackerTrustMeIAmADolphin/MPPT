@@ -32,7 +32,15 @@ static uint8_t faultCounter = 0;
 static void transitionTo(SystemState_t newState) {
     if (currentState == newState) return;
     
-    // State Entry Actions
+    // State Exit Actions (from old state)
+    if (currentState == STATE_FAULT || currentState == STATE_IDLE) {
+        // Leaving inactive state: Start Power Hardware
+        if (newState != STATE_FAULT && newState != STATE_IDLE) {
+            POWER_Start();
+        }
+    }
+
+    // State Entry Actions (into new state)
     switch (newState) {
         case STATE_SWEEPING:
             MPPT_ResetSweep();
@@ -51,8 +59,12 @@ static void transitionTo(SystemState_t newState) {
             pidCC.previousInput = *pidCC.input;
             break;
         case STATE_IDLE:
+            POWER_Shutdown();
             currentFaultReason = FAULT_REASON_NONE;
             faultCounter = 0;
+            break;
+        case STATE_FAULT:
+            POWER_Shutdown();
             break;
         default:
             break;
