@@ -38,11 +38,16 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 ---
 
 ## 🛠 Hardware & Platform
-- **MCU:** STM32F072RBT6 (openMPPT v1.1 Custom Board)
-- **Framework:** STM32Cube HAL
-- **Build System:** PlatformIO (using custom `openmppt` board definition)
-- **GUI Config:** STM32CubeMX (`MPPT.ioc`)
-- **Headless Operation:** Fixed USB boot lockup; the board boots and regulates **autonomously** without requiring a serial connection.
+
+### Board: openMPPT v1.1 (Custom Architecture)
+- **MCU:** STM32F072RBT6 (ARM Cortex-M0 @ 48MHz).
+- **Topology:** 4-Switch Synchronous Non-Inverting Buck-Boost.
+- **Power Stage:** Four TI **CSD19505KCS** 80V N-Channel MOSFETs driven by two Infineon **IRS21867STRPBF** gate drivers. High-side drivers are powered by isolated **B1212S-1W** DC-DC converters for continuous high-voltage operation.
+- **Sensing:** Precision zero-drift **INA240A4DR** current sense amplifiers. *(Note: Footprints for isolated ACS712 sensors exist as a planned future replacement for the INA240).*
+- **Auxiliary Power:** **XL7005A** wide-input buck converters providing 12V and 3.3V logic rails from panel voltage.
+- **Framework:** STM32Cube HAL.
+- **Build System:** PlatformIO using a custom `openmppt` board definition.
+- **Headless Operation:** The board regulates autonomously without requiring a serial connection.
 
 ---
 

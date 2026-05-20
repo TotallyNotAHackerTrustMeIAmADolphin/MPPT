@@ -18,9 +18,13 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 - **EEPROM Storage**: Integrated signature-checked Flash storage for persisting calibration and limits.
 
 ## Technologies & Architecture
-- **MCU**: STM32F072RBT6 (ARM Cortex-M0)
-- **Framework**: STM32Cube HAL
-- **Build System**: PlatformIO with a custom automation script (`scripts/setup_cubemx_env_auto.py`).
+- **Topology**: 4-Switch Synchronous Non-Inverting Buck-Boost.
+- **MCU**: STM32F072RBT6 (ARM Cortex-M0 @ 48MHz).
+- **Power Stage**: Four TI CSD19505KCS 80V N-Channel MOSFETs driven by two Infineon IRS21867STRPBF gate drivers. High-side drivers are powered by isolated B1212S-1W DC-DC converters for continuous high-voltage operation.
+- **Sensing**: Precision zero-drift INA240A4DR current sense amplifiers. *(Note: Footprints for isolated ACS712ELCTR-30A-T hall-effect sensors exist on v1.1 as a planned future replacement for the INA240).*
+- **Auxiliary Power**: XL7005A wide-input buck converters step down high panel voltage to a stable 12V rail (drivers/fans) and 3.3V rail (logic).
+- **Framework**: STM32Cube HAL.
+- **Build System**: PlatformIO using the custom `openmppt` board definition and `setup_cubemx_env_auto.py` automation bridge.
 - **Hardware Automation**: `TIMER_PERIOD` is automatically extracted from `MPPT.ioc` during build.
 
 ## Building and Running
@@ -40,6 +44,19 @@ pio device monitor -b 115200
 ```
 
 ## Development Conventions
+
+### Git Workflow & Branching Strategy
+The project strictly follows a **Stable Main** workflow tailored for embedded systems hardware safety:
+1.  **Stable Main:** The `main` branch MUST always compile cleanly and represent a hardware-safe, tested state. Never commit broken or experimental code directly to `main`.
+2.  **Feature Isolation:** All new features, bug fixes, or hardware investigations MUST be developed on dedicated branches (`feature/<name>` or `fix/<name>`).
+3.  **Merge Quality Gate:** A branch can only be merged into `main` after it:
+    - Compiles cleanly for the `openmppt` target (no warnings, `-Werror` compliant).
+    - Passes all native unit tests (`pio test -e native`).
+    - **Requires User Hardware Approval:** The AI agent must prompt the user to verify the branch on physical hardware (or confirm simulation satisfaction) before executing the merge.
+4.  **Atomic Commits:** Use Conventional Commits (`feat:`, `fix:`, `refactor:`). Commit messages must explain the *why*, especially for hardware timing or magic numbers.
+5.  **Unified Codebase:** Handle hardware revisions via `platformio.ini` build environments or `#define` macros. Never use long-lived branches for different PCB versions.
+
+### Code & Math Conventions
 - **Fixed-Point Math**: NEVER use `float` or `double`. Use 32-bit millivolts (`_mV`) and milliamps (`_mA`), and 64-bit microwatts (`_uW`) for power.
 - **Calibration Protocol**: Use machine-readable `CMD:CAL_...` format for serial interaction to maintain compatibility with future web frontends.
 - **Safety First**: Power stage must be disabled (`POWER_PWM_Set(0)`) before writing to Flash (EEPROM).
