@@ -221,14 +221,7 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
     case CDC_SET_LINE_CODING:
-    {
-        uint32_t baudrate = (uint32_t)(pbuf[0] | (pbuf[1] << 8) | (pbuf[2] << 16) | (pbuf[3] << 24));
-        if (baudrate == 1200) {
-            dfu_magic = DFU_MAGIC_VALUE;
-            dfu_magic_inv = ~DFU_MAGIC_VALUE;
-            HAL_NVIC_SystemReset();
-        }
-    }
+
     break;
 
     case CDC_GET_LINE_CODING:

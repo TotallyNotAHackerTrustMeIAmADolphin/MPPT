@@ -13,7 +13,6 @@
 #include "mppt.h"
 #include "usbd_cdc_if.h"
 #include "system_config.h"
-#include "main.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -145,13 +144,7 @@ void COMMS_HandleCommands(void) {
                     CONTROLLER_Reset();
                     printf("ACK:TUNE_RESET_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:HELP") == 0) {
-                    printf("Commands: CAL_..., SET_..., TUNE_STEP, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET, BOOTLOADER\n");
-                } else if (strcmp(cmdBuffer, "CMD:BOOTLOADER") == 0) {
-                    printf("ACK:BOOTLOADER_OK\n");
-                    HAL_Delay(100);
-                    dfu_magic = DFU_MAGIC_VALUE;
-                    dfu_magic_inv = ~DFU_MAGIC_VALUE;
-                    HAL_NVIC_SystemReset();
+                    printf("Commands: CAL_..., SET_..., TUNE_STEP, TUNE_THRESH, TUNE_INT, TUNE_EMA, TUNE_RESET\n");
                 }
                 
                 cmdIdx = 0;
