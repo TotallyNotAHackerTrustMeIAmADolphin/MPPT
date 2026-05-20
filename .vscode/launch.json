@@ -12,22 +12,22 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "/home/bashi/Documents/MPPT/.pio/build/nucleo_f072rb/firmware.elf",
-            "projectEnvName": "nucleo_f072rb",
+            "executable": "/home/bashi/Documents/MPPT/.pio/build/openmppt/firmware.elf",
+            "projectEnvName": "openmppt",
             "toolchainBinDir": "/home/bashi/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "svdPath": "/home/bashi/.platformio/platforms/ststm32/misc/svd/STM32F072x.svd",
             "preLaunchTask": {
                 "type": "PlatformIO",
-                "task": "Pre-Debug (nucleo_f072rb)"
+                "task": "Pre-Debug (openmppt)"
             }
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "/home/bashi/Documents/MPPT/.pio/build/nucleo_f072rb/firmware.elf",
-            "projectEnvName": "nucleo_f072rb",
+            "executable": "/home/bashi/Documents/MPPT/.pio/build/openmppt/firmware.elf",
+            "projectEnvName": "openmppt",
             "toolchainBinDir": "/home/bashi/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "svdPath": "/home/bashi/.platformio/platforms/ststm32/misc/svd/STM32F072x.svd"
@@ -36,8 +36,8 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-            "executable": "/home/bashi/Documents/MPPT/.pio/build/nucleo_f072rb/firmware.elf",
-            "projectEnvName": "nucleo_f072rb",
+            "executable": "/home/bashi/Documents/MPPT/.pio/build/openmppt/firmware.elf",
+            "projectEnvName": "openmppt",
             "toolchainBinDir": "/home/bashi/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
             "svdPath": "/home/bashi/.platformio/platforms/ststm32/misc/svd/STM32F072x.svd",

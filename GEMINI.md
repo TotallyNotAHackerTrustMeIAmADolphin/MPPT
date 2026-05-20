@@ -1,9 +1,10 @@
-# MPPT Controller - STM32F072 Project
+# openMPPT Controller - STM32F072 Project
 
 ## Project Overview
-This project is an embedded firmware for a Maximum Power Point Tracking (MPPT) solar charge controller. It is built for the **STM32F072RBT6** MCU (Nucleo-F072RB board) using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
+This project is an embedded firmware for the **openMPPT v1.1** solar charge controller. It is built for the **STM32F072RBT6** MCU using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
 
 ### Key Features
+- **Custom Hardware**: Optimized for the openMPPT v1.1 board (Cortex-M0 based).
 - **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
 - **Velocity PI Regulation**: mathematically stable PI controller for CV/CC modes, eliminating ripple.

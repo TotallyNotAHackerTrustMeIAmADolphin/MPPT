@@ -38,9 +38,9 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 ---
 
 ## 🛠 Hardware & Platform
-- **MCU:** STM32F072RBT6 (Nucleo-F072RB Development Board)
+- **MCU:** STM32F072RBT6 (openMPPT v1.1 Custom Board)
 - **Framework:** STM32Cube HAL
-- **Build System:** PlatformIO
+- **Build System:** PlatformIO (using custom `openmppt` board definition)
 - **GUI Config:** STM32CubeMX (`MPPT.ioc`)
 - **Headless Operation:** Fixed USB boot lockup; the board boots and regulates **autonomously** without requiring a serial connection.
 
