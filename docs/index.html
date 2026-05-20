@@ -53,24 +53,32 @@
         </section>
 
         <section id="limits">
-            <h2>Device Limits</h2>
+            <h2>Device Configuration</h2>
             <form id="limitsForm">
                 <div class="form-group">
-                    <label>Max Battery Voltage (V):</label>
+                    <label>Operation Mode:</label>
+                    <select id="limit_mode" onchange="sendLimit('SET_MODE', 'limit_mode')">
+                        <option value="0">Solar MPPT</option>
+                        <option value="1">E-Bike Drive</option>
+                        <option value="2">Power Supply (CV/CC)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Output Target Voltage (V):</label>
                     <input type="number" step="0.01" id="limit_Vmax" value="25.20">
                     <button type="button" onclick="sendLimit('SET_V_MAX', 'limit_Vmax')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Min Battery Voltage (V):</label>
+                    <label>Battery (Input) Min Voltage (V):</label>
                     <input type="number" step="0.01" id="limit_Vmin" value="18.00">
                     <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Max Charging Current (A):</label>
+                    <label>Max Output/Charge Current (A):</label>
                     <input type="number" step="0.01" id="limit_Imax" value="2.00">
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
                 </div>
-                <button type="button" id="saveLimitsBtn" class="primary">Save Limits to EEPROM</button>
+                <button type="button" id="saveLimitsBtn" class="primary">Save Configuration to EEPROM</button>
             </form>
         </section>
 

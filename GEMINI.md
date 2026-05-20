@@ -4,7 +4,9 @@
 This project is an embedded firmware for the **openMPPT v1.1** solar charge controller. It is built for the **STM32F072RBT6** MCU using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
 
 ### Key Features
-- **Custom Hardware**: Optimized for the openMPPT v1.1 board (Cortex-M0 based).
+- **Multi-Mode Operation**: Selectable modes via dashboard (Solar MPPT, E-Bike Bidirectional, Power Supply CV/CC).
+- **Bidirectional E-Bike Mode**: Supports motor driving (boost) and regenerative braking (buck) with seamless PI transitions.
+- **Unified Multi-Variable Control**: Single control loop manages voltage, current, and regen limits simultaneously for stability.
 - **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
 - **Velocity PI Regulation**: mathematically stable PI controller for CV/CC modes, eliminating ripple.

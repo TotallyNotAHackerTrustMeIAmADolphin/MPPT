@@ -27,7 +27,6 @@
 #define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
 #define POWER_THRESHOLD_UW    189769 // Optimal threshold for speed/stability
 #define SWEEP_STEP_SIZE_TICKS 8
-#define MIN_INPUT_VOLTAGE_MPPT_MV 18000 // 18V brownout floor
 #define MPPT_STEP_SIZE_TICKS  13     // Tuned fixed step size (ticks)
 
 // --- Sensor Physics ---

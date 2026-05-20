@@ -245,8 +245,14 @@ async function sendCommand(cmd) {
 }
 
 window.sendLimit = async (cmdPrefix, inputId) => {
-    const value = document.getElementById(inputId).value;
-    const valueInt = Math.round(parseFloat(value) * 1000);
+    const el = document.getElementById(inputId);
+    const value = el.value;
+    let valueInt;
+    if (cmdPrefix === 'SET_MODE') {
+        valueInt = parseInt(value);
+    } else {
+        valueInt = Math.round(parseFloat(value) * 1000);
+    }
     await sendCommand(`CMD:${cmdPrefix}:${valueInt}`);
 };
 

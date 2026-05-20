@@ -30,10 +30,11 @@ void test_mppt_increase_power(void) {
     
     // Power increases significantly (> threshold)
     m.powerOut_uW = 2000000; // 2W
-    int32_t nextDuty = MPPT_PerturbAndObserve(&m, &l);
+    int32_t delta = MPPT_PerturbAndObserve(&m, &l);
     
-    // Should increase duty cycle (direction is true)
-    TEST_ASSERT_GREATER_THAN(500, nextDuty);
+    // Should return positive delta (direction is true)
+    TEST_ASSERT_GREATER_THAN(0, delta);
+    TEST_ASSERT_EQUAL(13, delta);
 }
 
 void test_mppt_decrease_power(void) {
@@ -51,31 +52,17 @@ void test_mppt_decrease_power(void) {
     
     // Now power decreases significantly (> threshold)
     m.powerOut_uW = 1000000; // 1W
-    int32_t nextDuty = MPPT_PerturbAndObserve(&m, &l);
+    int32_t delta = MPPT_PerturbAndObserve(&m, &l);
     
     // dP = 1W - 2W = -1W. dP < 0, so direction should flip from true to false.
-    // Result should be currentDuty - adaptiveStep
-    TEST_ASSERT_LESS_THAN(POWER_PWM_Get(), nextDuty);
-}
-
-void test_mppt_brownout_protection(void) {
-    Measurements_t m = {0};
-    DeviceLimits_t l = {0};
-    
-    // Voltage below MIN_INPUT_VOLTAGE_MPPT_MV (18000)
-    m.voltageIn_mV = 15000;
-    m.powerOut_uW = 1000000;
-    
-    int32_t nextDuty = MPPT_PerturbAndObserve(&m, &l);
-    
-    // Should drop duty cycle significantly (currentDuty - 38)
-    TEST_ASSERT_EQUAL(500 - 38, nextDuty);
+    // Result should be negative delta
+    TEST_ASSERT_LESS_THAN(0, delta);
+    TEST_ASSERT_EQUAL(-13, delta);
 }
 
 int main(int argc, char **argv) {
     UNITY_BEGIN();
     RUN_TEST(test_mppt_increase_power);
     RUN_TEST(test_mppt_decrease_power);
-    RUN_TEST(test_mppt_brownout_protection);
     return UNITY_END();
 }

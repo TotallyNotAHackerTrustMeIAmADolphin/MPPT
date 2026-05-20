@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file           : controller.c
-  * @brief          : Unified System State Machine implementation.
+  * @brief          : Unified Override Control (Min-Selector) implementation.
   ******************************************************************************
   */
 
@@ -22,9 +22,18 @@ static uint32_t lastMPPTTick = 0;
 static uint32_t lastSweepTick = 0;
 static uint32_t lastTelemetryTick = 0;
 
-static PID_t pidCV;
-static PID_t pidCC;
+/* High-resolution duty cycle accumulator (Velocity PI integral) */
+static int64_t globalDutyIntegral = 0;
 static int32_t targetDuty_ticks = 0;
+
+/* Control Gains (Scaled for 1ms task) */
+#define GAIN_KP 10
+#define GAIN_KI 2
+
+/* Velocity PI storage for derivative terms */
+static int32_t lastVout = 0;
+static int32_t lastIout = 0;
+
 static uint8_t faultCounter = 0;
 #define FAULT_THRESHOLD_FRAMES 3
 
@@ -32,31 +41,23 @@ static uint8_t faultCounter = 0;
 static void transitionTo(SystemState_t newState) {
     if (currentState == newState) return;
     
-    // State Exit Actions (from old state)
+    // State Exit Actions
     if (currentState == STATE_FAULT || currentState == STATE_IDLE) {
-        // Leaving inactive state: Start Power Hardware
         if (newState != STATE_FAULT && newState != STATE_IDLE) {
             POWER_Start();
         }
     }
 
-    // State Entry Actions (into new state)
+    // State Entry Actions
     switch (newState) {
         case STATE_SWEEPING:
             MPPT_ResetSweep();
             break;
-        case STATE_MPPT:
+        case STATE_ACTIVE:
+            globalDutyIntegral = (int64_t)targetDuty_ticks * 1000;
+            lastVout = SENSORS_GetMeasurements()->voltageOut_mV;
+            lastIout = SENSORS_GetMeasurements()->currentOut_mA;
             MPPT_StartTracking(SENSORS_GetMeasurements());
-            break;
-        case STATE_CV:
-            pidCV.integral = (int64_t)targetDuty_ticks * 1000;
-            pidCV.previousError = 0;
-            pidCV.previousInput = *pidCV.input;
-            break;
-        case STATE_CC:
-            pidCC.integral = (int64_t)targetDuty_ticks * 1000;
-            pidCC.previousError = 0;
-            pidCC.previousInput = *pidCC.input;
             break;
         case STATE_IDLE:
             POWER_Shutdown();
@@ -73,9 +74,7 @@ static void transitionTo(SystemState_t newState) {
     printf("STATE: %s -> %s\n", CONTROLLER_GetStateString(), 
            (newState == STATE_IDLE) ? "IDLE" :
            (newState == STATE_SWEEPING) ? "SWEEPING" :
-           (newState == STATE_MPPT) ? "MPPT" :
-           (newState == STATE_CV) ? "CV" :
-           (newState == STATE_CC) ? "CC" :
+           (newState == STATE_ACTIVE) ? "ACTIVE" :
            (newState == STATE_FAULT) ? "FAULT" : "RECOVERY");
            
     currentState = newState;
@@ -87,32 +86,10 @@ void CONTROLLER_Init(void) {
     lastMPPTTick = 0;
     lastSweepTick = 0;
     lastTelemetryTick = 0;
-
-    const DeviceLimits_t *limits = SETTINGS_GetLimits();
-    const Measurements_t *m = SENSORS_GetMeasurements();
-
-    // Initialize PID controllers (tuned for 200Hz high-rate task using Velocity PI)
-    pidCV.Kp = 10; pidCV.Ki = 2; pidCV.Kd = 0;
-    pidCV.previousError = 0; 
-    pidCV.previousInput = m->voltageOut_mV;
-    pidCV.integral = 0;
-    pidCV.setPoint = limits->batteryMax_mV;
-    pidCV.input = (int32_t*)&m->voltageOut_mV;
-    pidCV.output = &targetDuty_ticks;
-    pidCV.maxIntegral = 20000;
-    pidCV.minOutput = 0;
-    pidCV.maxOutput = POWER_PWM_GetMax();
-
-    pidCC.Kp = 10; pidCC.Ki = 2; pidCC.Kd = 0;
-    pidCC.previousError = 0;
-    pidCC.previousInput = m->currentOut_mA;
-    pidCC.integral = 0;
-    pidCC.setPoint = limits->chargingCurrent_mA;
-    pidCC.input = (int32_t*)&m->currentOut_mA;
-    pidCC.output = &targetDuty_ticks;
-    pidCC.maxIntegral = 20000;
-    pidCC.minOutput = 0;
-    pidCC.maxOutput = POWER_PWM_GetMax();
+    globalDutyIntegral = 0;
+    targetDuty_ticks = 0;
+    lastVout = 0;
+    lastIout = 0;
 }
 
 void CONTROLLER_UpdateHighRate(void) {
@@ -120,7 +97,7 @@ void CONTROLLER_UpdateHighRate(void) {
     const DeviceLimits_t *limits = SETTINGS_GetLimits();
     uint32_t currentTick = HAL_GetTick();
 
-    // 1. Safety Logic (Highest Priority - Hard Hardware Limits)
+    // 1. Safety Logic (Hard Hardware Limits)
     FaultReason_t newFault = FAULT_REASON_NONE;
 
     if (m->voltageIn_mV > HARD_LIMIT_VIN_MAX_MV) {
@@ -135,7 +112,7 @@ void CONTROLLER_UpdateHighRate(void) {
         newFault = FAULT_REASON_OUTPUT_OC;
     } else if (m->tempMCU_C_x100 > (HARD_LIMIT_TEMP_MAX_C * 100)) {
         newFault = FAULT_REASON_OVERTEMP;
-    } else if (m->currentOut_mA < -500) {
+    } else if (limits->mode != MODE_EBIKE && m->currentOut_mA < -500) {
         newFault = FAULT_REASON_BACKFLOW;
     }
 
@@ -149,11 +126,10 @@ void CONTROLLER_UpdateHighRate(void) {
         faultCounter = 0;
     }
 
-    // 2. State-Specific High-Rate Logic
+    // 2. Control Logic
     switch (currentState) {
         case STATE_FAULT:
             targetDuty_ticks = 0;
-            // Auto-recovery from brownout (Input Under-voltage)
             if (currentFaultReason == FAULT_REASON_INPUT_UV && m->voltageIn_mV > MIN_VOLTAGE_IN_MV) {
                 transitionTo(STATE_IDLE);
             }
@@ -162,52 +138,84 @@ void CONTROLLER_UpdateHighRate(void) {
         case STATE_IDLE:
             targetDuty_ticks = 0;
             if (m->voltageIn_mV > MIN_VOLTAGE_IN_MV) {
-                transitionTo(STATE_SWEEPING);
+                if (limits->mode == MODE_MPPT) transitionTo(STATE_SWEEPING);
+                else transitionTo(STATE_ACTIVE);
             }
             break;
 
-        case STATE_CV:
-            pidCV.setPoint = limits->batteryMax_mV; // Keep updated from limits
-            POWER_PID_Compute(&pidCV);
+        case STATE_ACTIVE: {
+            // --- Multi-Variable Override Control (Min-Selector) ---
+            int64_t min_delta = 1000000; // Large positive default (1000 ticks)
+
+            // A. Forward Voltage Limit (CV)
+            // Velocity PI: delta = Ki*error - Kp*dInput
+            int64_t error_V = (int64_t)limits->outputVoltageMax_mV - m->voltageOut_mV;
+            int64_t dInput_V = (int64_t)m->voltageOut_mV - lastVout;
+            int64_t delta_Vout = (GAIN_KI * error_V) - (GAIN_KP * dInput_V);
+            if (delta_Vout < min_delta) min_delta = delta_Vout;
+
+            // B. Forward Current Limit (CC)
+            int64_t error_I = (int64_t)limits->outputCurrentMax_mA - m->currentOut_mA;
+            int64_t dInput_I = (int64_t)m->currentOut_mA - lastIout;
+            int64_t delta_Iout = (GAIN_KI * error_I) - (GAIN_KP * dInput_I);
+            if (delta_Iout < min_delta) min_delta = delta_Iout;
+
+            // C. Input Brownout Protection (Hard floor)
+            if (m->voltageIn_mV < limits->inputVoltageMin_mV) {
+                int64_t delta_brownout = -19000; // Hard backoff (ticks*1000)
+                if (delta_brownout < min_delta) min_delta = delta_brownout;
+            }
+
+            // D. E-Bike Specific Regen Limits
+            if (limits->mode == MODE_EBIKE) {
+                if (m->currentOut_mA < 0) {
+                    // Regen Voltage (Protect battery from overcharge)
+                    int64_t delta_RegenV = (int64_t)GAIN_KI * (limits->inputVoltageMax_mV - m->voltageIn_mV);
+                    if (delta_RegenV < min_delta) min_delta = delta_RegenV;
+
+                    // Regen Current (Negative Iout out)
+                    int64_t delta_RegenI = (int64_t)GAIN_KI * (m->currentOut_mA + limits->inputCurrentMax_mA);
+                    if (delta_RegenI < min_delta) min_delta = delta_RegenI;
+                }
+
+                // E. Soft Disconnect: Prevent forward drive if battery is low
+                if (m->voltageIn_mV < limits->inputVoltageMin_mV && min_delta > 0) {
+                    min_delta = 0;
+                }
+            } else if (limits->mode == MODE_POWER_SUPPLY) {
+                // PSU Mode: Block logical duty increase if reverse current detected
+                if (m->currentOut_mA < -100 && min_delta > 0) min_delta = 0;
+            }
+
+            // F. MPPT Algorithm Participation
+            // (Only runs at MPPT_INTERVAL_MS, otherwise delta is effectively infinite)
+            if (limits->mode == MODE_MPPT && (currentTick - lastMPPTTick >= MPPT_GetInterval())) {
+                lastMPPTTick = currentTick;
+                int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
+                int64_t delta_MPPT = (int64_t)mppt_delta_ticks * 1000;
+                if (delta_MPPT < min_delta) min_delta = delta_MPPT;
+            }
+
+            // 3. Accumulate and Apply
+            globalDutyIntegral += min_delta;
             
-            // Input Voltage Sag Protection (Brownout prevention)
-            if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
-                targetDuty_ticks -= 19; // Back off hard if source sags
-                if (targetDuty_ticks < 0) targetDuty_ticks = 0;
-            }
+            // Constrain logical state
+            int64_t maxIntegral = (int64_t)POWER_PWM_GetMax() * 1000;
+            if (globalDutyIntegral < 0) globalDutyIntegral = 0;
+            if (globalDutyIntegral > maxIntegral) globalDutyIntegral = maxIntegral;
 
-            // Only exit CV if voltage drops significantly below setpoint
-            if (m->voltageOut_mV < (limits->batteryMax_mV - HYSTERESIS_VOLTAGE_MV)) {
-                transitionTo(STATE_MPPT);
-            }
+            targetDuty_ticks = (int32_t)(globalDutyIntegral / 1000);
+            
+            // Update derivative terms
+            lastVout = m->voltageOut_mV;
+            lastIout = m->currentOut_mA;
+
+            // Return to IDLE if input voltage is lost
+            if (m->voltageIn_mV < (MIN_VOLTAGE_IN_MV - 1000)) transitionTo(STATE_IDLE);
             break;
-
-        case STATE_CC:
-            pidCC.setPoint = limits->chargingCurrent_mA; // Keep updated
-            POWER_PID_Compute(&pidCC);
-
-            // Input Voltage Sag Protection (Brownout prevention)
-            if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
-                targetDuty_ticks -= 19;
-                if (targetDuty_ticks < 0) targetDuty_ticks = 0;
-            }
-
-            // Only exit CC if current drops significantly below limit
-            if (m->currentOut_mA < (limits->chargingCurrent_mA - HYSTERESIS_CURRENT_MA)) {
-                transitionTo(STATE_MPPT);
-            }
-            break;
+        }
 
         default:
-            // MPPT or Sweeping states use timed-rate updates for duty cycle,
-            // but we check for CV/CC transitions here at high rate.
-            if (m->voltageOut_mV >= limits->batteryMax_mV) {
-                transitionTo(STATE_CV);
-                lastSweepTick = currentTick; // Postpone sweep if we hit limit
-            } else if (m->currentOut_mA >= limits->chargingCurrent_mA) {
-                transitionTo(STATE_CC);
-                lastSweepTick = currentTick;
-            }
             break;
     }
 
@@ -230,36 +238,20 @@ void CONTROLLER_Task(void) {
         COMMS_SendTelemetry(m);
     }
 
-    // 2. Control Logic (Timed)
-    if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
-        lastMPPTTick = currentTick;
+    // 2. Sweeping Logic (Managed here as it's a global search)
+    if (currentState == STATE_SWEEPING) {
+        bool finished = false;
+        targetDuty_ticks = MPPT_RunSweep(m, limits, &finished);
+        if (finished) {
+            transitionTo(STATE_ACTIVE);
+            lastSweepTick = currentTick;
+        }
+    }
 
-        switch (currentState) {
-            case STATE_SWEEPING: {
-                bool finished = false;
-                targetDuty_ticks = MPPT_RunSweep(m, &finished);
-                if (finished) {
-                    transitionTo(STATE_MPPT);
-                    lastSweepTick = currentTick;
-                }
-                break;
-            }
-
-            case STATE_MPPT:
-                // Check if it's time for a periodic sweep
-                if (currentTick - lastSweepTick >= (uint32_t)SWEEP_INTERVAL_SECONDS * 1000) {
-                    transitionTo(STATE_SWEEPING);
-                } else {
-                    targetDuty_ticks = MPPT_PerturbAndObserve(m, limits);
-                }
-                break;
-
-            case STATE_FAULT:
-                // Recovery logic?
-                break;
-
-            default:
-                break;
+    // 3. Periodic Sweep (Solar mode only)
+    if (currentState == STATE_ACTIVE && limits->mode == MODE_MPPT) {
+        if (currentTick - lastSweepTick >= (uint32_t)SWEEP_INTERVAL_SECONDS * 1000) {
+            transitionTo(STATE_SWEEPING);
         }
     }
 }
@@ -272,9 +264,7 @@ const char* CONTROLLER_GetStateString(void) {
     switch (currentState) {
         case STATE_IDLE:     return "IDLE";
         case STATE_SWEEPING: return "SWEEPING";
-        case STATE_MPPT:     return "MPPT";
-        case STATE_CV:       return "CV";
-        case STATE_CC:       return "CC";
+        case STATE_ACTIVE:   return "ACTIVE";
         case STATE_FAULT:    return "FAULT";
         case STATE_RECOVERY: return "RECOVERY";
         default:             return "UNKNOWN";
@@ -303,6 +293,7 @@ void CONTROLLER_ResetFault(void) {
 
 void CONTROLLER_Reset(void) {
     targetDuty_ticks = 0;
+    globalDutyIntegral = 0;
     POWER_PWM_Set(0);
     transitionTo(STATE_IDLE);
 }

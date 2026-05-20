@@ -18,12 +18,20 @@ typedef enum
 {
   STATE_IDLE,      // System waiting for conditions (e.g. low input voltage)
   STATE_SWEEPING,  // Performing a global MPPT sweep
-  STATE_MPPT,      // Normal P&O tracking
-  STATE_CV,        // Constant Voltage regulation (battery full)
-  STATE_CC,        // Constant Current regulation (limit reached)
+  STATE_ACTIVE,    // Unified control mode (MPPT/CV/CC/Regen/PSU)
   STATE_FAULT,     // Critical error (over-voltage/current/temp)
   STATE_RECOVERY   // Waiting after a fault
 } SystemState_t;
+
+/**
+ * @brief System operation modes
+ */
+typedef enum
+{
+  MODE_MPPT,
+  MODE_EBIKE,
+  MODE_POWER_SUPPLY
+} OperationMode_t;
 
 /**
  * @brief Specific reasons for a system fault
@@ -82,11 +90,12 @@ typedef struct
  */
 typedef struct
 {
-  int32_t batteryMax_mV;
-  int32_t batteryMin_mV;
-  int32_t chargingCurrent_mA;
+  OperationMode_t mode;
+  int32_t outputVoltageMax_mV;
+  int32_t inputVoltageMin_mV;
+  int32_t outputCurrentMax_mA;
   int32_t inputVoltageMax_mV;
-  int32_t inputCurrentMax_mA;
+  int32_t inputCurrentMax_mA; // For E-Bike mode, this is Regen Max Current
 } DeviceLimits_t;
 
 /**

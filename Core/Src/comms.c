@@ -103,17 +103,20 @@ void COMMS_HandleCommands(void) {
                     SETTINGS_SaveCalibration();
                     printf("ACK:CAL_SAVE_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MAX:", 14) == 0) {
-                    limits->batteryMax_mV = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_V_MAX_OK:%ld\n", limits->batteryMax_mV);
+                    limits->outputVoltageMax_mV = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_V_MAX_OK:%ld\n", limits->outputVoltageMax_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MIN:", 14) == 0) {
-                    limits->batteryMin_mV = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_V_MIN_OK:%ld\n", limits->batteryMin_mV);
+                    limits->inputVoltageMin_mV = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_V_MIN_OK:%ld\n", limits->inputVoltageMin_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_I_MAX:", 14) == 0) {
-                    limits->chargingCurrent_mA = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_I_MAX_OK:%ld\n", limits->chargingCurrent_mA);
+                    limits->outputCurrentMax_mA = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_I_MAX_OK:%ld\n", limits->outputCurrentMax_mA);
+                } else if (strncmp(cmdBuffer, "CMD:SET_MODE:", 13) == 0) {
+                    limits->mode = (OperationMode_t)atoi(cmdBuffer + 13);
+                    printf("ACK:SET_MODE_OK:%d\n", limits->mode);
                 } else if (strcmp(cmdBuffer, "CMD:GET_LIMITS") == 0) {
-                    printf("{\"type\":\"limits\",\"Vmax_limit\":%ld,\"Vmin_limit\":%ld,\"Imax_limit\":%ld}\n",
-                           limits->batteryMax_mV, limits->batteryMin_mV, limits->chargingCurrent_mA);
+                    printf("{\"type\":\"limits\",\"mode\":%d,\"Vmax_limit\":%ld,\"Vmin_limit\":%ld,\"Imax_limit\":%ld}\n",
+                           limits->mode, limits->outputVoltageMax_mV, limits->inputVoltageMin_mV, limits->outputCurrentMax_mA);
                 } else if (strcmp(cmdBuffer, "CMD:RESET_FAULT") == 0) {
                     CONTROLLER_ResetFault();
                     printf("ACK:RESET_FAULT_OK\n");

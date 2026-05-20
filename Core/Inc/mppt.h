@@ -14,17 +14,18 @@
  * @brief Performs a single step of the Perturb and Observe algorithm.
  * @param m Pointer to current measurements.
  * @param limits Pointer to system operational limits.
- * @return The new target duty cycle in ticks.
+ * @return The required duty cycle CHANGE (delta) in ticks.
  */
 int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *limits);
 
 /**
  * @brief Manages the global power sweep.
  * @param m Pointer to current measurements.
+ * @param limits Pointer to system operational limits.
  * @param isFinished Pointer to a bool set to true when sweep is done.
  * @return The current sweep duty cycle in ticks.
  */
-int32_t MPPT_RunSweep(const Measurements_t *m, bool *isFinished);
+int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, bool *isFinished);
 
 /**
  * @brief Resets the sweep internal state.

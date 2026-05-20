@@ -26,17 +26,6 @@ static int64_t sweepMaxPower_uW = 0;
 static int32_t sweepBestDutyCycle = 0;
 
 int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *limits) {
-    int32_t currentDuty = POWER_PWM_Get();
-
-    // Supply-Aware Protection (Brownout prevention)
-    if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
-        currentDuty -= 38; 
-        if (currentDuty < 0) currentDuty = 0;
-        direction = false; // Force direction to increase voltage
-        previousPowerIn_uW = m->powerOut_uW;
-        return currentDuty;
-    }
-
     // Calculate change relative to the last STABLE baseline
     int64_t dP = m->powerOut_uW - previousPowerIn_uW;
     int32_t dP_mW = (int32_t)(dP / 1000);
@@ -49,29 +38,20 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
         previousPowerIn_uW = m->powerOut_uW;
     }
 
-    // 2. Fixed Step Perturbation
-    if (direction) {
-        currentDuty += mppt_step_size;
-    } else {
-        currentDuty -= mppt_step_size;
-    }
-
-    // 3. Safety Cap: Limit MPPT to 95% of the absolute maximum duty cycle
-    int32_t absoluteMax = POWER_PWM_GetMax();
-    int32_t safetyMargin = (absoluteMax * 5) / 100; // 5% margin
-    if (currentDuty > absoluteMax - safetyMargin) currentDuty = absoluteMax - safetyMargin;
+    // 2. Fixed Step Delta (ticks)
+    int32_t delta = direction ? mppt_step_size : -mppt_step_size;
 
     lastStep = mppt_step_size;
-    return currentDuty;
+    return delta;
 }
 
 
 
-int32_t MPPT_RunSweep(const Measurements_t *m, bool *isFinished) {
+int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, bool *isFinished) {
     *isFinished = false;
 
     // Supply-Aware Termination
-    if (m->voltageIn_mV < MIN_INPUT_VOLTAGE_MPPT_MV) {
+    if (m->voltageIn_mV < limits->inputVoltageMin_mV) {
         *isFinished = true;
         return sweepBestDutyCycle;
     }

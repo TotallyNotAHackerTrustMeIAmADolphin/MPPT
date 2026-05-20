@@ -17,11 +17,12 @@ static Calibration_t cal = {
     1986, 0, 1661, 3900
 };
 
-static DeviceLimits_t limits = {25200, 18000, 2000, 80000, 20000};
+static DeviceLimits_t limits = {MODE_MPPT, 25200, 18000, 2000, 80000, 20000};
 static bool isCalibrating = false;
 static bool calHighSideOn = false;
 
 #define SETTINGS_SIGNATURE 0xABCD
+#define LIMITS_WORDS (sizeof(DeviceLimits_t) / 2)
 
 void SETTINGS_Init(void) {
     if (EE_Init() != HAL_OK) return;
@@ -44,9 +45,9 @@ void SETTINGS_Init(void) {
         }
     }
 
-    // Load Device Limits (virtual addresses 20-29)
+    // Load Device Limits (virtual addresses 20-35 reserved)
     uint16_t *pLimits = (uint16_t *)&limits;
-    for (uint16_t i = 0; i < 10; i++) {
+    for (uint16_t i = 0; i < LIMITS_WORDS; i++) {
         uint16_t val;
         if (EE_ReadVariable(i + 20, &val) == 0) {
             pLimits[i] = val;
@@ -63,7 +64,7 @@ void SETTINGS_SaveCalibration(void) {
 
 void SETTINGS_SaveLimits(void) {
     uint16_t *pLimits = (uint16_t *)&limits;
-    for (uint16_t i = 0; i < 10; i++) {
+    for (uint16_t i = 0; i < LIMITS_WORDS; i++) {
         EE_WriteVariable(i + 20, pLimits[i]);
     }
 }
