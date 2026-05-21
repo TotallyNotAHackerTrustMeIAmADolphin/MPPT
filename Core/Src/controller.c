@@ -174,7 +174,6 @@ void CONTROLLER_UpdateHighRate(void) {
             int64_t delta_Vout = (GAIN_KI * error_Vout) - (GAIN_KP * dInput_Vout);
             if (delta_Vout < min_delta) {
                 min_delta = delta_Vout;
-                // In MPPT mode, only tag if it is actually pulling back (limiting)
                 if (limits->mode != MODE_MPPT || delta_Vout <= 0) {
                     activeSoftLimit = LIMIT_V_OUT_MAX;
                 }
@@ -202,12 +201,22 @@ void CONTROLLER_UpdateHighRate(void) {
             }
 
             // D. Input Brownout Regulation (Soft Floor)
-            int64_t error_Vin = (int64_t)m->voltageIn_mV - limits->vInMin_mV;
-            if (error_Vin < 0) {
-                int64_t delta_VinMin = (int64_t)GAIN_KI * error_Vin * 2; 
+            int64_t error_VinMin = (int64_t)m->voltageIn_mV - limits->vInMin_mV;
+            if (error_VinMin < 0) {
+                int64_t delta_VinMin = (int64_t)GAIN_KI * error_VinMin * 2; 
                 if (delta_VinMin < min_delta) {
                     min_delta = delta_VinMin;
                     activeSoftLimit = LIMIT_V_IN_MIN;
+                }
+            }
+
+            // E. Input Voltage Max Limit (Reverse CV)
+            int64_t error_VinMax = (int64_t)limits->vInMax_mV - m->voltageIn_mV;
+            if (error_VinMax < 0) {
+                int64_t delta_VinMax = (int64_t)GAIN_KI * error_VinMax * 2;
+                if (delta_VinMax < min_delta) {
+                    min_delta = delta_VinMax;
+                    activeSoftLimit = LIMIT_V_IN_MAX;
                 }
             }
 
@@ -283,6 +292,7 @@ const char* CONTROLLER_GetStateString(void) {
             if (activeSoftLimit == LIMIT_V_OUT_MAX) return "ACTIVE_CV";
             if (activeSoftLimit == LIMIT_I_OUT_MAX) return "ACTIVE_CC";
             if (activeSoftLimit == LIMIT_V_IN_MIN)  return "ACTIVE_BROWNOUT";
+            if (activeSoftLimit == LIMIT_V_IN_MAX)  return "ACTIVE_VIN_LIMIT";
             if (activeSoftLimit == LIMIT_I_OUT_MIN) return "ACTIVE_REVERSE";
             return "ACTIVE_TRACKING";
         }

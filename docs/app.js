@@ -198,6 +198,7 @@ function updateLimitsUI(data) {
     // Logic is now unified via updateTelemetryUI style, but we'll manually set here too for GET_LIMITS
     if (data.Vmax !== undefined) document.getElementById('limit_Vmax').value = (data.Vmax / 1000).toFixed(2);
     if (data.Vmin !== undefined) document.getElementById('limit_Vmin').value = (data.Vmin / 1000).toFixed(2);
+    if (data.VinMax !== undefined) document.getElementById('limit_VinMax').value = (data.VinMax / 1000).toFixed(2);
     if (data.Imax !== undefined) document.getElementById('limit_Imax').value = (data.Imax / 1000).toFixed(2);
     if (data.Imin !== undefined) document.getElementById('limit_Imin').value = (Math.abs(data.Imin) / 1000).toFixed(2);
     appendToLog('Limits synchronized');

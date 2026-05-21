@@ -74,6 +74,11 @@
                     <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
                 </div>
                 <div class="form-group">
+                    <label>Input Voltage Limit (V):</label>
+                    <input type="number" step="0.01" id="limit_VinMax" value="80.00">
+                    <button type="button" onclick="sendLimit('SET_VIN_MAX', 'limit_VinMax')">Update</button>
+                </div>
+                <div class="form-group">
                     <label>Max Forward Current (A):</label>
                     <input type="number" step="0.01" id="limit_Imax" value="2.00">
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
