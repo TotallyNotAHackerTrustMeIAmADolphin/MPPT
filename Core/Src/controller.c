@@ -12,12 +12,15 @@
 #include "mppt.h"
 #include "settings.h"
 #include "comms.h"
+#ifndef NATIVE_TEST
 #include "stm32f0xx_hal.h"
+#endif
 #include <stdio.h>
 
 /* Private variables (Encapsulation) */
 static SystemState_t currentState = STATE_IDLE;
 static FaultReason_t currentFaultReason = FAULT_REASON_NONE;
+static SoftLimit_t activeSoftLimit = LIMIT_NONE;
 static uint32_t lastMPPTTick = 0;
 static uint32_t lastSweepTick = 0;
 static uint32_t lastTelemetryTick = 0;
@@ -52,20 +55,24 @@ static void transitionTo(SystemState_t newState) {
     switch (newState) {
         case STATE_SWEEPING:
             MPPT_ResetSweep();
+            activeSoftLimit = LIMIT_SWEEPING;
             break;
         case STATE_ACTIVE:
             globalDutyIntegral = (int64_t)targetDuty_ticks * 1000;
             lastVout = SENSORS_GetMeasurements()->voltageOut_mV;
             lastIout = SENSORS_GetMeasurements()->currentOut_mA;
             MPPT_StartTracking(SENSORS_GetMeasurements());
+            activeSoftLimit = LIMIT_NONE;
             break;
         case STATE_IDLE:
             POWER_Shutdown();
             currentFaultReason = FAULT_REASON_NONE;
             faultCounter = 0;
+            activeSoftLimit = LIMIT_NONE;
             break;
         case STATE_FAULT:
             POWER_Shutdown();
+            activeSoftLimit = LIMIT_NONE;
             break;
         default:
             break;
@@ -83,6 +90,7 @@ static void transitionTo(SystemState_t newState) {
 void CONTROLLER_Init(void) {
     currentState = STATE_IDLE;
     currentFaultReason = FAULT_REASON_NONE;
+    activeSoftLimit = LIMIT_NONE;
     lastMPPTTick = 0;
     lastSweepTick = 0;
     lastTelemetryTick = 0;
@@ -112,7 +120,7 @@ void CONTROLLER_UpdateHighRate(void) {
         newFault = FAULT_REASON_OUTPUT_OC;
     } else if (m->tempMCU_C_x100 > (HARD_LIMIT_TEMP_MAX_C * 100)) {
         newFault = FAULT_REASON_OVERTEMP;
-    } else if (limits->mode != MODE_EBIKE && m->currentOut_mA < -500) {
+    } else if (limits->mode == MODE_MPPT && m->currentOut_mA < -1000) {
         newFault = FAULT_REASON_BACKFLOW;
     }
 
@@ -145,55 +153,62 @@ void CONTROLLER_UpdateHighRate(void) {
 
         case STATE_ACTIVE: {
             // --- Multi-Variable Override Control (Min-Selector) ---
-            int64_t min_delta = 1000000; // Large positive default (1000 ticks)
+            
+            // Baseline: What do we WANT to do if no limits are hit?
+            int64_t min_delta = 1000000; // Default to "increase" in CC/CV modes
+            activeSoftLimit = LIMIT_NONE;
 
-            // A. Forward Voltage Limit (CV)
-            // Velocity PI: delta = Ki*error - Kp*dInput
-            int64_t error_V = (int64_t)limits->outputVoltageMax_mV - m->voltageOut_mV;
-            int64_t dInput_V = (int64_t)m->voltageOut_mV - lastVout;
-            int64_t delta_Vout = (GAIN_KI * error_V) - (GAIN_KP * dInput_V);
-            if (delta_Vout < min_delta) min_delta = delta_Vout;
-
-            // B. Forward Current Limit (CC)
-            int64_t error_I = (int64_t)limits->outputCurrentMax_mA - m->currentOut_mA;
-            int64_t dInput_I = (int64_t)m->currentOut_mA - lastIout;
-            int64_t delta_Iout = (GAIN_KI * error_I) - (GAIN_KP * dInput_I);
-            if (delta_Iout < min_delta) min_delta = delta_Iout;
-
-            // C. Input Brownout Protection (Hard floor)
-            if (m->voltageIn_mV < limits->inputVoltageMin_mV) {
-                int64_t delta_brownout = -19000; // Hard backoff (ticks*1000)
-                if (delta_brownout < min_delta) min_delta = delta_brownout;
+            if (limits->mode == MODE_MPPT) {
+                if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
+                    lastMPPTTick = currentTick;
+                    int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
+                    min_delta = (int64_t)mppt_delta_ticks * 1000;
+                } else {
+                    min_delta = 0; // Hold duty between MPPT steps
+                }
             }
 
-            // D. E-Bike Specific Regen Limits
-            if (limits->mode == MODE_EBIKE) {
-                if (m->currentOut_mA < 0) {
-                    // Regen Voltage (Protect battery from overcharge)
-                    int64_t delta_RegenV = (int64_t)GAIN_KI * (limits->inputVoltageMax_mV - m->voltageIn_mV);
-                    if (delta_RegenV < min_delta) min_delta = delta_RegenV;
-
-                    // Regen Current (Negative Iout out)
-                    int64_t delta_RegenI = (int64_t)GAIN_KI * (m->currentOut_mA + limits->inputCurrentMax_mA);
-                    if (delta_RegenI < min_delta) min_delta = delta_RegenI;
+            // A. Output Voltage Limit (Forward CV)
+            int64_t error_Vout = (int64_t)limits->vOutMax_mV - m->voltageOut_mV;
+            int64_t dInput_Vout = (int64_t)m->voltageOut_mV - lastVout;
+            int64_t delta_Vout = (GAIN_KI * error_Vout) - (GAIN_KP * dInput_Vout);
+            if (delta_Vout < min_delta) {
+                min_delta = delta_Vout;
+                // In MPPT mode, only tag if it is actually pulling back (limiting)
+                if (limits->mode != MODE_MPPT || delta_Vout <= 0) {
+                    activeSoftLimit = LIMIT_V_OUT_MAX;
                 }
-
-                // E. Soft Disconnect: Prevent forward drive if battery is low
-                if (m->voltageIn_mV < limits->inputVoltageMin_mV && min_delta > 0) {
-                    min_delta = 0;
-                }
-            } else if (limits->mode == MODE_POWER_SUPPLY) {
-                // PSU Mode: Block logical duty increase if reverse current detected
-                if (m->currentOut_mA < -100 && min_delta > 0) min_delta = 0;
             }
 
-            // F. MPPT Algorithm Participation
-            // (Only runs at MPPT_INTERVAL_MS, otherwise delta is effectively infinite)
-            if (limits->mode == MODE_MPPT && (currentTick - lastMPPTTick >= MPPT_GetInterval())) {
-                lastMPPTTick = currentTick;
-                int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
-                int64_t delta_MPPT = (int64_t)mppt_delta_ticks * 1000;
-                if (delta_MPPT < min_delta) min_delta = delta_MPPT;
+            // B. Output Current Max Limit (Forward CC)
+            int64_t error_IoutMax = (int64_t)limits->iOutMax_mA - m->currentOut_mA;
+            int64_t dInput_Iout = (int64_t)m->currentOut_mA - lastIout;
+            int64_t delta_IoutMax = (GAIN_KI * error_IoutMax) - (GAIN_KP * dInput_Iout);
+            if (delta_IoutMax < min_delta) {
+                min_delta = delta_IoutMax;
+                if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) {
+                    activeSoftLimit = LIMIT_I_OUT_MAX;
+                }
+            }
+
+            // C. Output Current Min Limit (Reverse CC / Backflow)
+            int64_t error_IoutMin = (int64_t)m->currentOut_mA - limits->iOutMin_mA;
+            if (error_IoutMin < 0) {
+                int64_t delta_IoutMin = (int64_t)GAIN_KI * error_IoutMin * 5; 
+                if (delta_IoutMin < min_delta) {
+                    min_delta = delta_IoutMin;
+                    activeSoftLimit = LIMIT_I_OUT_MIN;
+                }
+            }
+
+            // D. Input Brownout Regulation (Soft Floor)
+            int64_t error_Vin = (int64_t)m->voltageIn_mV - limits->vInMin_mV;
+            if (error_Vin < 0) {
+                int64_t delta_VinMin = (int64_t)GAIN_KI * error_Vin * 2; 
+                if (delta_VinMin < min_delta) {
+                    min_delta = delta_VinMin;
+                    activeSoftLimit = LIMIT_V_IN_MIN;
+                }
             }
 
             // 3. Accumulate and Apply
@@ -264,7 +279,13 @@ const char* CONTROLLER_GetStateString(void) {
     switch (currentState) {
         case STATE_IDLE:     return "IDLE";
         case STATE_SWEEPING: return "SWEEPING";
-        case STATE_ACTIVE:   return "ACTIVE";
+        case STATE_ACTIVE: {
+            if (activeSoftLimit == LIMIT_V_OUT_MAX) return "ACTIVE_CV";
+            if (activeSoftLimit == LIMIT_I_OUT_MAX) return "ACTIVE_CC";
+            if (activeSoftLimit == LIMIT_V_IN_MIN)  return "ACTIVE_BROWNOUT";
+            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "ACTIVE_REVERSE";
+            return "ACTIVE_TRACKING";
+        }
         case STATE_FAULT:    return "FAULT";
         case STATE_RECOVERY: return "RECOVERY";
         default:             return "UNKNOWN";

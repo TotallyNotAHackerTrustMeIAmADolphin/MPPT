@@ -53,11 +53,11 @@ void setUp(void) {
     
     // Reset limits
     mock_l.mode = MODE_EBIKE;
-    mock_l.outputVoltageMax_mV = 30000; // 30V target
-    mock_l.inputVoltageMin_mV = 11200;  // 11.2V LVD
-    mock_l.outputCurrentMax_mA = 5000;   // 5A drive limit
-    mock_l.inputVoltageMax_mV = 20000;  // 20V regen limit
-    mock_l.inputCurrentMax_mA = 2000;   // 2A regen current limit
+    mock_l.vOutMax_mV = 30000; // 30V target
+    mock_l.vInMin_mV = 11200;  // 11.2V LVD
+    mock_l.iOutMax_mA = 5000;   // 5A drive limit
+    mock_l.vInMax_mV = 20000;  // 20V regen limit
+    mock_l.iOutMin_mA = -2000;   // 2A regen current limit
     
     // Reset state
     currentState = STATE_IDLE;

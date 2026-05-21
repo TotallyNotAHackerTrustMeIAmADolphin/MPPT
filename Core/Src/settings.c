@@ -17,7 +17,14 @@ static Calibration_t cal = {
     1986, 0, 1661, 3900
 };
 
-static DeviceLimits_t limits = {MODE_MPPT, 25200, 18000, 2000, 80000, 20000};
+static DeviceLimits_t limits = {
+    .mode = MODE_MPPT,
+    .vOutMax_mV = 24000,
+    .iOutMax_mA = 2000,
+    .vInMin_mV = 14000,
+    .vInMax_mV = 80000,
+    .iOutMin_mA = -500
+};
 static bool isCalibrating = false;
 static bool calHighSideOn = false;
 

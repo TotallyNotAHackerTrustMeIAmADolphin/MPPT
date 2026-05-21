@@ -49,6 +49,20 @@ typedef enum
 } FaultReason_t;
 
 /**
+ * @brief Active regulation (soft) limits
+ */
+typedef enum
+{
+  LIMIT_NONE,       // No limit active (MPPT tracking)
+  LIMIT_V_OUT_MAX,  // Output Voltage Max (Forward CV)
+  LIMIT_I_OUT_MAX,  // Output Current Max (Forward CC)
+  LIMIT_V_IN_MIN,   // Input Voltage Min (Brownout regulation)
+  LIMIT_V_IN_MAX,   // Input Voltage Max (Reverse/Regen CV)
+  LIMIT_I_OUT_MIN,  // Output Current Min (Reverse/Regen CC or Backflow)
+  LIMIT_SWEEPING    // Sweep in progress
+} SoftLimit_t;
+
+/**
  * @brief PID Controller state and configuration
  */
 typedef struct
@@ -91,11 +105,11 @@ typedef struct
 typedef struct
 {
   OperationMode_t mode;
-  int32_t outputVoltageMax_mV;
-  int32_t inputVoltageMin_mV;
-  int32_t outputCurrentMax_mA;
-  int32_t inputVoltageMax_mV;
-  int32_t inputCurrentMax_mA; // For E-Bike mode, this is Regen Max Current
+  int32_t vOutMax_mV;
+  int32_t iOutMax_mA;
+  int32_t vInMin_mV;
+  int32_t vInMax_mV;
+  int32_t iOutMin_mA;  // Typically negative for reverse flow
 } DeviceLimits_t;
 
 /**

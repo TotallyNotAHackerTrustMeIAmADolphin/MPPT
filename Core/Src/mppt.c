@@ -51,7 +51,7 @@ int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, boo
     *isFinished = false;
 
     // Supply-Aware Termination
-    if (m->voltageIn_mV < limits->inputVoltageMin_mV) {
+    if (m->voltageIn_mV < limits->vInMin_mV) {
         *isFinished = true;
         return sweepBestDutyCycle;
     }

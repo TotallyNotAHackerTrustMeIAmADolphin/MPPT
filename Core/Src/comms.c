@@ -103,20 +103,23 @@ void COMMS_HandleCommands(void) {
                     SETTINGS_SaveCalibration();
                     printf("ACK:CAL_SAVE_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MAX:", 14) == 0) {
-                    limits->outputVoltageMax_mV = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_V_MAX_OK:%ld\n", limits->outputVoltageMax_mV);
+                    limits->vOutMax_mV = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_V_MAX_OK:%ld\n", limits->vOutMax_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MIN:", 14) == 0) {
-                    limits->inputVoltageMin_mV = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_V_MIN_OK:%ld\n", limits->inputVoltageMin_mV);
+                    limits->vInMin_mV = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_V_MIN_OK:%ld\n", limits->vInMin_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_I_MAX:", 14) == 0) {
-                    limits->outputCurrentMax_mA = atoi(cmdBuffer + 14);
-                    printf("ACK:SET_I_MAX_OK:%ld\n", limits->outputCurrentMax_mA);
+                    limits->iOutMax_mA = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_I_MAX_OK:%ld\n", limits->iOutMax_mA);
+                } else if (strncmp(cmdBuffer, "CMD:SET_I_MIN:", 14) == 0) {
+                    limits->iOutMin_mA = atoi(cmdBuffer + 14);
+                    printf("ACK:SET_I_MIN_OK:%ld\n", limits->iOutMin_mA);
                 } else if (strncmp(cmdBuffer, "CMD:SET_MODE:", 13) == 0) {
                     limits->mode = (OperationMode_t)atoi(cmdBuffer + 13);
                     printf("ACK:SET_MODE_OK:%d\n", limits->mode);
                 } else if (strcmp(cmdBuffer, "CMD:GET_LIMITS") == 0) {
-                    printf("{\"type\":\"limits\",\"mode\":%d,\"Vmax_limit\":%ld,\"Vmin_limit\":%ld,\"Imax_limit\":%ld}\n",
-                           limits->mode, limits->outputVoltageMax_mV, limits->inputVoltageMin_mV, limits->outputCurrentMax_mA);
+                    printf("{\"type\":\"limits\",\"mode\":%d,\"Vmax\":%ld,\"Vmin\":%ld,\"Imax\":%ld,\"Imin\":%ld}\n",
+                           limits->mode, limits->vOutMax_mV, limits->vInMin_mV, limits->iOutMax_mA, limits->iOutMin_mA);
                 } else if (strcmp(cmdBuffer, "CMD:RESET_FAULT") == 0) {
                     CONTROLLER_ResetFault();
                     printf("ACK:RESET_FAULT_OK\n");
