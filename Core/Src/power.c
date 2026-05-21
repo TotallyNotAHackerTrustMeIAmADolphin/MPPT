@@ -86,10 +86,22 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
     // 2. Hardware-specific constraints for PWM Generation
     int32_t hardwareDuty = dutyCycleTicks;
 
-    // Apply safety dead-bands to hardware execution only
+    // --- CRITICAL SAFETY: Hard-Zero / Shutdown ---
+    // If duty is near zero, we must disable outputs entirely to prevent 
+    // the synchronous Low-Side FETs from shorting the rails to ground.
     if (hardwareDuty < PWM_DEAD_BAND_TICKS) {
-        hardwareDuty = 0;
-    } else if (hardwareDuty > maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS) {
+        __HAL_TIM_MOE_DISABLE(&htim1); // Hardware-level high-impedance
+        CH1Value = 0;
+        CH2Value = 0;
+        updateDitherTable(ditherTableCH1, 0);
+        updateDitherTable(ditherTableCH2, 0);
+        return; 
+    } else {
+        __HAL_TIM_MOE_ENABLE(&htim1); // Re-enable if we are above dead-band
+    }
+
+    // Apply safety dead-bands to top of range
+    if (hardwareDuty > maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS) {
         hardwareDuty = maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS;
     }
     
