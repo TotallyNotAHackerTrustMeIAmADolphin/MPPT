@@ -64,19 +64,24 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Output Target Voltage (V):</label>
-                    <input type="number" step="0.01" id="limit_Vmax" value="25.20">
+                    <label>Output Voltage Limit (V):</label>
+                    <input type="number" step="0.01" id="limit_Vmax" value="24.00">
                     <button type="button" onclick="sendLimit('SET_V_MAX', 'limit_Vmax')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Battery (Input) Min Voltage (V):</label>
-                    <input type="number" step="0.01" id="limit_Vmin" value="18.00">
+                    <label>Input Soft-Floor (V):</label>
+                    <input type="number" step="0.01" id="limit_Vmin" value="14.00">
                     <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Max Output/Charge Current (A):</label>
+                    <label>Max Forward Current (A):</label>
                     <input type="number" step="0.01" id="limit_Imax" value="2.00">
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Max Reverse/Regen Current (A):</label>
+                    <input type="number" step="0.01" id="limit_Imin" value="0.50">
+                    <button type="button" onclick="sendLimit('SET_I_MIN', 'limit_Imin')">Update</button>
                 </div>
                 <button type="button" id="saveLimitsBtn" class="primary">Save Configuration to EEPROM</button>
             </form>

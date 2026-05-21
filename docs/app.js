@@ -196,9 +196,10 @@ function updateLimitsUI(data) {
         syncInterval = null;
     }
     // Logic is now unified via updateTelemetryUI style, but we'll manually set here too for GET_LIMITS
-    if (data.Vmax_limit !== undefined) document.getElementById('limit_Vmax').value = (data.Vmax_limit / 1000).toFixed(2);
-    if (data.Vmin_limit !== undefined) document.getElementById('limit_Vmin').value = (data.Vmin_limit / 1000).toFixed(2);
-    if (data.Imax_limit !== undefined) document.getElementById('limit_Imax').value = (data.Imax_limit / 1000).toFixed(2);
+    if (data.Vmax !== undefined) document.getElementById('limit_Vmax').value = (data.Vmax / 1000).toFixed(2);
+    if (data.Vmin !== undefined) document.getElementById('limit_Vmin').value = (data.Vmin / 1000).toFixed(2);
+    if (data.Imax !== undefined) document.getElementById('limit_Imax').value = (data.Imax / 1000).toFixed(2);
+    if (data.Imin !== undefined) document.getElementById('limit_Imin').value = (Math.abs(data.Imin) / 1000).toFixed(2);
     appendToLog('Limits synchronized');
 }
 
@@ -252,6 +253,8 @@ window.sendLimit = async (cmdPrefix, inputId) => {
         valueInt = parseInt(value);
     } else {
         valueInt = Math.round(parseFloat(value) * 1000);
+        // Imin is a negative flow limit
+        if (inputId === 'limit_Imin') valueInt = -valueInt;
     }
     await sendCommand(`CMD:${cmdPrefix}:${valueInt}`);
 };

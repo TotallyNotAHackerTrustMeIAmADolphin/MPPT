@@ -153,12 +153,14 @@ input[type="number"] {
 }
 
 .state-idle { background-color: #666 !important; }
-.state-mppt { background-color: var(--primary-color) !important; }
+.state-active_tracking { background-color: var(--primary-color) !important; }
 .state-sweeping { background-color: var(--accent-color) !important; }
-.state-cv { background-color: #9c27b0 !important; }
-.state-cc { background-color: #ff9800 !important; }
+.state-active_cv { background-color: #9c27b0 !important; }
+.state-active_cc { background-color: #ff9800 !important; }
+.state-active_brownout { background-color: #795548 !important; }
+.state-active_reverse { background-color: #607d8b !important; }
 .state-fault { background-color: var(--error-color) !important; }
-.state-recovery { background-color: #795548 !important; }
+.state-recovery { background-color: #3f51b5 !important; }
 
 #log {
     background-color: #000;
