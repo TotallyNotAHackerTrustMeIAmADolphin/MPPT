@@ -4,6 +4,9 @@
 This project is an embedded firmware for the **openMPPT v1.1** solar charge controller. It is built for the **STM32F072RBT6** MCU using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
 
 ### Key Features
+- **Multi-Algorithm MPPT**: Supports both **Incremental Conductance (IncCond)** for high-speed tracking and classic **Perturb and Observe (P&O)**.
+- **Pre-Charge Duty Matching**: Dynamically calculates equilibrium duty cycle based on $V_{in}/V_{out}$ ratio before engaging the power stage to prevent battery backflow faults.
+- **Voltage/Current Bound Sweeping**: Global power sweep terminates autonomously upon hitting soft device limits, preventing hardware overvoltage faults.
 - **Multi-Mode Operation**: Selectable modes via dashboard (Solar MPPT, E-Bike Bidirectional, Power Supply CV/CC).
 - **Bidirectional E-Bike Mode**: Supports motor driving (boost) and regenerative braking (buck) with seamless PI transitions.
 - **Unified Multi-Variable Control**: Single control loop manages voltage, current, and regen limits simultaneously using a high-speed "Min-Selector" architecture.
@@ -14,7 +17,7 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks).
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong processing for zero-latency measurement.
 - **Hardware Safety Architecture**: Mandatory hardware limits (80V Vin, 12.5V Min Vin, 20A Current) with descriptive fault reporting.
-- **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping. This allows small MPPT steps to accumulate and "walk" out of the 100% passthrough dead-band without losing state.
+- **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping.
 - **Enhanced UI Stability**: 100ms state-hold hysteresis prevents dashboard flickering during limit-hitting events.
 - **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) with automated safety bypasses for field calibration.
 - **Dynamic Tuning**: Remote parameter optimization (`CMD:TUNE_...`) supported via Python hybrid search.
@@ -48,6 +51,11 @@ pio device monitor -b 115200
 
 ## Development Conventions
 
+### MPPT Algorithm Configuration
+The active tracking algorithm can be toggled in `Core/Inc/mppt.h` using the `ACTIVE_MPPT_ALGO` macro:
+- `MPPT_ALGO_INC_COND`: (Default) mathematically tracks the peak via $dI/dV$. Superior for shading/fast clouds.
+- `MPPT_ALGO_P_AND_O`: Classic power-comparison sweep.
+
 ### Git Workflow & Branching Strategy
 The project strictly follows a **Stable Main** workflow tailored for embedded systems hardware safety:
 1.  **Stable Main:** The `main` branch MUST always compile cleanly and represent a hardware-safe, tested state. Never commit broken or experimental code directly to `main`.
@@ -61,6 +69,7 @@ The project strictly follows a **Stable Main** workflow tailored for embedded sy
 
 ### Code & Math Conventions
 - **Fixed-Point Math**: NEVER use `float` or `double`. Use 32-bit millivolts (`_mV`) and milliamps (`_mA`), and 64-bit microwatts (`_uW`) for power.
+- **Sign Awareness**: When implementing MPPT math, always cross-multiply (e.g., $dI \times V = -I \times dV$) to avoid division, and ensure sign handling for negative $dV$ is explicit in Incremental Conductance implementations.
 - **Calibration Protocol**: Use machine-readable `CMD:CAL_...` format for serial interaction to maintain compatibility with future web frontends.
 - **Safety First**: Power stage must be disabled (`POWER_PWM_Set(0)`) before writing to Flash (EEPROM).
 
