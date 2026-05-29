@@ -245,13 +245,6 @@ void CONTROLLER_UpdateHighRate(void) {
                     int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
 #endif
                     min_delta = (int64_t)mppt_delta_ticks * 1000;
-
-                    // --- NO-LOAD PRESSURE ---
-                    // If output current is very low (battery disconnected), the algorithm might stall.
-                    // We apply a small positive pressure to drive the voltage up to the CV limit.
-                    if (m->currentOut_mA < 100 && min_delta == 0) {
-                        min_delta = (int64_t)MPPT_GetStepSize() * 1000;
-                    }
                 } else {
                     min_delta = 0; // Hold duty between MPPT steps
                 }
