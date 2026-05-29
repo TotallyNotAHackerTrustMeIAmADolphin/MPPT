@@ -10,6 +10,13 @@
 
 #include "system_types.h"
 
+/* Algorithm Selection */
+#define MPPT_ALGO_P_AND_O       0
+#define MPPT_ALGO_INC_COND      1
+
+/* Set the active algorithm here for easy switching */
+#define ACTIVE_MPPT_ALGO        MPPT_ALGO_INC_COND
+
 /**
  * @brief Performs a single step of the Perturb and Observe algorithm.
  * @param m Pointer to current measurements.
@@ -17,6 +24,14 @@
  * @return The required duty cycle CHANGE (delta) in ticks.
  */
 int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *limits);
+
+/**
+ * @brief Performs a single step of the Incremental Conductance algorithm.
+ * @param m Pointer to current measurements.
+ * @param limits Pointer to system operational limits.
+ * @return The required duty cycle CHANGE (delta) in ticks.
+ */
+int32_t MPPT_IncrementalConductance(const Measurements_t *m, const DeviceLimits_t *limits);
 
 /**
  * @brief Manages the global power sweep.

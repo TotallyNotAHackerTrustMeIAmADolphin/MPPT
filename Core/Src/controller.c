@@ -175,7 +175,11 @@ void CONTROLLER_UpdateHighRate(void) {
             if (limits->mode == MODE_MPPT) {
                 if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
                     lastMPPTTick = currentTick;
+#if ACTIVE_MPPT_ALGO == MPPT_ALGO_INC_COND
+                    int32_t mppt_delta_ticks = MPPT_IncrementalConductance(m, limits);
+#else
                     int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
+#endif
                     min_delta = (int64_t)mppt_delta_ticks * 1000;
                 } else {
                     min_delta = 0; // Hold duty between MPPT steps
