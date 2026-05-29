@@ -5,6 +5,7 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 
 ### Key Features
 - **Multi-Algorithm MPPT**: Supports both **Incremental Conductance (IncCond)** for high-speed tracking and classic **Perturb and Observe (P&O)**.
+- **Sunlight-Readable Telemetry**: Integrated Nokia 5110 LCD (PCD8544) via SPI1 for real-time monitoring of Vin, Vout, Pout, and Operation Mode.
 - **Pre-Charge Duty Matching**: Dynamically calculates equilibrium duty cycle based on $V_{in}/V_{out}$ ratio before engaging the power stage to prevent battery backflow faults.
 - **Voltage/Current Bound Sweeping**: Global power sweep terminates autonomously upon hitting soft device limits, preventing hardware overvoltage faults.
 - **Multi-Mode Operation**: Selectable modes via dashboard (Solar MPPT, E-Bike Bidirectional, Power Supply CV/CC).
@@ -17,7 +18,7 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks).
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong processing for zero-latency measurement.
 - **Hardware Safety Architecture**: Mandatory hardware limits (80V Vin, 12.5V Min Vin, 20A Current) with descriptive fault reporting.
-- **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping.
+- **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping. This allows small MPPT steps to accumulate and "walk" out of the 100% passthrough dead-band without losing state.
 - **Enhanced UI Stability**: 100ms state-hold hysteresis prevents dashboard flickering during limit-hitting events.
 - **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) with automated safety bypasses for field calibration.
 - **Dynamic Tuning**: Remote parameter optimization (`CMD:TUNE_...`) supported via Python hybrid search.
@@ -34,7 +35,7 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 - **Hardware Automation**: `TIMER_PERIOD` is automatically extracted from `MPPT.ioc` during build.
 
 ## Project Roadmap
-- [ ] **Telemetry Display**: Integrate Nokia 5110 LCD (PCD8544) via SPI1 for real-time sunlight-readable monitoring.
+- [x] **Telemetry Display**: Integrated Nokia 5110 LCD (PCD8544) via SPI1 for real-time sunlight-readable monitoring.
 - [ ] **Task Scheduling**: Implement a priority-based scheduler or lightweight RTOS (FreeRTOS) to decouple safety-critical control (1.5kHz) from telemetry/comms.
 
 ## Building and Running
@@ -82,12 +83,28 @@ The project strictly follows a **Stable Main** workflow tailored for embedded sy
 - `Core/Src/controller.c`: Unified state machine and safety logic.
 - `Core/Src/mppt.c`: Optimized P&O and Sweep algorithms.
 - `Core/Src/power.c`: Velocity PI regulation and PWM management.
+- `Core/Src/lcd_pcd8544.c`: Hardened Nokia 5110 (PCD8544) SPI driver.
 - `Core/Src/eeprom.c`: ST EEPROM Emulation storage layer.
 - `STM32F072RBTX_FLASH.ld`: Linker script (modified to reserve last 4KB for EEPROM).
 - `scripts/setup_cubemx_env_auto.py`: Automated build environment bridge.
 - `scripts/tune_mppt.py`: Hybrid machine-learning auto-tuning script.
 - `scripts/mppt_tool.py`: Advanced diagnostic and control suite.
 - `hardware/`: Directory containing hardware design files and documentation.
+
+## Hardware Integration - Nokia 5110 LCD
+The telemetry display is connected via the **SPI1** header and specific GPIO pins:
+
+| LCD Pin | Board Label / Pin | MCU Pin |
+| :--- | :--- | :--- |
+| **CLK** | SCK | PB3 |
+| **DIN** | MOSI | PB5 |
+| **DC** | Pin 4 | PB13 |
+| **CE** (CS) | Pin 5 | PB14 |
+| **RST** | Pin 3 | PB12 |
+| **VCC** | 3.3V | 3.3V |
+| **GND** | GND | GND |
+
+**Driver Performance:** The LCD update task runs at **10Hz** in the main loop, non-blocking, ensuring no interference with the **1.5kHz** high-rate control loop.
 
 ## Diagnostic Tools
 

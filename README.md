@@ -24,7 +24,12 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
   - **Power:** Microwatts (`_uW`)
   - **PWM:** Raw Dithered Ticks (`_ticks`)
 
-### 4. Advanced Control & Safety Logic
+### 4. Sunlight-Readable Telemetry Display
+- **Hardware:** Integrated **Nokia 5110 (PCD8544)** LCD via SPI1.
+- **Performance:** Non-blocking 10Hz UI refresh task decoupled from high-rate power control.
+- **UI Design:** Real-time monitoring of Vin, Vout, Pout, and Operation Mode with vertical decimal alignment for high readability.
+
+### 5. Advanced Control & Safety Logic
 - **Velocity PI Regulation:** Implements a mathematically stable **Velocity PI algorithm** for Constant Voltage (CV) and Constant Current (CC) modes. This eliminates double-integration instability and provides rock-solid, ripple-free regulation.
 - **Limit-Aware MPPT (P&O):** A refined Perturb & Observe algorithm with **power accumulation logic**. It accurately tracks the maximum power point on gentle slopes and intelligently "parks" the duty cycle near user limits to prevent state flapping.
 - **Stabilized Global Sweep:** Slowed-down global sweep (15s duration) ensures hardware capacitors settle, providing a near-perfect MPP baseline without voltage offsets.
@@ -45,6 +50,7 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 - **Power Stage:** Four TI **CSD19505KCS** 80V N-Channel MOSFETs driven by two Infineon **IRS21867STRPBF** gate drivers. High-side drivers are powered by isolated **B1212S-1W** DC-DC converters for continuous high-voltage operation.
 - **Sensing:** Precision zero-drift **INA240A4DR** current sense amplifiers. *(Note: Footprints for isolated ACS712 sensors exist as a planned future replacement for the INA240).*
 - **Auxiliary Power:** **XL7005A** wide-input buck converters providing 12V and 3.3V logic rails from panel voltage.
+- **Display:** Integrated **Nokia 5110 LCD** for real-time telemetry (SPI1).
 - **Framework:** STM32Cube HAL.
 - **Build System:** PlatformIO using a custom `openmppt` board definition.
 - **Headless Operation:** The board regulates autonomously without requiring a serial connection.
