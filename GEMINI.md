@@ -6,16 +6,17 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 ### Key Features
 - **Multi-Mode Operation**: Selectable modes via dashboard (Solar MPPT, E-Bike Bidirectional, Power Supply CV/CC).
 - **Bidirectional E-Bike Mode**: Supports motor driving (boost) and regenerative braking (buck) with seamless PI transitions.
-- **Unified Multi-Variable Control**: Single control loop manages voltage, current, and regen limits simultaneously for stability.
+- **Unified Multi-Variable Control**: Single control loop manages voltage, current, and regen limits simultaneously using a high-speed "Min-Selector" architecture.
 - **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
-- **Velocity PI Regulation**: mathematically stable PI controller for CV/CC modes, eliminating ripple.
+- **Velocity PI Regulation**: Mathematically stable PI controller for CV/CC modes, eliminating ripple and state-switching oscillation.
 - **Autonomous Operation**: Board boots and regulates without a serial connection (headless).
 - **Semantic Fixed-Point Math**: All calculations use integers with semantic scaling (mV, mA, uW, ticks).
 - **DMA-based ADC**: Samples 6 channels with Ping-Pong processing for zero-latency measurement.
 - **Hardware Safety Architecture**: Mandatory hardware limits (80V Vin, 12.5V Min Vin, 20A Current) with descriptive fault reporting.
 - **Dead-Band Escape Strategy**: Decouples logical duty cycle state from hardware-level PWM clamping. This allows small MPPT steps to accumulate and "walk" out of the 100% passthrough dead-band without losing state.
-- **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) for field calibration.
+- **Enhanced UI Stability**: 100ms state-hold hysteresis prevents dashboard flickering during limit-hitting events.
+- **Interactive Calibration**: Structured serial command protocol (`CMD:CAL_...`) with automated safety bypasses for field calibration.
 - **Dynamic Tuning**: Remote parameter optimization (`CMD:TUNE_...`) supported via Python hybrid search.
 - **EEPROM Storage**: Integrated signature-checked Flash storage for persisting calibration and limits.
 
