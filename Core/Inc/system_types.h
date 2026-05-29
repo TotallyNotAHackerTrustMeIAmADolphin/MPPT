@@ -29,7 +29,7 @@ typedef enum
 typedef enum
 {
   MODE_MPPT,
-  MODE_EBIKE,
+  MODE_BIDIRECTIONAL,
   MODE_POWER_SUPPLY
 } OperationMode_t;
 

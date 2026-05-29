@@ -116,6 +116,26 @@ button.primary:hover {
     min-width: 200px;
 }
 
+.info-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-color: #444;
+    color: #aaa;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 10px;
+    line-height: 14px;
+    cursor: help;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.info-icon:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
 input[type="number"] {
     background-color: #333;
     color: white;

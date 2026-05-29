@@ -52,7 +52,7 @@ void setUp(void) {
     last_duty = 0;
     
     // Reset limits
-    mock_l.mode = MODE_EBIKE;
+    mock_l.mode = MODE_BIDIRECTIONAL;
     mock_l.vOutMax_mV = 30000; // 30V target
     mock_l.vInMin_mV = 11200;  // 11.2V LVD
     mock_l.iOutMax_mA = 5000;   // 5A drive limit
