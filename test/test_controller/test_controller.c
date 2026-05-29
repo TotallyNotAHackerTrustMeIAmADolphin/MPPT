@@ -139,6 +139,7 @@ void test_controller_brownout_limit(void) {
 void test_controller_reverse_limit(void) {
     currentState = STATE_ACTIVE;
     globalDutyIntegral = 1000 * 1000;
+    mock_l.mode = MODE_BIDIRECTIONAL; // Allow reverse current
     
     mock_l.iOutMin_mA = -500;
     mock_m.currentOut_mA = -600; // More negative than limit
@@ -183,15 +184,63 @@ void test_controller_min_selector_priority(void) {
     mock_m.voltageOut_mV = 24010; 
     lastVout = 24010; // delta_Vout will be GAIN_KI * -10 = -20
     
-    // Brownout wants to decrease duty HEAVILY
-    mock_l.vInMin_mV = 14000;
-    mock_m.voltageIn_mV = 13500; // -500mV error -> delta_Vin = GAIN_KI * -500 * 2 = -2000
+    // CC wants to decrease duty HEAVILY
+    mock_l.iOutMax_mA = 2000;
+    mock_m.currentOut_mA = 3000; // +1000mA error -> delta_Iout = GAIN_KI * -1000 = -2000
+    lastIout = 3000;
     
     CONTROLLER_UpdateHighRate();
     
-    // Brownout should win
-    TEST_ASSERT_EQUAL(LIMIT_V_IN_MIN, activeSoftLimit);
+    // CC should win
+    TEST_ASSERT_EQUAL(LIMIT_I_OUT_MAX, activeSoftLimit);
     TEST_ASSERT_EQUAL(1000 - 2, last_duty); // -2000 / 1000 = -2 ticks
+}
+
+void test_controller_backflow_psu_protection(void) {
+    mock_m.voltageIn_mV = 20000;
+    mock_l.mode = MODE_POWER_SUPPLY;
+    
+    // Start active
+    currentState = STATE_ACTIVE;
+    
+    // 1. Test tight threshold (-40mA should trip)
+    mock_m.voltageIn_mV = 19000; 
+    mock_m.currentOut_mA = -40; 
+    
+    CONTROLLER_UpdateHighRate();
+    
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_BACKFLOW, currentFaultReason);
+}
+
+void test_controller_hard_safety_uv_trip(void) {
+    mock_m.voltageIn_mV = 20000;
+    mock_l.mode = MODE_POWER_SUPPLY;
+    currentState = STATE_ACTIVE;
+
+    // Drop Vin below mandatory 13V threshold
+    mock_m.voltageIn_mV = 12900; 
+    
+    CONTROLLER_UpdateHighRate();
+    
+    // Should trigger FAULT immediately (1 frame)
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_INPUT_UV, currentFaultReason);
+}
+
+void test_controller_hard_safety_uv_recovery(void) {
+    currentState = STATE_FAULT;
+    currentFaultReason = FAULT_REASON_INPUT_UV;
+    
+    // 1. Below recovery threshold (13.5V)
+    mock_m.voltageIn_mV = 13500;
+    CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+
+    // 2. Above recovery threshold (14.1V)
+    mock_m.voltageIn_mV = 14100;
+    CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_IDLE, currentState);
 }
 
 int main(int argc, char **argv) {
@@ -199,9 +248,11 @@ int main(int argc, char **argv) {
     RUN_TEST(test_controller_transition_idle_to_active);
     RUN_TEST(test_controller_cv_limit);
     RUN_TEST(test_controller_cc_limit);
-    RUN_TEST(test_controller_brownout_limit);
     RUN_TEST(test_controller_reverse_limit);
     RUN_TEST(test_controller_mppt_tracking);
     RUN_TEST(test_controller_min_selector_priority);
+    RUN_TEST(test_controller_backflow_psu_protection);
+    RUN_TEST(test_controller_hard_safety_uv_trip);
+    RUN_TEST(test_controller_hard_safety_uv_recovery);
     return UNITY_END();
 }

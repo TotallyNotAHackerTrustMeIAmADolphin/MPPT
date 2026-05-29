@@ -178,7 +178,7 @@ void CONTROLLER_UpdateHighRate(void) {
 
     if (m->voltageIn_mV > HARD_LIMIT_VIN_MAX_MV) {
         newFault = FAULT_REASON_INPUT_OV;
-    } else if (currentState != STATE_IDLE && m->voltageIn_mV < HARD_LIMIT_VIN_MIN_MV) {
+    } else if (currentState != STATE_IDLE && m->voltageIn_mV < 13000) {
         newFault = FAULT_REASON_INPUT_UV;
     } else if (m->currentIn_mA > HARD_LIMIT_IIN_MAX_MA) {
         newFault = FAULT_REASON_INPUT_OC;
@@ -188,15 +188,23 @@ void CONTROLLER_UpdateHighRate(void) {
         newFault = FAULT_REASON_OUTPUT_OC;
     } else if (m->tempMCU_C_x100 > (HARD_LIMIT_TEMP_MAX_C * 100)) {
         newFault = FAULT_REASON_OVERTEMP;
-    } else if (limits->mode == MODE_MPPT && m->currentOut_mA < -1000) {
+    } else if (limits->mode != MODE_BIDIRECTIONAL && (m->currentOut_mA < -30 || (m->voltageIn_mV < 14000 && m->currentOut_mA < 0))) {
         newFault = FAULT_REASON_BACKFLOW;
     }
 
     if (newFault != FAULT_REASON_NONE && !SETTINGS_IsCalibrating()) {
-        faultCounter++;
-        if (faultCounter >= FAULT_THRESHOLD_FRAMES) {
+        // High-priority safety faults trigger immediately (1 frame)
+        if (newFault == FAULT_REASON_BACKFLOW || newFault == FAULT_REASON_INPUT_OV || 
+            newFault == FAULT_REASON_OUTPUT_OV || newFault == FAULT_REASON_INPUT_UV) {
             currentFaultReason = newFault;
             transitionTo(STATE_FAULT);
+        } else {
+            // Other faults use a small integration window to avoid noise trips
+            faultCounter++;
+            if (faultCounter >= FAULT_THRESHOLD_FRAMES) {
+                currentFaultReason = newFault;
+                transitionTo(STATE_FAULT);
+            }
         }
     } else {
         faultCounter = 0;
@@ -210,7 +218,7 @@ void CONTROLLER_UpdateHighRate(void) {
             targetDuty_ticks = 0;
             // Auto-recovery: If input UV is gone OR if it was a transient fault (like backflow), wait then retry
             if (currentFaultReason == FAULT_REASON_INPUT_UV) {
-                if (m->voltageIn_mV > MIN_VOLTAGE_IN_MV) transitionTo(STATE_IDLE);
+                if (m->voltageIn_mV > 14000) transitionTo(STATE_IDLE);
             } else if (currentTick - faultStateEntryTick >= FAULT_RECOVERY_DELAY_MS) {
                 // Try to recover from other faults after a delay
                 transitionTo(STATE_IDLE);
@@ -219,7 +227,7 @@ void CONTROLLER_UpdateHighRate(void) {
 
         case STATE_IDLE:
             targetDuty_ticks = 0;
-            if (m->voltageIn_mV > MIN_VOLTAGE_IN_MV) {
+            if (m->voltageIn_mV > 14000) {
                 if (limits->mode == MODE_MPPT) transitionTo(STATE_SWEEPING);
                 else transitionTo(STATE_ACTIVE);
             }
@@ -285,18 +293,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 }
             }
 
-            // D. Input Brownout Regulation (Soft Floor)
-            int64_t error_VinMin = (int64_t)m->voltageIn_mV - limits->vInMin_mV;
-            if (error_VinMin < 0) {
-                int64_t delta_VinMin = (int64_t)GAIN_KI * error_VinMin * 2; 
-                if (delta_VinMin < min_delta) {
-                    min_delta = delta_VinMin;
-                    activeSoftLimit = LIMIT_V_IN_MIN;
-                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
-                }
-            }
-
-            // E. Input Voltage Max Limit (Reverse CV)
+            // D. Input Voltage Max Limit (Reverse CV)
             int64_t error_VinMax = (int64_t)limits->vInMax_mV - m->voltageIn_mV;
             if (error_VinMax < 0) {
                 int64_t delta_VinMax = (int64_t)GAIN_KI * error_VinMax * 2;
@@ -322,7 +319,7 @@ void CONTROLLER_UpdateHighRate(void) {
             lastIout = m->currentOut_mA;
 
             // Return to IDLE if input voltage is lost
-            if (m->voltageIn_mV < (MIN_VOLTAGE_IN_MV - 1000)) transitionTo(STATE_IDLE);
+            if (m->voltageIn_mV < 13000) transitionTo(STATE_IDLE);
             break;
         }
 
