@@ -45,6 +45,9 @@ static uint8_t faultCounter = 0;
 static uint32_t softLimitHoldTimer = 0;
 #define SOFT_LIMIT_HOLD_TIME_MS 100
 #define SWEEP_STEP_INTERVAL_MS 20
+#define FAULT_RECOVERY_DELAY_MS 5000
+
+static uint32_t faultStateEntryTick = 0;
 
 /* Fault Blink Logic */
 static uint32_t lastFaultBlinkTick = 0;
@@ -135,6 +138,7 @@ static void transitionTo(SystemState_t newState) {
             POWER_Shutdown();
             activeSoftLimit = LIMIT_NONE;
             lastFaultBlinkTick = HAL_GetTick();
+            faultStateEntryTick = HAL_GetTick();
             blinkPhase = 0;
             blinkCount = 0;
             break;
@@ -204,7 +208,11 @@ void CONTROLLER_UpdateHighRate(void) {
     switch (currentState) {
         case STATE_FAULT:
             targetDuty_ticks = 0;
-            if (currentFaultReason == FAULT_REASON_INPUT_UV && m->voltageIn_mV > MIN_VOLTAGE_IN_MV) {
+            // Auto-recovery: If input UV is gone OR if it was a transient fault (like backflow), wait then retry
+            if (currentFaultReason == FAULT_REASON_INPUT_UV) {
+                if (m->voltageIn_mV > MIN_VOLTAGE_IN_MV) transitionTo(STATE_IDLE);
+            } else if (currentTick - faultStateEntryTick >= FAULT_RECOVERY_DELAY_MS) {
+                // Try to recover from other faults after a delay
                 transitionTo(STATE_IDLE);
             }
             break;
@@ -237,6 +245,13 @@ void CONTROLLER_UpdateHighRate(void) {
                     int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
 #endif
                     min_delta = (int64_t)mppt_delta_ticks * 1000;
+
+                    // --- NO-LOAD PRESSURE ---
+                    // If output current is very low (battery disconnected), the algorithm might stall.
+                    // We apply a small positive pressure to drive the voltage up to the CV limit.
+                    if (m->currentOut_mA < 100 && min_delta == 0) {
+                        min_delta = (int64_t)MPPT_GetStepSize() * 1000;
+                    }
                 } else {
                     min_delta = 0; // Hold duty between MPPT steps
                 }
