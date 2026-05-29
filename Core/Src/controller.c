@@ -30,7 +30,7 @@ static int64_t globalDutyIntegral = 0;
 static int32_t targetDuty_ticks = 0;
 
 /* Control Gains (Scaled for 1ms task) */
-#define GAIN_KP 10
+#define GAIN_KP 5
 #define GAIN_KI 2
 
 /* Velocity PI storage for derivative terms */
@@ -39,6 +39,9 @@ static int32_t lastIout = 0;
 
 static uint8_t faultCounter = 0;
 #define FAULT_THRESHOLD_FRAMES 3
+
+static uint32_t softLimitHoldTimer = 0;
+#define SOFT_LIMIT_HOLD_TIME_MS 100
 
 /* Internal State Transition Logic */
 static void transitionTo(SystemState_t newState) {
@@ -124,7 +127,7 @@ void CONTROLLER_UpdateHighRate(void) {
         newFault = FAULT_REASON_BACKFLOW;
     }
 
-    if (newFault != FAULT_REASON_NONE) {
+    if (newFault != FAULT_REASON_NONE && !SETTINGS_IsCalibrating()) {
         faultCounter++;
         if (faultCounter >= FAULT_THRESHOLD_FRAMES) {
             currentFaultReason = newFault;
@@ -135,6 +138,8 @@ void CONTROLLER_UpdateHighRate(void) {
     }
 
     // 2. Control Logic
+    if (softLimitHoldTimer > 0) softLimitHoldTimer--;
+    
     switch (currentState) {
         case STATE_FAULT:
             targetDuty_ticks = 0;
@@ -156,7 +161,11 @@ void CONTROLLER_UpdateHighRate(void) {
             
             // Baseline: What do we WANT to do if no limits are hit?
             int64_t min_delta = 1000000; // Default to "increase" in CC/CV modes
-            activeSoftLimit = LIMIT_NONE;
+            
+            // Only update soft limit if the hold timer has expired
+            if (softLimitHoldTimer == 0) {
+                activeSoftLimit = LIMIT_NONE;
+            }
 
             if (limits->mode == MODE_MPPT) {
                 if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
@@ -176,6 +185,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 min_delta = delta_Vout;
                 if (limits->mode != MODE_MPPT || delta_Vout <= 0) {
                     activeSoftLimit = LIMIT_V_OUT_MAX;
+                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
                 }
             }
 
@@ -187,6 +197,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 min_delta = delta_IoutMax;
                 if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) {
                     activeSoftLimit = LIMIT_I_OUT_MAX;
+                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
                 }
             }
 
@@ -197,6 +208,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 if (delta_IoutMin < min_delta) {
                     min_delta = delta_IoutMin;
                     activeSoftLimit = LIMIT_I_OUT_MIN;
+                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
                 }
             }
 
@@ -207,6 +219,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 if (delta_VinMin < min_delta) {
                     min_delta = delta_VinMin;
                     activeSoftLimit = LIMIT_V_IN_MIN;
+                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
                 }
             }
 
@@ -217,6 +230,7 @@ void CONTROLLER_UpdateHighRate(void) {
                 if (delta_VinMax < min_delta) {
                     min_delta = delta_VinMax;
                     activeSoftLimit = LIMIT_V_IN_MAX;
+                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
                 }
             }
 

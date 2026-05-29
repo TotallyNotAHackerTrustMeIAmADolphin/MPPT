@@ -58,6 +58,8 @@ void COMMS_HandleCommands(void) {
                 
                 if (strcmp(cmdBuffer, "CMD:CAL_ENTER") == 0) {
                     SETTINGS_SetCalibrating(true);
+                    CONTROLLER_ResetFault(); // Clear any existing fault state
+                    POWER_Start();           // Force power stage to enable MOE and DMA
                     printf("ACK:CAL_ENTER_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:CAL_EXIT") == 0) {
                     SETTINGS_SetCalibrating(false);
@@ -158,7 +160,7 @@ void COMMS_HandleCommands(void) {
                 
                 cmdIdx = 0;
             }
-        } else if (cmdIdx < 63) {
+        } else if (cmdIdx < 63 && c != '\n' && c != '\r' && c != ' ') {
             cmdBuffer[cmdIdx++] = c;
         }
     }
