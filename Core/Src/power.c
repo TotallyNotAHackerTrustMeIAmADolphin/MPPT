@@ -171,6 +171,26 @@ int32_t POWER_PWM_GetMax(void) {
     return maxDutyCycle_ticks;
 }
 
+int32_t POWER_CalculateVoltageMatchDuty(int32_t vIn_mV, int32_t vOut_mV) {
+    if (vIn_mV <= 100) return 0; // Prevent divide by zero or extreme noise
+    
+    int32_t timerPeriod = MAX_DUTY_CYCLE_TICKS;
+    int32_t matchDuty = 0;
+    
+    if (vOut_mV <= vIn_mV) {
+        // Buck mode
+        matchDuty = (int32_t)(((int64_t)timerPeriod * vOut_mV) / vIn_mV);
+    } else {
+        // Boost mode
+        matchDuty = timerPeriod + (int32_t)(((int64_t)timerPeriod * (vOut_mV - vIn_mV)) / vOut_mV);
+    }
+    
+    if (matchDuty < 0) matchDuty = 0;
+    if (matchDuty > maxDutyCycle_ticks) matchDuty = maxDutyCycle_ticks;
+    
+    return matchDuty;
+}
+
 static void updateDitherTable(uint16_t *pDitherTable, uint16_t desiredDutyCycle) {
     // ditherBits is 3 (log2 of DITHER_TABLE_SIZE 8)
     const uint8_t ditherBits = 3;

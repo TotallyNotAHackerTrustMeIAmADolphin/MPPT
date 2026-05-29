@@ -56,6 +56,15 @@ int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, boo
         return sweepBestDutyCycle;
     }
 
+    // Limit-Aware Termination (Stop sweep if we hit max voltage or max current)
+    if (m->voltageOut_mV >= limits->vOutMax_mV || 
+        m->currentOut_mA >= limits->iOutMax_mA ||
+        m->currentOut_mA <= limits->iOutMin_mA ||
+        m->voltageIn_mV >= limits->vInMax_mV) {
+        *isFinished = true;
+        return sweepBestDutyCycle;
+    }
+
     if (m->powerIn_uW > sweepMaxPower_uW) {
         sweepMaxPower_uW = m->powerIn_uW;
         sweepBestDutyCycle = sweepDutyCycle;
@@ -71,10 +80,10 @@ int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, boo
     return sweepDutyCycle;
 }
 
-void MPPT_ResetSweep(void) {
-    sweepDutyCycle = 0; // Will be initialized by controller to minDuty
+void MPPT_ResetSweep(int32_t startDuty) {
+    sweepDutyCycle = startDuty; // Start from voltage-matched duty to prevent reverse current
     sweepMaxPower_uW = 0;
-    sweepBestDutyCycle = 0;
+    sweepBestDutyCycle = startDuty;
 }
 
 void MPPT_StartTracking(const Measurements_t *m) {
