@@ -100,6 +100,19 @@ This Python-based suite provides real-time interaction with the firmware via the
 - **Single Command**: `python3 scripts/mppt_tool.py --cmd "CMD:RESET_FAULT"`
   - Executes a single command and exits.
 
+### Hardware LED Diagnostics
+The onboard LED (`PC10`) provides visual status and fault diagnostic codes.
+
+- **Heartbeat (Slow Blink)**: System is in `STATE_ACTIVE` and operating normally.
+- **Fault Blink Codes**: When in `STATE_FAULT`, the LED blinks a specific number of times followed by a 1-second pause:
+  - **1 Pulse**: Input Over-voltage
+  - **2 Pulses**: Input Under-voltage
+  - **3 Pulses**: Input Over-current
+  - **4 Pulses**: Output Over-voltage
+  - **5 Pulses**: Output Over-current
+  - **6 Pulses**: Backflow Fault
+  - **7 Pulses**: Over-temperature
+
 #### Requirements
 - `pyserial` (Python 3)
 - Active USB connection to the openMPPT board.
