@@ -1,7 +1,7 @@
 # openMPPT Hardware Documentation
 
 ## v1.1 Build Status: SUCCESS (Verified 2026-05-29)
-The v1.1 PCB has been fully assembled and verified. However, several physical patches are required to achieve full functionality. These must be implemented in the next KiCad revision.
+The v1.1 PCB has been fully assembled and verified, v1.1 means the v1.0 but with some patches hand soldered to the board. However, several physical patches are required to achieve full functionality. These must be implemented in the next KiCad revision.
 
 ## 🛠 Critical Design Fixes (To-Do)
 The following issues were identified in V1.0/V1.1 and must be implemented in the KiCad source files:
@@ -12,7 +12,10 @@ The following issues were identified in V1.0/V1.1 and must be implemented in the
 - **XT60 PCB versions are switched polarity** based on wheter they are male or female.
 - **the Reset button needs a pinout** fix.
 - **the SWDIO/SWCLK pull downs are wrong**.
-- **ADC Safety**: Add protection for PA1 (VsenseIn). It gets fried if the low-side divider resistor (R2/R4) is missing or has a cold joint.
+
+## nice to have:
+- better dev header (reset, and uart all in one plug)
+- SWO ?
 
 ## ⚡ High-Efficiency Optimization (Verified)
 The following manual modifications have been proven to increase efficiency from 94% to **96%**:
