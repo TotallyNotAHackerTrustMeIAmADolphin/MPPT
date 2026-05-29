@@ -103,7 +103,7 @@ int main(void)
   hlcd.port_rst = LCD_RST_GPIO_Port;
   hlcd.pin_rst = LCD_RST_Pin;
   LCD_Init(&hlcd);
-  LCD_DrawString(&hlcd, 0, 0, "openMPPT v1.1");
+  LCD_DrawString(&hlcd, 0, 0, "openMPPT v1.2");
   LCD_Update(&hlcd);
   /* USER CODE END 2 */
 

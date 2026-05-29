@@ -1,7 +1,7 @@
 # openMPPT Controller - STM32F072 Project
 
 ## Project Overview
-This project is an embedded firmware for the **openMPPT v1.1** solar charge controller. It is built for the **STM32F072RBT6** MCU using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
+This project is an embedded firmware for the **openMPPT v1.2** solar charge controller. It is built for the **STM32F072RBT6** MCU using the **STM32Cube** framework. The system manages DC-DC power conversion using high-frequency PWM and monitors system status through various analog sensors.
 
 ### Key Features
 - **Multi-Algorithm MPPT**: Supports both **Incremental Conductance (IncCond)** for high-speed tracking and classic **Perturb and Observe (P&O)**.
@@ -77,6 +77,10 @@ The project strictly follows a **Stable Main** workflow tailored for embedded sy
 - **Sign Awareness**: When implementing MPPT math, always cross-multiply (e.g., $dI \times V = -I \times dV$) to avoid division, and ensure sign handling for negative $dV$ is explicit in Incremental Conductance implementations.
 - **Calibration Protocol**: Use machine-readable `CMD:CAL_...` format for serial interaction to maintain compatibility with future web frontends.
 - **Safety First**: Power stage must be disabled (`POWER_PWM_Set(0)`) before writing to Flash (EEPROM).
+
+### Dashboard Development
+- **Versioning**: Always increment the version number in `docs/index.html` (inside the `<h1>` tag) when modifying any file in the `docs/` directory.
+
 
 ## Key Files
 - `Core/Src/main.c`: Core application logic and sensor processing.
