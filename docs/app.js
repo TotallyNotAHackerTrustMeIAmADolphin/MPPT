@@ -6,6 +6,9 @@ let outputDone;
 let inputStream;
 let outputStream;
 let syncInterval;
+let isConnecting = false;
+let isDisconnecting = false;
+let autoReconnectInterval;
 
 const connectBtn = document.getElementById('connectBtn');
 const status = document.getElementById('status');
@@ -30,10 +33,56 @@ connectBtn.addEventListener('click', async () => {
     }
 });
 
-async function connect() {
+// Auto-reconnect when device is plugged back in
+navigator.serial.addEventListener('connect', (e) => {
+    console.log('Device connected:', e.target);
+    if (!port) {
+        autoReconnect();
+    }
+});
+
+navigator.serial.addEventListener('disconnect', (e) => {
+    console.log('Device disconnected:', e.target);
+    if (port && e.target === port) {
+        disconnect();
+    }
+});
+
+async function autoReconnect() {
+    if (autoReconnectInterval) return;
+    
+    status.textContent = 'Waiting for device...';
+    status.className = 'waiting';
+    
+    autoReconnectInterval = setInterval(async () => {
+        if (port || isConnecting) return;
+        
+        const ports = await navigator.serial.getPorts();
+        if (ports.length > 0) {
+            console.log('Found paired port, attempting reconnect...');
+            // Try the first available port that was previously authorized
+            await connect(ports[0]);
+        }
+    }, 2000);
+}
+
+async function connect(existingPort = null) {
+    if (isConnecting) return;
+    isConnecting = true;
+    
     try {
-        port = await navigator.serial.requestPort();
+        if (existingPort) {
+            port = existingPort;
+        } else {
+            port = await navigator.serial.requestPort();
+        }
+
         await port.open({ baudRate: 115200 });
+
+        if (autoReconnectInterval) {
+            clearInterval(autoReconnectInterval);
+            autoReconnectInterval = null;
+        }
 
         status.textContent = 'Connected';
         status.className = 'connected';
@@ -60,34 +109,53 @@ async function connect() {
         readLoop();
     } catch (err) {
         console.error('Connection failed:', err);
-        appendToLog('ERROR: ' + err.message);
+        if (!existingPort) {
+            appendToLog('ERROR: ' + err.message);
+            port = null;
+        }
+    } finally {
+        isConnecting = false;
     }
 }
 
 async function disconnect() {
-    if (syncInterval) {
-        clearInterval(syncInterval);
-        syncInterval = null;
-    }
-    if (reader) {
-        await reader.cancel();
-        await inputDone.catch(() => {});
-        reader = null;
-        inputDone = null;
-    }
-    if (writer) {
-        await writer.close();
-        await outputDone;
-        writer = null;
-        outputDone = null;
-    }
-    await port.close();
-    port = null;
+    if (isDisconnecting) return;
+    isDisconnecting = true;
 
-    status.textContent = 'Disconnected';
-    status.className = 'disconnected';
-    document.getElementById('state-badge').style.display = 'none';
-    connectBtn.textContent = 'Connect to Device';
+    try {
+        if (syncInterval) {
+            clearInterval(syncInterval);
+            syncInterval = null;
+        }
+        if (reader) {
+            await reader.cancel();
+            await inputDone.catch(() => {});
+            reader = null;
+            inputDone = null;
+        }
+        if (writer) {
+            await writer.close();
+            await outputDone.catch(() => {});
+            writer = null;
+            outputDone = null;
+        }
+        if (port) {
+            await port.close();
+            port = null;
+        }
+
+        status.textContent = 'Disconnected';
+        status.className = 'disconnected';
+        document.getElementById('state-badge').style.display = 'none';
+        connectBtn.textContent = 'Connect to Device';
+        
+        // Start waiting for reconnect
+        autoReconnect();
+    } catch (err) {
+        console.error('Disconnect error:', err);
+    } finally {
+        isDisconnecting = false;
+    }
 }
 
 async function readLoop() {
