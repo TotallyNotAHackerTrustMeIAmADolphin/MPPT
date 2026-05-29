@@ -12,6 +12,7 @@
 #include "mppt.h"
 #include "settings.h"
 #include "comms.h"
+#include "main.h"
 #ifndef NATIVE_TEST
 #include "stm32f0xx_hal.h"
 #endif
@@ -45,6 +46,57 @@ static uint32_t softLimitHoldTimer = 0;
 #define SOFT_LIMIT_HOLD_TIME_MS 100
 #define SWEEP_STEP_INTERVAL_MS 20
 
+/* Fault Blink Logic */
+static uint32_t lastFaultBlinkTick = 0;
+static uint8_t blinkPhase = 0;
+static uint8_t blinkCount = 0;
+
+static void handleFaultBlink(FaultReason_t reason) {
+    uint32_t currentTick = HAL_GetTick();
+    uint8_t targetBlinks = 0;
+    
+    // Define blink codes based on fault reason
+    switch (reason) {
+        case FAULT_REASON_INPUT_OV:  targetBlinks = 1; break;
+        case FAULT_REASON_INPUT_UV:  targetBlinks = 2; break;
+        case FAULT_REASON_INPUT_OC:  targetBlinks = 3; break;
+        case FAULT_REASON_OUTPUT_OV: targetBlinks = 4; break;
+        case FAULT_REASON_OUTPUT_OC: targetBlinks = 5; break;
+        case FAULT_REASON_BACKFLOW:  targetBlinks = 6; break;
+        case FAULT_REASON_OVERTEMP:  targetBlinks = 7; break;
+        default:                     targetBlinks = 0; break;
+    }
+
+    if (targetBlinks == 0) {
+        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+        return;
+    }
+
+    // Blink timing: 200ms ON, 200ms OFF, 1000ms pause between cycles
+    uint32_t elapsed = currentTick - lastFaultBlinkTick;
+
+    if (blinkPhase == 0) { // Active blinking phase
+        if (elapsed >= 200) {
+            lastFaultBlinkTick = currentTick;
+            HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+            
+            // If we just toggled to OFF (GPIO_PIN_RESET)
+            if (HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin) == GPIO_PIN_RESET) {
+                blinkCount++;
+                if (blinkCount >= targetBlinks) {
+                    blinkPhase = 1; // Start pause phase
+                    blinkCount = 0;
+                }
+            }
+        }
+    } else { // Pause phase
+        if (elapsed >= 1000) {
+            lastFaultBlinkTick = currentTick;
+            blinkPhase = 0;
+        }
+    }
+}
+
 /* Internal State Transition Logic */
 static void transitionTo(SystemState_t newState) {
     if (currentState == newState) return;
@@ -77,10 +129,14 @@ static void transitionTo(SystemState_t newState) {
             currentFaultReason = FAULT_REASON_NONE;
             faultCounter = 0;
             activeSoftLimit = LIMIT_NONE;
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
             break;
         case STATE_FAULT:
             POWER_Shutdown();
             activeSoftLimit = LIMIT_NONE;
+            lastFaultBlinkTick = HAL_GetTick();
+            blinkPhase = 0;
+            blinkCount = 0;
             break;
         default:
             break;
@@ -285,7 +341,19 @@ void CONTROLLER_Task(void) {
         COMMS_SendTelemetry(m);
     }
 
-    // 2. Sweeping Logic (Managed here as it's a global search)
+    // 2. Fault Indication
+    if (currentState == STATE_FAULT) {
+        handleFaultBlink(currentFaultReason);
+    } else if (currentState == STATE_ACTIVE) {
+        // Heartbeat or active indicator (slow blink)
+        if (currentTick % 2000 < 100) {
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+        } else {
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+        }
+    }
+
+    // 3. Sweeping Logic (Managed here as it's a global search)
     if (currentState == STATE_SWEEPING) {
         if (currentTick - lastSweepStepTick >= SWEEP_STEP_INTERVAL_MS) {
             lastSweepStepTick = currentTick;
