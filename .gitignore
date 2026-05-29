@@ -132,6 +132,9 @@ $tf/
 
 # MPPT Project specific
 tuning_logs/
+mppt_log.csv
+mppt_debug_log.csv
+fault_dump_*.json
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/

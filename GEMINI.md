@@ -73,4 +73,24 @@ The project strictly follows a **Stable Main** workflow tailored for embedded sy
 - `STM32F072RBTX_FLASH.ld`: Linker script (modified to reserve last 4KB for EEPROM).
 - `scripts/setup_cubemx_env_auto.py`: Automated build environment bridge.
 - `scripts/tune_mppt.py`: Hybrid machine-learning auto-tuning script.
+- `scripts/mppt_tool.py`: Advanced diagnostic and control suite.
 - `hardware/`: Directory containing hardware design files and documentation.
+
+## Diagnostic Tools
+
+### MPPT Debug & Control Tool (`scripts/mppt_tool.py`)
+This Python-based suite provides real-time interaction with the firmware via the USB-CDC interface. It is the primary tool for telemetry analysis and fault diagnosis.
+
+#### Usage Modes
+- **Monitoring & Control**: `python3 scripts/mppt_tool.py --monitor`
+  - Streams JSON telemetry to `mppt_log.csv`.
+  - Provides an interactive prompt to send raw serial commands (e.g., `RESET_FAULT`, `SET_I_MAX:5000`).
+- **Autonomous Watchdog**: `python3 scripts/mppt_tool.py --watch`
+  - Monitors the system until a fault occurs.
+  - Automatically captures and saves a high-resolution `fault_dump_XXX.json` containing the telemetry leading up to the fault.
+- **Single Command**: `python3 scripts/mppt_tool.py --cmd "CMD:RESET_FAULT"`
+  - Executes a single command and exits.
+
+#### Requirements
+- `pyserial` (Python 3)
+- Active USB connection to the openMPPT board.

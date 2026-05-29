@@ -15,6 +15,10 @@ static int64_t previousPowerIn_uW = 0;
 static bool direction = true;
 static int32_t lastStep = 0;
 
+/* IncCond State Variables */
+static int32_t previousVoltageIn_mV = 0;
+static int32_t previousCurrentIn_mA = 0;
+
 /* Dynamic Tuning Parameters (Defaults from system_config.h) */
 static int32_t mppt_step_size = MPPT_STEP_SIZE_TICKS;
 static uint32_t pwr_threshold = POWER_THRESHOLD_UW;
@@ -46,6 +50,85 @@ int32_t MPPT_PerturbAndObserve(const Measurements_t *m, const DeviceLimits_t *li
 }
 
 
+
+int32_t MPPT_IncrementalConductance(const Measurements_t *m, const DeviceLimits_t *limits) {
+    int32_t delta = 0;
+    
+    int32_t dV = m->voltageIn_mV - previousVoltageIn_mV;
+    int32_t dI = m->currentIn_mA - previousCurrentIn_mA;
+    
+    /* 
+     * Incremental Conductance (IncCond) Logic:
+     * The MPP is found when dP/dV = 0.
+     * Since P = V * I, then dP/dV = I + V * (dI/dV).
+     * At MPP: dI/dV = -I/V.
+     * To avoid division by zero and floating point math, we evaluate the slope 
+     * using the cross-product: slope_num = (dI * V) + (I * dV).
+     */
+    
+    if (dV == 0) {
+        /* 
+         * Case 1: Voltage has not changed.
+         * If current has changed, it is due to an irradiance change.
+         */
+        if (dI == 0) {
+            delta = 0; // Stable
+        } else if (dI > 0) {
+            /* 
+             * Irradiance increased, MPP moved right (higher current capacity). 
+             * Increase duty cycle to pull more power and follow the peak.
+             */
+            delta = mppt_step_size;
+        } else {
+            /* 
+             * Irradiance decreased, panel is being choked. 
+             * Move left (decrease duty) to recover voltage.
+             */
+            delta = -mppt_step_size;
+        }
+    } else {
+        /* 
+         * Case 2: Voltage has changed. Evaluate incremental conductance.
+         * slope_num is proportional to dP/dV.
+         */
+        int64_t slope_num = (int64_t)dI * m->voltageIn_mV + (int64_t)m->currentIn_mA * dV;
+        
+        if (slope_num == 0) {
+            delta = 0; // At MPP peak
+        } else {
+            /* 
+             * Sign Handling Logic:
+             * In our topology, Increasing Duty -> Decreases Vin.
+             * 
+             * If dV > 0 (Voltage increased):
+             *   If slope_num > 0 (dP/dV > 0): Left of peak -> Increase V further (Decrease Duty)
+             *   If slope_num < 0 (dP/dV < 0): Right of peak -> Decrease V (Increase Duty)
+             * 
+             * If dV < 0 (Voltage decreased):
+             *   If slope_num > 0 (dP/dV > 0): Right of peak -> Decrease V further (Increase Duty)
+             *   If slope_num < 0 (dP/dV < 0): Left of peak -> Increase V (Decrease Duty)
+             */
+            if (dV > 0) {
+                delta = (slope_num > 0) ? -mppt_step_size : mppt_step_size;
+            } else {
+                delta = (slope_num > 0) ? mppt_step_size : -mppt_step_size;
+            }
+        }
+    }
+    
+    /* 
+     * Update baselines if the change was significant enough to be real signal,
+     * or if we have reached a stable equilibrium (delta == 0).
+     */
+    if (abs((int)dV) > 50 || abs((int)dI) > 50 || delta == 0) {
+        previousVoltageIn_mV = m->voltageIn_mV;
+        previousCurrentIn_mA = m->currentIn_mA;
+        previousPowerIn_uW = m->powerOut_uW;
+    }
+    
+    lastStep = delta;
+    return delta;
+}
 
 int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, bool *isFinished) {
     *isFinished = false;
@@ -88,6 +171,8 @@ void MPPT_ResetSweep(int32_t startDuty) {
 
 void MPPT_StartTracking(const Measurements_t *m) {
     previousPowerIn_uW = m->powerIn_uW;
+    previousVoltageIn_mV = m->voltageIn_mV;
+    previousCurrentIn_mA = m->currentIn_mA;
 }
 
 int32_t MPPT_GetLastStep(void) {
