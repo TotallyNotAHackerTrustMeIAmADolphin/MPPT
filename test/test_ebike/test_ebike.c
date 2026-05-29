@@ -1,5 +1,6 @@
 #include <unity.h>
 #include <stdio.h>
+#include "main.h"
 #include "system_config.h"
 #include "system_types.h"
 
@@ -28,12 +29,19 @@ int32_t POWER_PWM_GetMax(void) { return 240 * 8; }
 void POWER_Start(void) {}
 void POWER_Shutdown(void) {}
 void POWER_PID_Compute(PID_t *pid) {} // Not used in unified
+int32_t POWER_CalculateVoltageMatchDuty(int32_t vin, int32_t vout) { return 0; }
+
+// Mock HAL
+void HAL_GPIO_WritePin(GPIO_TypeDef* port, uint16_t pin, uint8_t state) {}
+void HAL_GPIO_TogglePin(GPIO_TypeDef* port, uint16_t pin) {}
+uint8_t HAL_GPIO_ReadPin(GPIO_TypeDef* port, uint16_t pin) { return 0; }
 
 // Mock MPPT
-void MPPT_ResetSweep(void) {}
+void MPPT_ResetSweep(int32_t startDuty) {}
 void MPPT_StartTracking(const Measurements_t* m) {}
 int32_t MPPT_RunSweep(const Measurements_t* m, const DeviceLimits_t* limits, bool* finished) { return 0; }
 int32_t MPPT_PerturbAndObserve(const Measurements_t* m, const DeviceLimits_t* l) { return 0; }
+int32_t MPPT_IncrementalConductance(const Measurements_t* m, const DeviceLimits_t* l) { return 0; }
 uint32_t MPPT_GetInterval(void) { return 100; }
 
 // Mock Comms

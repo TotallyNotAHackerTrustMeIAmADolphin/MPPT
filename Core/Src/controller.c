@@ -391,12 +391,12 @@ const char* CONTROLLER_GetStateString(void) {
         case STATE_IDLE:     return "IDLE";
         case STATE_SWEEPING: return "SWEEPING";
         case STATE_ACTIVE: {
-            if (activeSoftLimit == LIMIT_V_OUT_MAX) return "ACTIVE_CV";
-            if (activeSoftLimit == LIMIT_I_OUT_MAX) return "ACTIVE_CC";
-            if (activeSoftLimit == LIMIT_V_IN_MIN)  return "ACTIVE_BROWNOUT";
-            if (activeSoftLimit == LIMIT_V_IN_MAX)  return "ACTIVE_VIN_LIMIT";
-            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "ACTIVE_REVERSE";
-            return "ACTIVE_TRACKING";
+            if (activeSoftLimit == LIMIT_V_OUT_MAX) return "CV";
+            if (activeSoftLimit == LIMIT_I_OUT_MAX) return "CC";
+            if (activeSoftLimit == LIMIT_V_IN_MIN)  return "BROWNOUT";
+            if (activeSoftLimit == LIMIT_V_IN_MAX)  return "VIN_LIM";
+            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "REVERSE";
+            return "MPPT";
         }
         case STATE_FAULT:    return "FAULT";
         case STATE_RECOVERY: return "RECOVERY";

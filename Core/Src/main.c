@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "system_config.h"
 #include "usbd_cdc_if.h"
+#include "lcd_pcd8544.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +45,8 @@
 IWDG_HandleTypeDef hiwdg;
 
 /* USER CODE BEGIN PV */
+LCD_Handle_t hlcd;
+static uint32_t lastLCDTick = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,6 +93,18 @@ int main(void)
   POWER_Init();
   CONTROLLER_Init();
   COMMS_Init();
+
+  /* LCD Initialization */
+  hlcd.hspi = &hspi1;
+  hlcd.port_ce = LCD_CE_GPIO_Port;
+  hlcd.pin_ce = LCD_CE_Pin;
+  hlcd.port_dc = LCD_DC_GPIO_Port;
+  hlcd.pin_dc = LCD_DC_Pin;
+  hlcd.port_rst = LCD_RST_GPIO_Port;
+  hlcd.pin_rst = LCD_RST_Pin;
+  LCD_Init(&hlcd);
+  LCD_DrawString(&hlcd, 0, 0, "openMPPT v1.1");
+  LCD_Update(&hlcd);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,9 +114,10 @@ int main(void)
     HAL_IWDG_Refresh(&hiwdg);
     COMMS_HandleCommands();
 
-    if (SENSORS_IsBufferReady()) 
+    uint8_t readyStatus = SENSORS_IsBufferReady();
+    if (readyStatus) 
     {
-      uint16_t offset = (SENSORS_IsBufferReady() == 2) ? (ADC_BUF_LEN / 2) : 0;
+      uint16_t offset = (readyStatus == 2) ? (ADC_BUF_LEN / 2) : 0;
       SENSORS_ClearBufferReady();
 
       SENSORS_Process(offset);
@@ -110,6 +126,29 @@ int main(void)
 
     CONTROLLER_Task();
 
+    /* UI Refresh Task (10Hz) */
+    uint32_t currentTick = HAL_GetTick();
+    if (currentTick - lastLCDTick >= 100) {
+      lastLCDTick = currentTick;
+      const Measurements_t *m = SENSORS_GetMeasurements();
+      char line[20];
+
+      LCD_Clear(&hlcd);
+      
+      sprintf(line, "Vin:  %3ld.%01ldV", m->voltageIn_mV / 1000, (uint32_t)abs(m->voltageIn_mV % 1000) / 100);
+      LCD_DrawString(&hlcd, 0, 0, line);
+      
+      sprintf(line, "Vout: %3ld.%01ldV", m->voltageOut_mV / 1000, (uint32_t)abs(m->voltageOut_mV % 1000) / 100);
+      LCD_DrawString(&hlcd, 0, 8, line);
+      
+      sprintf(line, "Pout: %3ld.%01ldW", m->powerOut_mW / 1000, (uint32_t)abs(m->powerOut_mW % 1000) / 100);
+      LCD_DrawString(&hlcd, 0, 16, line);
+      
+      sprintf(line, "Mode: %s     ", CONTROLLER_GetStateString()); // Added spaces to clear previous text
+      LCD_DrawString(&hlcd, 0, 32, line);
+      
+      LCD_Update(&hlcd);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

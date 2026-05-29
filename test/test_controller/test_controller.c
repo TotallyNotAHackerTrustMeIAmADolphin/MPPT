@@ -1,6 +1,7 @@
 #include <unity.h>
 #include <stdio.h>
 #include <string.h>
+#include "main.h"
 #include "system_config.h"
 #include "system_types.h"
 
@@ -28,13 +29,20 @@ void POWER_PWM_Set(int32_t duty) { last_duty = duty; }
 int32_t POWER_PWM_GetMax(void) { return 240 * 8; }
 void POWER_Start(void) {}
 void POWER_Shutdown(void) {}
+int32_t POWER_CalculateVoltageMatchDuty(int32_t vin, int32_t vout) { return 0; }
+
+// Mock HAL
+void HAL_GPIO_WritePin(GPIO_TypeDef* port, uint16_t pin, uint8_t state) {}
+void HAL_GPIO_TogglePin(GPIO_TypeDef* port, uint16_t pin) {}
+uint8_t HAL_GPIO_ReadPin(GPIO_TypeDef* port, uint16_t pin) { return 0; }
 
 // Mock MPPT
 static int32_t mock_mppt_delta = 0;
-void MPPT_ResetSweep(void) {}
+void MPPT_ResetSweep(int32_t startDuty) {}
 void MPPT_StartTracking(const Measurements_t* m) {}
 int32_t MPPT_RunSweep(const Measurements_t* m, const DeviceLimits_t* limits, bool* finished) { return 0; }
 int32_t MPPT_PerturbAndObserve(const Measurements_t* m, const DeviceLimits_t* l) { return mock_mppt_delta; }
+int32_t MPPT_IncrementalConductance(const Measurements_t* m, const DeviceLimits_t* l) { return mock_mppt_delta; }
 uint32_t MPPT_GetInterval(void) { return 100; }
 int32_t MPPT_GetLastStep(void) { return 13; }
 

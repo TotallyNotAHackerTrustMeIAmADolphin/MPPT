@@ -33,6 +33,10 @@ This project is an embedded firmware for the **openMPPT v1.1** solar charge cont
 - **Build System**: PlatformIO using the custom `openmppt` board definition and `setup_cubemx_env_auto.py` automation bridge.
 - **Hardware Automation**: `TIMER_PERIOD` is automatically extracted from `MPPT.ioc` during build.
 
+## Project Roadmap
+- [ ] **Telemetry Display**: Integrate Nokia 5110 LCD (PCD8544) via SPI1 for real-time sunlight-readable monitoring.
+- [ ] **Task Scheduling**: Implement a priority-based scheduler or lightweight RTOS (FreeRTOS) to decouple safety-critical control (1.5kHz) from telemetry/comms.
+
 ## Building and Running
 ### Build
 ```bash
