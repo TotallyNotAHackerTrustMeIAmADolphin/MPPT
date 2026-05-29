@@ -57,55 +57,70 @@ int32_t MPPT_IncrementalConductance(const Measurements_t *m, const DeviceLimits_
     int32_t dV = m->voltageIn_mV - previousVoltageIn_mV;
     int32_t dI = m->currentIn_mA - previousCurrentIn_mA;
     
-    // We want to evaluate: dI/dV == -I/V 
-    // To avoid division by zero and floating point math, we cross-multiply:
-    // dI * V == -I * dV
+    /* 
+     * Incremental Conductance (IncCond) Logic:
+     * The MPP is found when dP/dV = 0.
+     * Since P = V * I, then dP/dV = I + V * (dI/dV).
+     * At MPP: dI/dV = -I/V.
+     * To avoid division by zero and floating point math, we evaluate the slope 
+     * using the cross-product: slope_num = (dI * V) + (I * dV).
+     */
     
     if (dV == 0) {
-        // Pure irradiance change (no voltage change)
+        /* 
+         * Case 1: Voltage has not changed.
+         * If current has changed, it is due to an irradiance change.
+         */
         if (dI == 0) {
-            // Stable
-            delta = 0;
+            delta = 0; // Stable
         } else if (dI > 0) {
-            // Irradiance increased, move left (decrease duty cycle to increase Vin)
-            delta = -mppt_step_size;
-        } else {
-            // Irradiance decreased, move right
+            /* 
+             * Irradiance increased, MPP moved right (higher current capacity). 
+             * Increase duty cycle to pull more power and follow the peak.
+             */
             delta = mppt_step_size;
+        } else {
+            /* 
+             * Irradiance decreased, panel is being choked. 
+             * Move left (decrease duty) to recover voltage.
+             */
+            delta = -mppt_step_size;
         }
     } else {
-        // Standard IncCond evaluation
-        int64_t di_v = (int64_t)dI * m->voltageIn_mV;
-        int64_t i_dv = (int64_t)m->currentIn_mA * dV;
+        /* 
+         * Case 2: Voltage has changed. Evaluate incremental conductance.
+         * slope_num is proportional to dP/dV.
+         */
+        int64_t slope_num = (int64_t)dI * m->voltageIn_mV + (int64_t)m->currentIn_mA * dV;
         
-        if (di_v == -i_dv) {
-            // At MPP
-            delta = 0;
-        } else if (di_v > -i_dv) {
-            // Left of MPP: decrease duty cycle to increase Vin
-            delta = -mppt_step_size;
+        if (slope_num == 0) {
+            delta = 0; // At MPP peak
         } else {
-            // Right of MPP: increase duty cycle to decrease Vin
-            delta = mppt_step_size;
+            /* 
+             * Sign Handling Logic:
+             * In our topology, Increasing Duty -> Decreases Vin.
+             * 
+             * If dV > 0 (Voltage increased):
+             *   If slope_num > 0 (dP/dV > 0): Left of peak -> Increase V further (Decrease Duty)
+             *   If slope_num < 0 (dP/dV < 0): Right of peak -> Decrease V (Increase Duty)
+             * 
+             * If dV < 0 (Voltage decreased):
+             *   If slope_num > 0 (dP/dV > 0): Right of peak -> Decrease V further (Increase Duty)
+             *   If slope_num < 0 (dP/dV < 0): Left of peak -> Increase V (Decrease Duty)
+             */
+            if (dV > 0) {
+                delta = (slope_num > 0) ? -mppt_step_size : mppt_step_size;
+            } else {
+                delta = (slope_num > 0) ? mppt_step_size : -mppt_step_size;
+            }
         }
     }
     
-    // In our topology, increasing duty cycle drops Vin (pulls more power)
-    // Wait, let's verify our control direction from P&O:
-    // P&O changes duty. If power went up, we keep same delta.
-    // If we are left of MPP (too high voltage), we need to pull more current -> increase duty.
-    // So if di/dV > -I/V, we are left of MPP. Voltage is too high. 
-    // Wait, the solar panel curve: 
-    // V=Voc (open circuit), I=0. Left of MPP means V is too low?
-    // Let's standardise: Panel voltage V. 
-    // Left of MPP: V < Vmpp. Right of MPP: V > Vmpp.
-    // If di_v > -i_dv -> dI/dV > -I/V. This occurs when V < Vmpp.
-    // If V < Vmpp (left), we need to INCREASE Vin -> DECREASE duty cycle.
-    // If V > Vmpp (right), we need to DECREASE Vin -> INCREASE duty cycle.
-    // Wait, the delta in code above: di_v > -i_dv means left (V < Vmpp) -> delta = -mppt_step_size. Correct.
-    
-    // Only update baselines if we actually moved, or if the change was significant
-    if (abs((int)(m->powerOut_uW - previousPowerIn_uW)) / 1000 >= (int32_t)(pwr_threshold / 1000) || delta == 0) {
+    /* 
+     * Update baselines if the change was significant enough to be real signal,
+     * or if we have reached a stable equilibrium (delta == 0).
+     */
+    if (abs((int)dV) > 50 || abs((int)dI) > 50 || delta == 0) {
         previousVoltageIn_mV = m->voltageIn_mV;
         previousCurrentIn_mA = m->currentIn_mA;
         previousPowerIn_uW = m->powerOut_uW;
