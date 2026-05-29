@@ -23,6 +23,7 @@ static FaultReason_t currentFaultReason = FAULT_REASON_NONE;
 static SoftLimit_t activeSoftLimit = LIMIT_NONE;
 static uint32_t lastMPPTTick = 0;
 static uint32_t lastSweepTick = 0;
+static uint32_t lastSweepStepTick = 0;
 static uint32_t lastTelemetryTick = 0;
 
 /* High-resolution duty cycle accumulator (Velocity PI integral) */
@@ -42,6 +43,7 @@ static uint8_t faultCounter = 0;
 
 static uint32_t softLimitHoldTimer = 0;
 #define SOFT_LIMIT_HOLD_TIME_MS 100
+#define SWEEP_STEP_INTERVAL_MS 20
 
 /* Internal State Transition Logic */
 static void transitionTo(SystemState_t newState) {
@@ -50,6 +52,8 @@ static void transitionTo(SystemState_t newState) {
     // State Exit Actions
     if (currentState == STATE_FAULT || currentState == STATE_IDLE) {
         if (newState != STATE_FAULT && newState != STATE_IDLE) {
+            const Measurements_t *m = SENSORS_GetMeasurements();
+            targetDuty_ticks = POWER_CalculateVoltageMatchDuty(m->voltageIn_mV, m->voltageOut_mV);
             POWER_Start();
         }
     }
@@ -57,8 +61,9 @@ static void transitionTo(SystemState_t newState) {
     // State Entry Actions
     switch (newState) {
         case STATE_SWEEPING:
-            MPPT_ResetSweep();
+            MPPT_ResetSweep(targetDuty_ticks);
             activeSoftLimit = LIMIT_SWEEPING;
+            lastSweepStepTick = HAL_GetTick();
             break;
         case STATE_ACTIVE:
             globalDutyIntegral = (int64_t)targetDuty_ticks * 1000;
@@ -278,11 +283,14 @@ void CONTROLLER_Task(void) {
 
     // 2. Sweeping Logic (Managed here as it's a global search)
     if (currentState == STATE_SWEEPING) {
-        bool finished = false;
-        targetDuty_ticks = MPPT_RunSweep(m, limits, &finished);
-        if (finished) {
-            transitionTo(STATE_ACTIVE);
-            lastSweepTick = currentTick;
+        if (currentTick - lastSweepStepTick >= SWEEP_STEP_INTERVAL_MS) {
+            lastSweepStepTick = currentTick;
+            bool finished = false;
+            targetDuty_ticks = MPPT_RunSweep(m, limits, &finished);
+            if (finished) {
+                transitionTo(STATE_ACTIVE);
+                lastSweepTick = currentTick;
+            }
         }
     }
 

@@ -29,8 +29,9 @@ int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, boo
 
 /**
  * @brief Resets the sweep internal state.
+ * @param startDuty The initial duty cycle to start the sweep from.
  */
-void MPPT_ResetSweep(void);
+void MPPT_ResetSweep(int32_t startDuty);
 
 /**
  * @brief Initializes the P&O tracking baseline with the current power measurement.

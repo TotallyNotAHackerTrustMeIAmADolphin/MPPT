@@ -56,4 +56,9 @@ void POWER_Shutdown(void);
  */
 void POWER_Start(void);
 
+/**
+ * @brief Calculate the duty cycle required to match the current input/output voltages.
+ */
+int32_t POWER_CalculateVoltageMatchDuty(int32_t vIn_mV, int32_t vOut_mV);
+
 #endif /* __POWER_H */
