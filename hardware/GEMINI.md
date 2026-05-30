@@ -87,7 +87,8 @@ flatpak run --command=kicad-cli org.kicad.KiCad sch export bom --output hardware
 | Q5-Q8 | CSD19505KCS | Buck-Boost MOSFETs | TO-220-3 Package |
 | UA, UB | IRS21867STRPBF | Half-Bridge Drivers | Driven by TIM1 |
 | U4, U5 | INA240A4DR | Current Sense Amp | Gain: 200 V/V |
-| U8, U9 | **SCT2A25** (v1.3) | 12V / 3.3V Buck | **Robust Replacement** (100V, 2A) |
+| U8 | **SCT2A25** (v1.3) | 10V Primary Aux Buck | **Robust 100V Replacement**. JLCPCB Extended (Preferred) |
+| U9 | **SY8120** (v1.3) | 3.3V Logic Sync Buck | **Cascaded from 10V**. JLCPCB Extended |
 | R11, R12, R37, R38 | 5.1 Ω (v1.3) | Gate Resistors | Upgraded from 10 Ω for 96% Eff. |
 | R1, R3 | 5.1 kΩ (v1.3) | Voltage Sensing Div | Fixes 5.1 Ω error in v1.1 |
 | VIN | XT60PW-M | Input Connector | Pin 1: GND, Pin 2: VIN (+) |
