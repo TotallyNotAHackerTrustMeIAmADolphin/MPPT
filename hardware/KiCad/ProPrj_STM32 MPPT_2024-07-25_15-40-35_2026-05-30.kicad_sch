@@ -1,0 +1,193 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "b4d74b55-d9ad-45d1-9f37-bb84a2194cf7")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 5.08 13.97)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "00737124-27db-4b6e-998e-5bf0fe27f985")
+		(property "Sheetname" "Buck-Boost Stuff"
+			(at 5.08 13.2584 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "2_Buck-Boost Stuff.kicad_sch"
+			(at 5.08 18.3646 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 5.08 5.08)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c1155cc8-1b64-4d3f-ad18-5ff50ee2add8")
+		(property "Sheetname" "MCU Stuff"
+			(at 5.08 4.3684 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "1_MCU Stuff.kicad_sch"
+			(at 5.08 9.4746 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
+					(page "1")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 5.08 22.86)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c80fb01e-2760-4d9b-a0d8-6c17bba01cdd")
+		(property "Sheetname" "Connectors"
+			(at 5.08 22.1484 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "3_Connectors.kicad_sch"
+			(at 5.08 27.2546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 29.21 45.72)
+		(size 38.1 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d")
+		(property "Sheetname" "auxilary power"
+			(at 29.21 45.0084 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 29.21 71.7046 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
+					(page "4")
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)

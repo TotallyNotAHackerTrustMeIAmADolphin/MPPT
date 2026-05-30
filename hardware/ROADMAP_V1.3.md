@@ -50,3 +50,9 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 - [ ] **Full DRC/ERC Audit**: Zero errors in KiCad using `flatpak run --command=kicad-cli org.kicad.KiCad`.
 - [ ] **BOM Scrubbing**: Ensure all components prioritize the `PCM-JLCPCB` library.
 - [ ] **Generation of Production Files**: Gerbers, Drill, BOM, and CPL.
+
+mosfets:
+https://www.lcsc.com/category/1436.html?sid=8466CDB6D1716D791DAA80D16E95CDBA
+
+capacitors:
+https://www.lcsc.com/category/1140.html?sid=AE5D06F4AE7218B43258EC85C28F1C0D
