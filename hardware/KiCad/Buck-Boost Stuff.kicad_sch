@@ -1727,7 +1727,7 @@
 					(justify left top)
 				)
 			)
-			(property "Value" "10Ω"
+			(property "Value" "5.1Ω"
 				(at -1.4986 -1.8669 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1885,7 +1885,7 @@
 					(justify left top)
 				)
 			)
-			(property "Value" "10Ω"
+			(property "Value" "5.1Ω"
 				(at -1.4986 -1.8669 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2043,7 +2043,7 @@
 					(justify left top)
 				)
 			)
-			(property "Value" "10Ω"
+			(property "Value" "5.1Ω"
 				(at -1.4986 -1.8669 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2201,7 +2201,7 @@
 					(justify left top)
 				)
 			)
-			(property "Value" "10Ω"
+			(property "Value" "5.1Ω"
 				(at -1.4986 -1.8669 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -19713,7 +19713,7 @@
 				(justify left top)
 			)
 		)
-		(property "Value" "10Ω"
+		(property "Value" "5.1Ω"
 			(at 96.2914 172.0469 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20112,7 +20112,7 @@
 				(justify left top)
 			)
 		)
-		(property "Value" "10Ω"
+		(property "Value" "5.1Ω"
 			(at 234.7214 156.8069 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -20451,7 +20451,7 @@
 				(justify left top)
 			)
 		)
-		(property "Value" "10Ω"
+		(property "Value" "5.1Ω"
 			(at 234.7214 127.5969 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -25351,7 +25351,7 @@
 				(justify left top)
 			)
 		)
-		(property "Value" "10Ω"
+		(property "Value" "5.1Ω"
 			(at 96.2914 142.8369 0)
 			(show_name no)
 			(do_not_autoplace no)
