@@ -12,10 +12,25 @@ The following issues were identified in V1.0/V1.1 and must be implemented in the
 - **XT60 PCB versions are switched polarity** based on wheter they are male or female.
 - **the Reset button needs a pinout** fix.
 - **the SWDIO/SWCLK pull downs are wrong**.
+- TVS diodes for overvoltage surges
+- 5 ohm resistors for gate instead of 10 ohm
 
-## nice to have:
+## nice to have todo:
 - better dev header (reset, and uart all in one plug)
 - SWO ?
+- SMD Mosfets
+- smaller Board size
+	- fewer capacitors
+- bootsrap capacitor instead of isolated 12v regulators
+- more efficiency (faster switching?)
+- hall effect current sensors
+- maybe switch to another MCU ? for example the bluepill one
+- maybe change the 3v3 regulator to an LDO
+
+## Design Rules:
+- use JLPCB prefered parts library as often as posible (PCM-JLCPCB)
+	- if not available, use LCSC partss
+
 
 ## ⚡ High-Efficiency Optimization (Verified)
 The following manual modifications have been proven to increase efficiency from 94% to **96%**:

@@ -18,7 +18,7 @@ typedef enum
 {
   STATE_IDLE,      // System waiting for conditions (e.g. low input voltage)
   STATE_SWEEPING,  // Performing a global MPPT sweep
-  STATE_ACTIVE,    // Unified control mode (MPPT/CV/CC/Regen/PSU)
+  STATE_ACTIVE,    // Unified control mode (MPPT/CV/CC/Reverse/PSU)
   STATE_FAULT,     // Critical error (over-voltage/current/temp)
   STATE_RECOVERY   // Waiting after a fault
 } SystemState_t;
@@ -57,8 +57,8 @@ typedef enum
   LIMIT_V_OUT_MAX,  // Output Voltage Max (Forward CV)
   LIMIT_I_OUT_MAX,  // Output Current Max (Forward CC)
   LIMIT_V_IN_MIN,   // Input Voltage Min (Brownout regulation)
-  LIMIT_V_IN_MAX,   // Input Voltage Max (Reverse/Regen CV)
-  LIMIT_I_OUT_MIN,  // Output Current Min (Reverse/Regen CC or Backflow)
+  LIMIT_V_IN_MAX,   // Input Voltage Max (Reverse Flow CV)
+  LIMIT_I_OUT_MIN,  // Output Current Min (Reverse Flow CC or Backflow)
   LIMIT_SWEEPING    // Sweep in progress
 } SoftLimit_t;
 

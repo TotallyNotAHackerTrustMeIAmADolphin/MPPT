@@ -13,8 +13,8 @@ The `state` string in the telemetry now provides granular feedback on which limi
 - `ACTIVE_CV`: Output Voltage limit is active (Battery Full).
 - `ACTIVE_CC`: Output Current limit is active.
 - `ACTIVE_BROWNOUT`: Input Voltage is dropping below the soft-floor.
-- `ACTIVE_VIN_LIMIT`: Input Voltage is hitting the upper limit (Regen safety).
-- `ACTIVE_REVERSE`: Reverse current/regen limit is active.
+- `ACTIVE_VIN_LIMIT`: Input Voltage is hitting the upper limit (Reverse flow safety).
+- `ACTIVE_REVERSE`: Reverse current limit is active.
 
 ## Control Gains
 - `GAIN_KP`: Proportional gain. Currently tuned to **5** for stable transitions on openMPPT v1.1 hardware.

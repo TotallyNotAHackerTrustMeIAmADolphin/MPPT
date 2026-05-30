@@ -56,10 +56,10 @@
             <h2>Device Configuration</h2>
             <form id="limitsForm">
                 <div class="form-group">
-                    <label>Operation Mode: <span class="info-icon" title="Solar MPPT: Tracks solar peaks. Bidirectional: Allows DC-DC drive and Regen braking. PSU: Fixed CV/CC supply.">ⓘ</span></label>
+                    <label>Operation Mode: <span class="info-icon" title="Solar MPPT: Tracks solar peaks. Bidirectional: Allows DC-DC drive and Reverse flow braking. PSU: Fixed CV/CC supply.">ⓘ</span></label>
                     <select id="limit_mode" onchange="sendLimit('SET_MODE', 'limit_mode')">
                         <option value="0">Solar MPPT</option>
-                        <option value="1">Bidirectional (DC-DC / Regen)</option>
+                        <option value="1">Bidirectional (DC-DC / Reverse)</option>
                         <option value="2">Power Supply (CV/CC)</option>
                     </select>
                 </div>
@@ -74,7 +74,7 @@
                     <button type="button" onclick="sendLimit('SET_V_MIN', 'limit_Vmin')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Input Voltage Limit (V): <span class="info-icon" title="Max voltage at Input terminal. Throttles REGEN current to prevent overcharging supply battery.">ⓘ</span></label>
+                    <label>Input Voltage Limit (V): <span class="info-icon" title="Max voltage at Input terminal. Throttles REVERSE current to prevent overcharging supply battery.">ⓘ</span></label>
                     <input type="number" step="0.01" id="limit_VinMax" value="80.00">
                     <button type="button" onclick="sendLimit('SET_VIN_MAX', 'limit_VinMax')">Update</button>
                 </div>
@@ -84,7 +84,7 @@
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Max Reverse/Regen Current (A): <span class="info-icon" title="Maximum current allowed to flow back from Output to Input.">ⓘ</span></label>
+                    <label>Max Reverse Current (A): <span class="info-icon" title="Maximum current allowed to flow back from Output to Input.">ⓘ</span></label>
                     <input type="number" step="0.01" id="limit_Imin" value="0.50">
                     <button type="button" onclick="sendLimit('SET_I_MIN', 'limit_Imin')">Update</button>
                 </div>

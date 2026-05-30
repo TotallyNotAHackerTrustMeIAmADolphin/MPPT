@@ -17,6 +17,7 @@
 #include "stm32f0xx_hal.h"
 #endif
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Private variables (Encapsulation) */
 static SystemState_t currentState = STATE_IDLE;
@@ -178,13 +179,13 @@ void CONTROLLER_UpdateHighRate(void) {
 
     if (m->voltageIn_mV > HARD_LIMIT_VIN_MAX_MV) {
         newFault = FAULT_REASON_INPUT_OV;
-    } else if (currentState != STATE_IDLE && m->voltageIn_mV < 13000) {
+    } else if (currentState != STATE_IDLE && m->voltageIn_mV < HARD_LIMIT_VIN_MIN_MV) {
         newFault = FAULT_REASON_INPUT_UV;
-    } else if (m->currentIn_mA > HARD_LIMIT_IIN_MAX_MA) {
+    } else if (m->currentIn_mA > HARD_LIMIT_IIN_MAX_MA || m->currentIn_mA < -HARD_LIMIT_IIN_MAX_MA) {
         newFault = FAULT_REASON_INPUT_OC;
     } else if (m->voltageOut_mV > HARD_LIMIT_VOUT_MAX_MV) {
         newFault = FAULT_REASON_OUTPUT_OV;
-    } else if (m->currentOut_mA > HARD_LIMIT_IOUT_MAX_MA) {
+    } else if (m->currentOut_mA > HARD_LIMIT_IOUT_MAX_MA || m->currentOut_mA < -HARD_LIMIT_IOUT_MAX_MA) {
         newFault = FAULT_REASON_OUTPUT_OC;
     } else if (m->tempMCU_C_x100 > (HARD_LIMIT_TEMP_MAX_C * 100)) {
         newFault = FAULT_REASON_OVERTEMP;
@@ -234,78 +235,77 @@ void CONTROLLER_UpdateHighRate(void) {
             break;
 
         case STATE_ACTIVE: {
-            // --- Multi-Variable Override Control (Min-Selector) ---
+            // --- Unified Min-Selector Control ---
             
-            // Baseline: What do we WANT to do if no limits are hit?
-            int64_t min_delta = 1000000; // Default to "increase" in CC/CV modes
-            
-            // Only update soft limit if the hold timer has expired
-            if (softLimitHoldTimer == 0) {
-                activeSoftLimit = LIMIT_NONE;
-            }
+            // 1. The "Wish" (Initial delta trying to increase power/reach target)
+            int64_t winning_delta = 1000000; 
+            SoftLimit_t winner = LIMIT_NONE;
 
             if (limits->mode == MODE_MPPT) {
                 if (currentTick - lastMPPTTick >= MPPT_GetInterval()) {
                     lastMPPTTick = currentTick;
 #if ACTIVE_MPPT_ALGO == MPPT_ALGO_INC_COND
-                    int32_t mppt_delta_ticks = MPPT_IncrementalConductance(m, limits);
+                    winning_delta = (int64_t)MPPT_IncrementalConductance(m, limits) * 1000;
 #else
-                    int32_t mppt_delta_ticks = MPPT_PerturbAndObserve(m, limits);
+                    winning_delta = (int64_t)MPPT_PerturbAndObserve(m, limits) * 1000;
 #endif
-                    min_delta = (int64_t)mppt_delta_ticks * 1000;
                 } else {
-                    min_delta = 0; // Hold duty between MPPT steps
+                    winning_delta = 0; // Hold logical state between MPPT steps
                 }
             }
 
-            // A. Output Voltage Limit (Forward CV)
+            // 2. The Constraints (Limits that pull duty DOWN)
+            
+            // Forward CV (Output Voltage Max)
             int64_t error_Vout = (int64_t)limits->vOutMax_mV - m->voltageOut_mV;
             int64_t dInput_Vout = (int64_t)m->voltageOut_mV - lastVout;
             int64_t delta_Vout = (GAIN_KI * error_Vout) - (GAIN_KP * dInput_Vout);
-            if (delta_Vout < min_delta) {
-                min_delta = delta_Vout;
-                if (limits->mode != MODE_MPPT || delta_Vout <= 0) {
-                    activeSoftLimit = LIMIT_V_OUT_MAX;
-                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
-                }
+            if (delta_Vout < winning_delta) {
+                winning_delta = delta_Vout;
+                if (limits->mode != MODE_MPPT || delta_Vout <= 0) winner = LIMIT_V_OUT_MAX;
             }
 
-            // B. Output Current Max Limit (Forward CC)
+            // Forward CC (Output Current Max)
             int64_t error_IoutMax = (int64_t)limits->iOutMax_mA - m->currentOut_mA;
             int64_t dInput_Iout = (int64_t)m->currentOut_mA - lastIout;
             int64_t delta_IoutMax = (GAIN_KI * error_IoutMax) - (GAIN_KP * dInput_Iout);
-            if (delta_IoutMax < min_delta) {
-                min_delta = delta_IoutMax;
-                if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) {
-                    activeSoftLimit = LIMIT_I_OUT_MAX;
-                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
+            if (delta_IoutMax < winning_delta) {
+                winning_delta = delta_IoutMax;
+                if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) winner = LIMIT_I_OUT_MAX;
+            }
+
+            // Reverse CC (Battery Charge Current Limit - Input side)
+            // If currentIn is MORE negative than limit (e.g. -1000 < -500), error is negative.
+            int64_t error_IinMin = (int64_t)m->currentIn_mA - limits->iOutMin_mA;
+            if (error_IinMin < 0) {
+                int64_t delta_IinMin = (GAIN_KI * error_IinMin * 10); // High gain for safety
+                if (delta_IinMin < winning_delta) {
+                    winning_delta = delta_IinMin;
+                    winner = LIMIT_I_OUT_MIN;
                 }
             }
 
-            // C. Output Current Min Limit (Reverse CC / Backflow)
-            int64_t error_IoutMin = (int64_t)m->currentOut_mA - limits->iOutMin_mA;
-            if (error_IoutMin < 0) {
-                int64_t delta_IoutMin = (int64_t)GAIN_KI * error_IoutMin * 5; 
-                if (delta_IoutMin < min_delta) {
-                    min_delta = delta_IoutMin;
-                    activeSoftLimit = LIMIT_I_OUT_MIN;
-                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
-                }
-            }
-
-            // D. Input Voltage Max Limit (Reverse CV)
+            // Reverse CV (Input Over-Voltage Protection - Battery Full in reverse)
             int64_t error_VinMax = (int64_t)limits->vInMax_mV - m->voltageIn_mV;
             if (error_VinMax < 0) {
-                int64_t delta_VinMax = (int64_t)GAIN_KI * error_VinMax * 2;
-                if (delta_VinMax < min_delta) {
-                    min_delta = delta_VinMax;
-                    activeSoftLimit = LIMIT_V_IN_MAX;
-                    softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
+                int64_t delta_VinMax = (GAIN_KI * error_VinMax * 5);
+                if (delta_VinMax < winning_delta) {
+                    winning_delta = delta_VinMax;
+                    winner = LIMIT_V_IN_MAX;
                 }
             }
 
-            // 3. Accumulate and Apply
-            globalDutyIntegral += min_delta;
+            // 3. Integration & Application
+            
+            // Update status with hysteresis
+            if (softLimitHoldTimer > 0) {
+                softLimitHoldTimer--;
+            } else {
+                activeSoftLimit = winner;
+                if (winner != LIMIT_NONE) softLimitHoldTimer = SOFT_LIMIT_HOLD_TIME_MS;
+            }
+
+            globalDutyIntegral += winning_delta;
             
             // Constrain logical state
             int64_t maxIntegral = (int64_t)POWER_PWM_GetMax() * 1000;
@@ -319,7 +319,7 @@ void CONTROLLER_UpdateHighRate(void) {
             lastIout = m->currentOut_mA;
 
             // Return to IDLE if input voltage is lost
-            if (m->voltageIn_mV < 13000) transitionTo(STATE_IDLE);
+            if (m->voltageIn_mV < HARD_LIMIT_VIN_MIN_MV) transitionTo(STATE_IDLE);
             break;
         }
 
@@ -391,8 +391,8 @@ const char* CONTROLLER_GetStateString(void) {
             if (activeSoftLimit == LIMIT_V_OUT_MAX) return "CV";
             if (activeSoftLimit == LIMIT_I_OUT_MAX) return "CC";
             if (activeSoftLimit == LIMIT_V_IN_MIN)  return "BROWNOUT";
-            if (activeSoftLimit == LIMIT_V_IN_MAX)  return "VIN_LIM";
-            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "REVERSE";
+            if (activeSoftLimit == LIMIT_V_IN_MAX)  return "REV_V";
+            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "REV_I";
             return "MPPT";
         }
         case STATE_FAULT:    return "FAULT";

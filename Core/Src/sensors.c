@@ -141,10 +141,28 @@ void SENSORS_Process(uint16_t offset) {
     measurements.powerIn_mW = (int32_t)(measurements.powerIn_uW / 1000);
     measurements.powerOut_mW = (int32_t)(measurements.powerOut_uW / 1000);
 
-    if (measurements.powerIn_mW > 10) {
-        measurements.efficiency_x100 = (uint16_t)((measurements.powerOut_uW * 10000) / measurements.powerIn_uW);
+    // Bidirectional Efficiency Calculation
+    // Forward (Discharging Battery): Efficiency = Pout / Pin
+    // Reverse (Charging Battery/Reverse): Efficiency = Pin / Pout
+    int64_t absPin = (measurements.powerIn_uW < 0) ? -measurements.powerIn_uW : measurements.powerIn_uW;
+    int64_t absPout = (measurements.powerOut_uW < 0) ? -measurements.powerOut_uW : measurements.powerOut_uW;
+
+    if (measurements.currentOut_mA >= 0) {
+        // Forward Mode
+        if (absPin > 10000) { // >10mW
+            int64_t eff = (absPout * 10000) / absPin;
+            measurements.efficiency_x100 = (eff > 9999) ? 9999 : (uint16_t)eff;
+        } else {
+            measurements.efficiency_x100 = 0;
+        }
     } else {
-        measurements.efficiency_x100 = 0;
+        // Reverse Mode (Reverse Flow)
+        if (absPout > 10000) { // >10mW
+            int64_t eff = (absPin * 10000) / absPout;
+            measurements.efficiency_x100 = (eff > 9999) ? 9999 : (uint16_t)eff;
+        } else {
+            measurements.efficiency_x100 = 0;
+        }
     }
 }
 

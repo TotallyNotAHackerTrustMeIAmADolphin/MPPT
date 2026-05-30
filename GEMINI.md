@@ -9,8 +9,8 @@ This project is an embedded firmware for the **openMPPT v1.2** solar charge cont
 - **Pre-Charge Duty Matching**: Dynamically calculates equilibrium duty cycle based on $V_{in}/V_{out}$ ratio before engaging the power stage to prevent battery backflow faults.
 - **Voltage/Current Bound Sweeping**: Global power sweep terminates autonomously upon hitting soft device limits, preventing hardware overvoltage faults.
 - **Multi-Mode Operation**: Selectable modes via dashboard (Solar MPPT, E-Bike Bidirectional, Power Supply CV/CC).
-- **Bidirectional E-Bike Mode**: Supports motor driving (boost) and regenerative braking (buck) with seamless PI transitions.
-- **Unified Multi-Variable Control**: Single control loop manages voltage, current, and regen limits simultaneously using a high-speed "Min-Selector" architecture.
+- **Bidirectional E-Bike Mode**: Supports motor driving (boost) and reverse flow braking (buck) with seamless PI transitions.
+- **Unified Multi-Variable Control**: Single control loop manages voltage, current, and reverse flow limits simultaneously using a high-speed "Min-Selector" architecture.
 - **High-Frequency PWM**: 100 kHz PWM frequency (`TIMER_PERIOD = 240`).
 - **PWM Dithering**: Implements a 3-bit dithering table to improve duty cycle resolution.
 - **Velocity PI Regulation**: Mathematically stable PI controller for CV/CC modes, eliminating ripple and state-switching oscillation.

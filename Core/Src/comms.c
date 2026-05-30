@@ -28,7 +28,7 @@ void COMMS_Init(void) {
 
 void COMMS_SendTelemetry(const Measurements_t *m) {
     // Basic telemetry
-    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty_x100\":%ld,\"mppt_step\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\",\"fault\":\"%s\"}\n",
+    printf("{\"type\":\"telemetry\",\"Vin_mV\":%ld,\"Vout_mV\":%ld,\"Ain_mA\":%ld,\"Aout_mA\":%ld,\"Win_mW\":%ld,\"Wout_mW\":%ld,\"duty_x100\":%ld,\"mppt_step\":%ld,\"eff\":%d,\"temp_C\":%ld,\"state\":\"%s\",\"fault_reason\":\"%s\"}\n",
            m->voltageIn_mV, m->voltageOut_mV, m->currentIn_mA, m->currentOut_mA,
            m->powerIn_mW, m->powerOut_mW, POWER_PWM_GetDutyCycle_x100(), 
            MPPT_GetLastStep(),
