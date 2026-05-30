@@ -21,23 +21,36 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (e.g., SCT2
 - Uses a "Cascaded Buck" architecture: 10V $\rightarrow$ Tiny Sync Buck $\rightarrow$ 3.3V.
 - *Why?* Prevents the catastrophic "Load Dump Cascade" where an 80V spike kills the primary regulator and shorts directly into the 3.3V MCU rail.
 
-## 3. Inductor Sizing
-Targeting a ripple current ($\Delta I_L$) of 20-40% of $I_{out,max}$.
-For a Buck converter: $L = \frac{V_{out} \times (V_{in} - V_{out})}{\Delta I_L \times f_{sw} \times V_{in}}$
+## 3. Inductor Sizing (Main Power Stage)
+Targeting a peak-to-peak ripple current ($\Delta I_L$) of 20% of $I_{out,max}$ (**4.0 A**).
+Because this is a 4-switch Buck-Boost, the inductor must satisfy both Buck and Boost continuous conduction modes (CCM).
 
-**Calculations for 48V Battery (58V Charge) from 80V Panel:**
-- $V_{in} = 80V$, $V_{out} = 58V$
-- Target $\Delta I_L = 4A$ (20% of 20A)
-- $L = \frac{58 \times (80 - 58)}{4 \times 100,000 \times 80} \approx 40 \mu H$
+**Buck Mode Worst-Case:** (50% Duty Cycle, e.g., 80V in, 40V out)
+$L_{buck} = \frac{V_{out} \times (V_{in} - V_{out})}{\Delta I_L \times f_{sw} \times V_{in}}$
+$L_{buck} = \frac{40 \times (80 - 40)}{4 \times 100,000 \times 80} = \mathbf{50.0 \mu H}$
 
-*Current v1.1 Implementation uses 100µH (L2, L3 in parallel or series configuration depending on assembly), which provides significantly lower ripple but higher ESR.*
+**Boost Mode Worst-Case:** (High Step-Up, e.g., 12V in, 58V out)
+$L_{boost} = \frac{V_{in} \times (V_{out} - V_{in})}{\Delta I_L \times f_{sw} \times V_{out}}$
+$L_{boost} = \frac{12 \times (58 - 12)}{4 \times 100,000 \times 58} \approx \mathbf{23.8 \mu H}$
 
-## 3. Output Capacitor Selection
-Targeting output voltage ripple ($\Delta V_{out}$) < 100mV.
-$\Delta V_{out} = \frac{\Delta I_L}{8 \times f_{sw} \times C_{out}}$
+**v1.3 Component Selection:**
+To satisfy both extremes while minimizing heat, the target inductor size should be between **33 µH and 47 µH**.
+- *Note:* The v1.1 implementation used 100µH, which resulted in very low ripple but high copper losses (DCR). Lowering to ~47µH will improve transient response and reduce inductor heating, provided the capacitors can handle the slightly higher ripple.
 
-**For $\Delta I_L = 4A$ and $C_{out} = 440 \mu F$ (4x 110µF):**
-- $\Delta V_{out} = \frac{4}{8 \times 100,000 \times 440 \times 10^{-6}} \approx 11 mV$
+## 4. Bulk Capacitor Selection
+Targeting an output voltage ripple ($\Delta V_{out}$) of **< 100mV**.
+
+**Ideal Capacitance (Assuming Zero ESR):**
+$C_{out,min} = \frac{\Delta I_L}{8 \times f_{sw} \times \Delta V_{out}}$
+$C_{out,min} = \frac{4.0}{8 \times 100,000 \times 0.1} = \mathbf{50.0 \mu F}$
+
+**Real-World Constraints (ESR Dominates):**
+At 100kHz, the voltage ripple is almost entirely dictated by the Equivalent Series Resistance (ESR) of the capacitors, not the pure capacitance value:
+$ESR_{max} = \frac{\Delta V_{out}}{\Delta I_L} = \frac{0.1V}{4.0A} = \mathbf{25 m\Omega}$
+
+**v1.3 Capacitor Strategy:**
+To achieve an ESR < 25 mΩ and handle the heavy ripple current without overheating, we must use a parallel bank of low-ESR capacitors.
+- *Recommendation*: Use **4x 100µF to 220µF** Aluminum Polymer or high-grade Electrolytic capacitors in parallel. If using standard electrolytics, they typically have ~80mΩ ESR each, so 4 in parallel gives ~20mΩ (passing our requirement). Ceramic MLCCs (e.g., 4x 10µF 100V X7R) should also be added directly at the MOSFET switching nodes to handle the high-frequency edge spikes.
 
 ## 4. Voltage Divider & ADC Scaling
 The ADC measures 0-3.3V. We scale $V_{in}$ and $V_{out}$ to fit this range.
