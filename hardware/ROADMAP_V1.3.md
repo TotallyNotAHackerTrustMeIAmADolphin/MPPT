@@ -7,8 +7,8 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 
 - [ ] **Voltage Sensing Correction**: Change `R1`, `R3` from 5.1 Ω to **5.1 kΩ** to enable correct voltage readings.
 - [ ] **Connector Standardization**: Use Male `XT60PW-M` on both `VIN` and `VOUT` to resolve polarity mismatch and simplify BOM.
-- [ ] **Robust 10V Gate Drive**: Replace the unstable **XL7005A** with a robust 100V-rated buck converter (e.g., SCT2A25) tuned to **10V** instead of 12V to optimize gate driver thermals.
-- [ ] **Cascaded 3.3V Logic Supply**: Implement a tiny synchronous buck to step down the 10V rail to 3.3V, isolating the MCU from 80V load dumps.
+- [x] **Robust 10V Gate Drive**: Replace the unstable **XL7005A** with a robust 100V-rated buck converter (SCT2A25) tuned to **10V** instead of 12V to optimize gate driver thermals. [CALCULATIONS COMPLETE, SCHEMATIC PENDING]
+- [x] **Cascaded 3.3V Logic Supply**: Implement a tiny synchronous buck (SY8120) to step down the 10V rail to 3.3V, isolating the MCU from 80V load dumps. [CALCULATIONS COMPLETE, SCHEMATIC PENDING]
 - [ ] **Gate Drive Optimization**: Permanently change gate resistors (`R11`, `R12`, `R37`, `R38`) to **5.1 Ω** to match proven 96% efficiency tuning.
 - [ ] **Reset & Debug Pinout**: 
     - Fix the Reset button pinout.

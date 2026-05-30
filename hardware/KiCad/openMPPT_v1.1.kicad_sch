@@ -21,7 +21,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "07398093-9e6c-42cb-aacb-0e974ae2545f")
-		(property "Sheetname" "Buck-Boost Stuff"
+		(property "Sheetname" "Buck-Boost"
 			(at 27.94 33.5784 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -113,7 +113,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "b560e0fd-1eda-4b79-8ab2-9394303de612")
-		(property "Sheetname" "MCU Stuff"
+		(property "Sheetname" "MCU"
 			(at 27.94 24.6884 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -139,6 +139,52 @@
 			(project "openMPPT_v1.1"
 				(path "/f6f5d1da-a682-42b4-8a9f-7d9a10833a0c"
 					(page "1")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 66.04 154.94)
+		(size 22.86 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "e7e2ff21-1792-4bcd-929d-c8dde76bf8cf")
+		(property "Sheetname" "Power"
+			(at 66.04 154.2284 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 66.04 159.3346 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "openMPPT_v1.1"
+				(path "/f6f5d1da-a682-42b4-8a9f-7d9a10833a0c"
+					(page "4")
 				)
 			)
 		)

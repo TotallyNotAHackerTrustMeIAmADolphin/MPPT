@@ -648,21 +648,25 @@
         "uuid": "f6f5d1da-a682-42b4-8a9f-7d9a10833a0c"
       }
     ],
-    "used_designators": "",
+    "used_designators": "U8,D6,L2-3,C5-8,C_OUT2",
     "variants": []
   },
   "sheets": [
     [
       "b560e0fd-1eda-4b79-8ab2-9394303de612",
-      "MCU Stuff"
+      "MCU"
     ],
     [
       "07398093-9e6c-42cb-aacb-0e974ae2545f",
-      "Buck-Boost Stuff"
+      "Buck-Boost"
     ],
     [
       "0ca9bfef-bcff-40cb-bb88-2992ce683339",
       "Connectors"
+    ],
+    [
+      "e7e2ff21-1792-4bcd-929d-c8dde76bf8cf",
+      "Power"
     ],
     [
       "f6f5d1da-a682-42b4-8a9f-7d9a10833a0c",

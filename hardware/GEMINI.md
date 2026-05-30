@@ -6,13 +6,21 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 ## Core Mandates
 - **Safety First**: High-power traces (VIN, VOUT, GND, VS_A, VS_B) must be sized for 20A continuous load. Standard width is **3.5mm** (assumes 2oz copper or dual-side reinforcement).
 - **Component Selection**: Prioritize the **PCM-JLCPCB** library for preferred parts whenever possible to ensure compatibility with JLCPCB's assembly service.
+- **Datasheet Handling**: Always check the local `hardware/Datasheets` directory first. If local PDF extraction fails, use `web_fetch` to read the PDF directly from the project's GitHub repository URL rather than relying on external Google searches. Only use external searches if the datasheet is not present in the repository.
 - **Persistent Memory (Hardware Universe)**: To optimize context usage, every time a new component mapping, pinout, or critical hardware fact is discovered by 'digging' through files, it MUST be persisted into the **Hardware Universe** section of this file immediately. This serves as the 'source of truth' for the project's physical implementation.
 - **Mandatory Audits**: No changes shall be merged into `main` without a clean DRC/ERC report (zero errors, justified warnings).
 - **Tooling**: Use the Flatpak-based `kicad-cli` for all automated audits and exports.
 
 ## Primary Workflows
 
-### 1. Running Audits (Flatpak Environment)
+### 1. AI-Human Collaboration Workflow (The "Hybrid Drop")
+This workflow optimizes for both AI capabilities and human spatial reasoning during schematic updates.
+- **Phase 1 (Calculation)**: The AI fetches datasheets, performs sizing calculations (e.g., feedback dividers, inductor sizing), and documents the math in `CALCULATIONS.md`.
+- **Phase 2 (Implementation)**: The AI provides a specific checklist of components to add. The Human Engineer places these symbols manually in the KiCad GUI and routes the wires.
+- **Phase 3 (Property Assignment)**: Once the symbols are placed, the AI scans the schematic S-expressions to bulk-update symbol properties (Values, Footprints, Manufacturer Part Numbers, Links).
+- **Phase 4 (Audit)**: The AI executes ERC/DRC audits via `kicad-cli` to verify connectivity and rules.
+
+### 2. Running Audits (Flatpak Environment)
 To run audits, use the following commands:
 
 **Electrical Rules Check (ERC):**

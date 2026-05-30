@@ -12,14 +12,31 @@ This document stores the theoretical basis and calculations for component select
 | Gate Drive Voltage | $V_{drive}$ | 10 V | Optimized for IRS21867 thermals (v1.3) |
 
 ## 2. Gate Drive & Auxiliary Power Optimization (v1.3)
-**Primary Aux Supply (10V):**
-Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (e.g., SCT2A25).
+**Primary Aux Supply (10V) - SCT2A25:**
+Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
 - Output is tuned to **10V** instead of 12V. 
-- *Why 10V?* The CSD19505 is fully enhanced at $V_{GS}=10V$ ($R_{DS(on)}$ = 11 mΩ). Driving at 10V instead of 12V reduces the gate charge power dissipation ($P_{gate} = Q_g \times V_{drive} \times f_{sw}$) by ~16%, shifting thermal load away from the sensitive IRS21867 gate drivers onto the heatsinked TO-220 MOSFETs.
+- **Feedback Divider**: $V_{FB} = 1.2V$
+  - $V_{OUT} = 1.2 \times (1 + R_{up}/R_{down})$
+  - $R_{up} = 73.2k\Omega$, $R_{down} = 10k\Omega \implies V_{OUT} = 9.984V \approx 10V$
+- **Switching Frequency**: Fixed at 300kHz.
+- **Inductor ($L_1$)**: For 10V out, a standard **33µH or 47µH** inductor (e.g., 6x6mm shielded) is suitable.
+- **Input Capacitor ($C_{IN}$)**: Minimum **2x 2.2µF 100V X7R** MLCCs + **0.1µF** high-frequency bypass.
+- **Output Capacitor ($C_{OUT}$)**: Minimum **2x 22µF 25V X7R/X5R** MLCCs.
+- **Catch Diode**: **SS510** (100V, 5A Schottky) or equivalent.
+- **Bootstrap Capacitor**: **0.1µF 50V** ceramic.
+- **UVLO Divider**: To set start at ~15V and stop at ~14V: $R_{UVLO\_TOP} = 464k\Omega$, $R_{UVLO\_BOT} = 42.2k\Omega$.
 
-**Secondary Aux Supply (3.3V Logic):**
-- Uses a "Cascaded Buck" architecture: 10V $\rightarrow$ Tiny Sync Buck $\rightarrow$ 3.3V.
-- *Why?* Prevents the catastrophic "Load Dump Cascade" where an 80V spike kills the primary regulator and shorts directly into the 3.3V MCU rail.
+**Secondary Aux Supply (3.3V Logic) - SY8120:**
+- Uses a "Cascaded Buck" architecture: 10V $\rightarrow$ Tiny Sync Buck (SY8120) $\rightarrow$ 3.3V.
+- **Feedback Divider**: $V_{FB} = 0.6V$
+  - $V_{OUT} = 0.6 \times (1 + R_{up}/R_{down})$
+  - $R_{up} = 100k\Omega$, $R_{down} = 22.1k\Omega \implies V_{OUT} = 0.6 \times (1 + 100/22.1) = 3.31V \approx 3.3V$
+- **Switching Frequency**: Fixed at 500kHz.
+- **Inductor ($L$)**: **4.7µH** (recommended for 3.3V out).
+- **Input Capacitor ($C_{IN}$)**: **10µF 16V** ceramic.
+- **Output Capacitor ($C_{OUT}$)**: **10µF 10V** ceramic (22µF is also acceptable).
+- **Feedforward Capacitor ($C_{FF}$)**: **47pF** ceramic.
+- **Bootstrap Capacitor ($C_{BS}$)**: **0.1µF** ceramic.
 
 ## 3. Inductor Sizing (Main Power Stage)
 Targeting a peak-to-peak ripple current ($\Delta I_L$) of 20% of $I_{out,max}$ (**4.0 A**).
