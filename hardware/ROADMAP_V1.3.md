@@ -27,6 +27,8 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 ## Phase 3: Power Scaling & Sensor Upgrades (80V/20A)
 *Goal: Scale the analog front-end and power stage for higher limits.*
 
+- [ ] **Inductor Sizing**: Replace 100µH inductors with optimized **33µH - 47µH** components to reduce DCR and improve transient response while maintaining CCM.
+- [ ] **Low-ESR Bulk Capacitance**: Implement a parallel bank of capacitors (e.g., 4x 100µF-220µF) to hit the **<25mΩ ESR** target required for 100mV ripple at 20A. Add ceramic MLCCs at switching nodes.
 - [ ] **80V Voltage Dividers**: 
     - Recalculate and update `R_top` values to support sensing up to **82V-85V** (current limit ~69V).
     - Update ADC scaling constants in `hardware/CALCULATIONS.md`.
