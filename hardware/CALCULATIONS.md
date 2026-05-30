@@ -17,20 +17,20 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
 - Output is tuned to **10V** instead of 12V. 
 - **Feedback Divider**: $V_{FB} = 1.2V$
   - $V_{OUT} = 1.2 \times (1 + R_{up}/R_{down})$
-  - $R_{up} = 73.2k\Omega$, $R_{down} = 10k\Omega \implies V_{OUT} = 9.984V \approx 10V$
+  - Using E96 series: $R_{up} = 73.2k\Omega$, $R_{down} = 10k\Omega \implies V_{OUT} = 1.2 \times (1 + 73.2/10) = 9.984V \approx 10V$
 - **Switching Frequency**: Fixed at 300kHz.
 - **Inductor ($L_1$)**: For 10V out, a standard **33µH or 47µH** inductor (e.g., 6x6mm shielded) is suitable.
 - **Input Capacitor ($C_{IN}$)**: Minimum **2x 2.2µF 100V X7R** MLCCs + **0.1µF** high-frequency bypass.
 - **Output Capacitor ($C_{OUT}$)**: Minimum **2x 22µF 25V X7R/X5R** MLCCs.
 - **Catch Diode**: **SS510** (100V, 5A Schottky) or equivalent.
 - **Bootstrap Capacitor**: **0.1µF 50V** ceramic.
-- **UVLO Divider**: To set start at ~15V and stop at ~14V: $R_{UVLO\_TOP} = 464k\Omega$, $R_{UVLO\_BOT} = 42.2k\Omega$.
+- **UVLO Divider**: To set start at ~15V and stop at ~14V: $R_{UVLO\_TOP} = 464k\Omega$, $R_{UVLO\_BOT} = 42.2k\Omega$ (Both are E96).
 
 **Secondary Aux Supply (3.3V Logic) - SY8120:**
 - Uses a "Cascaded Buck" architecture: 10V $\rightarrow$ Tiny Sync Buck (SY8120) $\rightarrow$ 3.3V.
 - **Feedback Divider**: $V_{FB} = 0.6V$
   - $V_{OUT} = 0.6 \times (1 + R_{up}/R_{down})$
-  - $R_{up} = 100k\Omega$, $R_{down} = 22.1k\Omega \implies V_{OUT} = 0.6 \times (1 + 100/22.1) = 3.31V \approx 3.3V$
+  - Using E96 series: $R_{up} = 100k\Omega$ (E96), $R_{down} = 22.1k\Omega$ (E96) $\implies V_{OUT} = 0.6 \times (1 + 100/22.1) = 3.31V \approx 3.3V$
 - **Switching Frequency**: Fixed at 500kHz.
 - **Inductor ($L$)**: **4.7µH** (recommended for 3.3V out).
 - **Input Capacitor ($C_{IN}$)**: **10µF 16V** ceramic.
