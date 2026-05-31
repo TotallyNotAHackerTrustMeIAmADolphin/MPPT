@@ -5,6 +5,197 @@
 	(uuid "d1706a5f-9b56-4454-b339-e08bf09e19b7")
 	(paper "A4")
 	(lib_symbols
+		(symbol "FTC201610S4R7MBCA_1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "L"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "FTC201610S4R7MBCA"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "easyeda2kicad:IND-SMD_L2.0-W1.6-B"
+				(at 0 -7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C5832346.pdf"
+				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "cjiang(长江微电)"
+				(at 0 -12.7 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "MPN" "FTC201610S4R7MBCA"
+				(at 0 -15.24 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC Part" "C5832346"
+				(at 0 -17.78 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "Power Inductors"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "FTC201610S4R7MBCA_1_0_1"
+				(arc
+					(start -4.06 0.01)
+					(mid -3.035 1.0102)
+					(end -2.03 -0.01)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -2.03 0.01)
+					(mid -1.005 1.0102)
+					(end 0 -0.01)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0 0.01)
+					(mid 1.0249 1.0101)
+					(end 2.03 -0.01)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 2.03 0.01)
+					(mid 3.0549 1.0101)
+					(end 4.06 -0.01)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 5.08 0 180)
+					(length 1.27)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "JLCPCB-Capacitors:0603,100nF"
 			(pin_numbers
 				(hide yes)
@@ -4431,197 +4622,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:FTC201610S4R7MBCA"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "L"
-				(at 0 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "FTC201610S4R7MBCA"
-				(at 0 -5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "easyeda2kicad:IND-SMD_L2.0-W1.6-B"
-				(at 0 -7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C5832346.pdf"
-				(at 0 -10.16 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Manufacturer" "cjiang(长江微电)"
-				(at 0 -12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "MPN" "FTC201610S4R7MBCA"
-				(at 0 -15.24 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "LCSC Part" "C5832346"
-				(at 0 -17.78 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "Power Inductors"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "FTC201610S4R7MBCA_0_1"
-				(arc
-					(start -4.06 0.01)
-					(mid -3.035 1.0102)
-					(end -2.03 -0.01)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start -2.03 0.01)
-					(mid -1.005 1.0102)
-					(end 0 -0.01)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0 0.01)
-					(mid 1.0249 1.0101)
-					(end 2.03 -0.01)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 2.03 0.01)
-					(mid 3.0549 1.0101)
-					(end 4.06 -0.01)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin unspecified line
-					(at -5.08 0 0)
-					(length 1.27)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin unspecified line
-					(at 5.08 0 180)
-					(length 1.27)
-					(name "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "easyeda2kicad:SCT2A25STER"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -5496,6 +5496,12 @@
 		(uuid "04dce952-f3df-44a3-9ac5-eca71d596b95")
 	)
 	(junction
+		(at 110.49 144.78)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2584afb7-f465-45eb-9912-e2e067ce22c0")
+	)
+	(junction
 		(at 96.52 78.74)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5520,12 +5526,6 @@
 		(uuid "53944009-ba86-40b3-bfbc-a64053b045f9")
 	)
 	(junction
-		(at 110.49 165.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "54230d7b-dea5-4783-bd13-f49aca2abf2f")
-	)
-	(junction
 		(at 77.47 147.32)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5536,12 +5536,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "56b2919e-3425-41d8-a41f-8798dfd2b86a")
-	)
-	(junction
-		(at 110.49 144.78)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5c823fbb-03ba-4379-82f1-9ba3cc7f1cbb")
 	)
 	(junction
 		(at 81.28 128.27)
@@ -5566,6 +5560,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6facad0d-d903-4229-a9e9-5cec61f0d355")
+	)
+	(junction
+		(at 110.49 165.1)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6fb95ee6-ee68-4d85-bfea-34184127e534")
 	)
 	(junction
 		(at 137.16 78.74)
@@ -5711,7 +5711,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 152.4) (xy 127 165.1)
+			(xy 127 157.48) (xy 127 165.1)
 		)
 		(stroke
 			(width 0)
@@ -5941,6 +5941,16 @@
 	)
 	(wire
 		(pts
+			(xy 110.49 149.86) (xy 110.49 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4df3e72e-866a-4e10-a9e6-31091567a4e7")
+	)
+	(wire
+		(pts
 			(xy 81.28 54.61) (xy 81.28 55.88)
 		)
 		(stroke
@@ -6101,7 +6111,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 142.24) (xy 127 144.78)
+			(xy 127 142.24) (xy 127 149.86)
 		)
 		(stroke
 			(width 0)
@@ -6221,7 +6231,7 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 152.4) (xy 110.49 165.1)
+			(xy 110.49 157.48) (xy 110.49 165.1)
 		)
 		(stroke
 			(width 0)
@@ -6527,6 +6537,120 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "FTC201610S4R7MBCA_1")
+		(lib_id "easyeda2kicad:FTC201610S4R7MBCA")
+		(at 119.38 142.24 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "045459f3-b976-4c5f-b1bf-ae26481f9f1e")
+		(property "Reference" "L3"
+			(at 119.38 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "4.7uH"
+			(at 119.38 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:IND-SMD_L2.0-W1.6-B"
+			(at 119.38 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C5832346.pdf"
+			(at 119.38 152.4 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 119.38 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "cjiang(长江微电)"
+			(at 119.38 154.94 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FTC201610S4R7MBCA"
+			(at 119.38 157.48 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C5832346"
+			(at 119.38 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "b4eca59b-8a43-48f7-87b5-54c84f89041a")
+		)
+		(pin "2"
+			(uuid "d73405c0-ef68-438f-be15-3d10f31ba1bf")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
+					(reference "L3")
+					(unit 1)
 				)
 			)
 		)
@@ -7040,7 +7164,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Capacitors:0603,4.7uF")
-		(at 110.49 148.59 0)
+		(at 110.49 153.67 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7050,7 +7174,7 @@
 		(dnp no)
 		(uuid "1d1d931c-53ef-4cb2-af0f-2d4c0818e961")
 		(property "Reference" "C35"
-			(at 112.268 146.304 0)
+			(at 112.268 151.384 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7061,7 +7185,7 @@
 			)
 		)
 		(property "Value" "4.7uF"
-			(at 113.03 148.59 0)
+			(at 113.03 153.67 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7072,7 +7196,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:C_0603"
-			(at 108.712 148.59 90)
+			(at 108.712 153.67 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7083,7 +7207,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10A475KO8NNNC_C19666.pdf"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7094,7 +7218,7 @@
 			)
 		)
 		(property "Description" "16V 4.7uF X5R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7105,7 +7229,7 @@
 			)
 		)
 		(property "LCSC" "C19666"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7116,7 +7240,7 @@
 			)
 		)
 		(property "Stock" "4246728"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7127,7 +7251,7 @@
 			)
 		)
 		(property "Price" "0.013USD"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7138,7 +7262,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7149,7 +7273,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7160,7 +7284,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7171,7 +7295,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7182,7 +7306,7 @@
 			)
 		)
 		(property "Category" "Capacitors,Multilayer Ceramic Capacitors MLCC - SMD/SMT"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7193,7 +7317,7 @@
 			)
 		)
 		(property "Manufacturer" "Samsung Electro-Mechanics"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7204,7 +7328,7 @@
 			)
 		)
 		(property "Part" "CL10A475KO8NNNC"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7215,7 +7339,7 @@
 			)
 		)
 		(property "Voltage Rated" "16V"
-			(at 113.03 151.13 0)
+			(at 113.03 156.21 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7226,7 +7350,7 @@
 			)
 		)
 		(property "Tolerance" "±10%"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7237,7 +7361,7 @@
 			)
 		)
 		(property "Capacitance" "4.7uF"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7248,7 +7372,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "X5R"
-			(at 110.49 148.59 0)
+			(at 110.49 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7746,7 +7870,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Capacitors:0603,22uF")
-		(at 127 148.59 0)
+		(at 127 153.67 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7757,7 +7881,7 @@
 		(fields_autoplaced yes)
 		(uuid "430d060c-13b4-48f6-ac4d-1c712d5d1c86")
 		(property "Reference" "C36"
-			(at 129.54 146.0499 0)
+			(at 129.54 151.1299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7768,7 +7892,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 129.54 148.59 0)
+			(at 129.54 153.67 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7779,7 +7903,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:C_0603"
-			(at 125.222 148.59 90)
+			(at 125.222 153.67 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7790,7 +7914,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10A226MQ8NRNC_C59461.pdf"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7801,7 +7925,7 @@
 			)
 		)
 		(property "Description" "6.3V 22uF X5R ±20% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7812,7 +7936,7 @@
 			)
 		)
 		(property "LCSC" "C59461"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7823,7 +7947,7 @@
 			)
 		)
 		(property "Stock" "5081183"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7834,7 +7958,7 @@
 			)
 		)
 		(property "Price" "0.012USD"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7845,7 +7969,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7856,7 +7980,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7867,7 +7991,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7878,7 +8002,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7889,7 +8013,7 @@
 			)
 		)
 		(property "Category" "Capacitors,Multilayer Ceramic Capacitors MLCC - SMD/SMT"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7900,7 +8024,7 @@
 			)
 		)
 		(property "Manufacturer" "Samsung Electro-Mechanics"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7911,7 +8035,7 @@
 			)
 		)
 		(property "Part" "CL10A226MQ8NRNC"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7922,7 +8046,7 @@
 			)
 		)
 		(property "Voltage Rated" "6.3V"
-			(at 129.54 151.13 0)
+			(at 129.54 156.21 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7933,7 +8057,7 @@
 			)
 		)
 		(property "Tolerance" "±20%"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7944,7 +8068,7 @@
 			)
 		)
 		(property "Capacitance" "22uF"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7955,7 +8079,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "X5R"
-			(at 127 148.59 0)
+			(at 127 153.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7975,6 +8099,119 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C36")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "easyeda2kicad:APS0650M470A")
+		(at 119.38 66.04 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4472278c-9d07-4836-837d-3b68b5ccaf69")
+		(property "Reference" "L2"
+			(at 119.38 59.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47uH"
+			(at 119.38 62.23 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
+			(at 119.38 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
+			(at 119.38 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 119.38 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Coilank(驰兴电感)"
+			(at 119.38 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "APS0650M470A"
+			(at 119.38 81.28 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC Part" "C47327224"
+			(at 119.38 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0bbff48c-841c-4890-84a9-03bedd52db31")
+		)
+		(pin "2"
+			(uuid "c4b0cbbc-f4ca-47c4-a5af-d51ffc0497df")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
+					(reference "L2")
 					(unit 1)
 				)
 			)
@@ -9102,119 +9339,6 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR042")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "easyeda2kicad:FTC201610S4R7MBCA")
-		(at 119.38 142.24 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "69c7cc86-cbc0-4ea1-9ebe-a3bc9188f6fe")
-		(property "Reference" "L3"
-			(at 119.38 135.89 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "4.7uH"
-			(at 119.38 138.43 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:IND-SMD_L2.0-W1.6-B"
-			(at 119.38 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C5832346.pdf"
-			(at 119.38 152.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 119.38 142.24 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "cjiang(长江微电)"
-			(at 119.38 154.94 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "FTC201610S4R7MBCA"
-			(at 119.38 157.48 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C5832346"
-			(at 119.38 160.02 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "e6ed18f9-8fc1-481c-bd35-788b8e1b359d")
-		)
-		(pin "1"
-			(uuid "fb0480fd-fd49-4864-9cf4-363b4520b2c7")
-		)
-		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
-				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
-					(reference "L3")
 					(unit 1)
 				)
 			)
@@ -11102,119 +11226,6 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:APS0650M470A")
-		(at 119.38 66.04 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "aae1060e-f5c6-460d-92d6-273dd08e1f52")
-		(property "Reference" "L2"
-			(at 119.38 59.69 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "47uH"
-			(at 119.38 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
-			(at 119.38 73.66 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
-			(at 119.38 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 119.38 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Coilank(驰兴电感)"
-			(at 119.38 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "APS0650M470A"
-			(at 119.38 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC Part" "C47327224"
-			(at 119.38 83.82 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "abb43430-691c-49ae-b7be-2cc357b70515")
-		)
-		(pin "2"
-			(uuid "e339abab-e244-4f83-9d5c-6b02e2ee7a23")
-		)
-		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
-				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
-					(reference "L2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "ProPrj_STM-easyedapro:GND")
 		(at 96.52 80.01 0)
 		(unit 1)
@@ -11225,7 +11236,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "b209d3ea-3c25-421f-972e-603079aee0fc")
-		(property "Reference" "#PWR046"
+		(property "Reference" "#PWR040"
 			(at 96.52 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -11287,7 +11298,7 @@
 		(instances
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
-					(reference "#PWR046")
+					(reference "#PWR040")
 					(unit 1)
 				)
 			)
@@ -11304,7 +11315,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "b33c2854-c0d1-4f21-99c3-557ce315dc5a")
-		(property "Reference" "#PWR047"
+		(property "Reference" "#PWR041"
 			(at 97.79 165.1 0)
 			(hide yes)
 			(show_name no)
@@ -11366,7 +11377,7 @@
 		(instances
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
-					(reference "#PWR047")
+					(reference "#PWR041")
 					(unit 1)
 				)
 			)
