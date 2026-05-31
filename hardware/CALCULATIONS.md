@@ -20,11 +20,8 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
   - Using E96 series: $R_{up} = 110k\Omega$, $R_{down} = 15k\Omega \implies V_{OUT} = 1.2 \times (1 + 110/15) = 10.0V$
 - **Switching Frequency**: Fixed at 300kHz.
 - **Inductor ($L_1$)**: For 10V out, a standard **33µH or 47µH** inductor (e.g., 6x6mm shielded) is suitable.
-- **Input Capacitor ($C_{IN}$)**: Minimum **2x 2.2µF 100V X7R** MLCCs + **0.1µF** high-frequency bypass.
-- **Output Capacitor ($C_{OUT}$)**: Minimum **2x 22µF 25V X7R/X5R** MLCCs.
-- **Catch Diode**: **SS510** (100V, 5A Schottky) or equivalent.
-- **Bootstrap Capacitor**: **0.1µF 50V** ceramic.
 - **UVLO Divider**: To set start at ~12.5V: $R_{UVLO\_TOP} = 430k\Omega$, $R_{UVLO\_BOT} = 47k\Omega$ (Both are E24).
+- **Bootstrap Diode**: **US1M** (1000V, 1A Ultrafast, $t_{rr} \le 75ns$).
 
 **Secondary Aux Supply (3.3V Logic) - SY8120:**
 - Uses a "Cascaded Buck" architecture: 10V $\rightarrow$ Tiny Sync Buck (SY8120) $\rightarrow$ 3.3V.
@@ -33,81 +30,50 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
   - Using E24 series: $R_{up} = 68k\Omega$, $R_{down} = 15k\Omega \implies V_{OUT} = 0.6 \times (1 + 68/15) = 3.32V \approx 3.3V$
 - **Switching Frequency**: Fixed at 500kHz.
 - **Inductor ($L$)**: **4.7µH** (recommended for 3.3V out).
-- **Input Capacitor ($C_{IN}$)**: **10µF 16V** ceramic.
-- **Output Capacitor ($C_{OUT}$)**: **10µF 10V** ceramic (22µF is also acceptable).
-- **Feedforward Capacitor ($C_{FF}$)**: **47pF** ceramic.
-- **Bootstrap Capacitor ($C_{BS}$)**: **0.1µF** ceramic.
 
-## 3. Inductor Sizing (Main Power Stage)
+## 3. Transient Voltage Suppression (TVS) Strategy
+**Primary Bus Protection (80V):**
+- **Component**: **5.0SMDJ85CA** (Bidirectional, 5kW).
+- **Rationale**: Standoff ($V_{RWM}$) of 85V ensures no leakage at 80V. 5kW rating handles massive inductive kickback and solar surges.
+- **Placement**: Immediately adjacent to VIN/VOUT XT60 connectors.
+
+**Gate Drive Protection (10V):**
+- **Component**: **H12VH22U** (6kW Surge).
+- **Rationale**: 12V standoff ensures invisibility at 10V rail. Protects sensitive IRS21867 drivers (25V max) from regulator failure.
+
+**Logic Protection (3.3V):**
+- **Component**: **H3V3L06B** (ESD).
+- **Rationale**: 3.3V standoff is required because STM32 Absolute Max is only 4.0V. Provides last line of defense against ESD and noise.
+
+## 4. Inductor Sizing (Main Power Stage)
 Targeting a peak-to-peak ripple current ($\Delta I_L$) of 20% of $I_{out,max}$ (**4.0 A**).
-Because this is a 4-switch Buck-Boost, the inductor must satisfy both Buck and Boost continuous conduction modes (CCM).
 
 **Buck Mode Worst-Case:** (50% Duty Cycle, e.g., 80V in, 40V out)
-$L_{buck} = \frac{V_{out} \times (V_{in} - V_{out})}{\Delta I_L \times f_{sw} \times V_{in}}$
-$L_{buck} = \frac{40 \times (80 - 40)}{4 \times 100,000 \times 80} = \mathbf{50.0 \mu H}$
-
-**Boost Mode Worst-Case:** (High Step-Up, e.g., 12V in, 58V out)
-$L_{boost} = \frac{V_{in} \times (V_{out} - V_{in})}{\Delta I_L \times f_{sw} \times V_{out}}$
-$L_{boost} = \frac{12 \times (58 - 12)}{4 \times 100,000 \times 58} \approx \mathbf{23.8 \mu H}$
+$L_{buck} = \frac{V_{out} \times (V_{in} - V_{out})}{\Delta I_L \times f_{sw} \times V_{in}} = \mathbf{50.0 \mu H}$
 
 **v1.3 Component Selection:**
-To satisfy both extremes while minimizing heat, the target inductor size should be between **33 µH and 47 µH**.
-- *Note:* The v1.1 implementation used 100µH, which resulted in very low ripple but high copper losses (DCR). Lowering to ~47µH will improve transient response and reduce inductor heating, provided the capacitors can handle the slightly higher ripple.
+Target inductor size: **33 µH to 47 µH**.
+- **CRITICAL**: Saturation Current ($I_{sat}$) **MUST be > 25A**. Using a lower $I_{sat}$ (like 11A) will cause magnetic collapse and MOSFET destruction.
 
-## 4. Bulk Capacitor Selection
+## 5. Bulk Capacitor Selection
 Targeting an output voltage ripple ($\Delta V_{out}$) of **< 100mV**.
-
-**Ideal Capacitance (Assuming Zero ESR):**
-$C_{out,min} = \frac{\Delta I_L}{8 \times f_{sw} \times \Delta V_{out}}$
-$C_{out,min} = \frac{4.0}{8 \times 100,000 \times 0.1} = \mathbf{50.0 \mu F}$
-
-**Real-World Constraints (ESR Dominates):**
-At 100kHz, the voltage ripple is almost entirely dictated by the Equivalent Series Resistance (ESR) of the capacitors, not the pure capacitance value:
 $ESR_{max} = \frac{\Delta V_{out}}{\Delta I_L} = \frac{0.1V}{4.0A} = \mathbf{25 m\Omega}$
 
 **v1.3 Capacitor Strategy:**
-To achieve an ESR < 25 mΩ and handle the heavy ripple current without overheating, we must use a parallel bank of low-ESR capacitors.
-- *Recommendation*: Use **4x 100µF to 220µF** Aluminum Polymer or high-grade Electrolytic capacitors in parallel. If using standard electrolytics, they typically have ~80mΩ ESR each, so 4 in parallel gives ~20mΩ (passing our requirement). Ceramic MLCCs (e.g., 4x 10µF 100V X7R) should also be added directly at the MOSFET switching nodes to handle the high-frequency edge spikes.
+- Use **4x 330µF 100V Low-ESR Electrolytic** (e.g., Ymin LKML series) in parallel.
+- **Total Bank ESR**: $\approx 11.75 m\Omega$ (Passes 25mΩ limit).
+- **Total Ripple Capacity**: $\approx 8.5 A$ (Safe for 20A operation).
 
-## 4. Voltage Divider & ADC Scaling
-The ADC measures 0-3.3V. We scale $V_{in}$ and $V_{out}$ to fit this range.
-
-**Current v1.1 Setup (e.g., VIN):**
-- $R_{top} = 200 k\Omega$ (`R2`)
-- $R_{bottom} = 10 k\Omega$ (`R9`)
-- Ratio: $10 / (200 + 10) = 0.0476$
-- $V_{max\_measurable} = 3.3V / 0.0476 = 69.3V$
-
-*Note: For v1.3 with 80V support, $R_{top}$ or $R_{bottom}$ must be adjusted to increase the measurable range.*
-
-## 5. Current Sense (INA240A4)
-- Gain: 200 V/V
-- Shunt Resistor: $1 m\Omega$ (`R18-R25` parallel network)
-- $V_{out} = I_{load} \times R_{shunt} \times Gain$
-- At 20A: $20A \times 0.001 \Omega \times 200 = 4.0V$
-- *Correction required for v1.3*: 4.0V exceeds the 3.3V MCU rail. Shunt value or Gain must be reduced.
-
-## 6. Thermal & Trace Width
-Using IPC-2221 standards for 10°C rise at 20A:
-- Required Cross-section: ~300 mils²
-- At 2oz copper (70µm): Required width $\approx$ 10.5mm
-- *Current v1.1 Strategy*: 3.5mm traces on Top + Bottom layers + exposed copper with solder reinforcement.
-
-## 7. Analog Low-Pass Filters (Anti-Aliasing)
-RC filters are used on ADC inputs to suppress 100kHz switching noise and prevent aliasing.
-Cutoff frequency: $f_c = \frac{1}{2 \pi R C}$
-
+## 6. Voltage Divider & ADC Scaling
 **Voltage Sensing LPF (v1.3 Optimized):**
-- $R_{source} \approx R_{th} \approx 4.59 k\Omega$
-- $C_{filter} = 10 nF$ (`C12`, `C13`)
+- $R_{top} = 200 k\Omega$, $R_{bottom} = 4.7 k\Omega$.
+- $R_{th} \approx 4.59 k\Omega$
+- $C_{filter} = 10 nF$
 - $f_c = \frac{1}{2 \pi \times 4,590 \times 10 \times 10^{-9}} \approx 3.47 kHz$
-- *Evaluation*: Improved transient response for high-speed tracking while still providing >40dB attenuation at 100kHz PWM frequency.
+- *Evaluation*: Balanced for high-speed tracking and noise rejection.
 
-**Current Sensing LPF (v1.1):**
-- INA240 output has low impedance. Series $R = 1.5 k\Omega$ (`R20`).
-- $C_{filter} = 10 nF$ (`C34`).
-- $f_c = \frac{1}{2 \pi \times 1500 \times 10 \times 10^{-9}} \approx 10.6 kHz$
-- *Evaluation*: Good balance for 1.5kHz control loop. Provides ~20dB attenuation at 100kHz.
-
-**v1.3 Proposed Optimization:**
-- To support faster transient response in E-Bike mode, consider reducing $C_{filter}$ for voltage sensing to $10nF$ ($f_c \approx 1.6kHz$) if the software EMA filter is sufficiently aggressive.
+## 7. Current Sense (CC6937)
+- **Type**: Isolated Hall Effect.
+- **Sensitivity**: Check variant (e.g., 66mV/A for 20A).
+- **Range**: +/- 20A (Full scale $\approx 2.97V$ on 3.3V ADC).
+- **VREF**: 100nF bypass to GND required.

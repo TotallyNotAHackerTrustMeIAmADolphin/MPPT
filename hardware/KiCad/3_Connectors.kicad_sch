@@ -1097,6 +1097,337 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "JLCPCB-Diodes:TVS-Uni,5.0SMDJ85CA"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 2.032 0.834 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "5.0SMDJ85CA"
+				(at 2.032 -1.2122 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 0.8 0.8)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "PCM_JLCPCB:D_SMC"
+				(at -1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2501071555_hongjiacheng-5-0SMDJ85CA_C42394457.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "137V 36.5A 5uA 85V 5kW 104V -55°C~+150°C SMC ESD and Surge Protection (TVS/ESD)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C42394457"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Stock" "1070"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Price" "0.373USD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Process" "SMT"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Minimum Qty" "2"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Attrition Qty" "0"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Class" "Preferred Component"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Category" "Circuit Protection,ESD And Surge Protection (TVS/ESD)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "hongjiacheng"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Part" "5.0SMDJ85CA"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Operating Temperature" "-55°C~+150°C"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Peak Pulse Power Dissipation (Ppp)" "5kW"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Clamping Voltage" "137V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Peak Pulse Current (Ipp)" "36.5A"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Voltage - Breakdown" "104V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Reverse Stand-Off Voltage (Vrwm)" "85V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Reverse Leakage Current (Ir)" "5uA"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "D_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TVS-Uni,5.0SMDJ85CA_0_1"
+				(polyline
+					(pts
+						(xy -1.905 -1.905) (xy -1.27 -1.27) (xy 1.27 -1.27) (xy 1.905 -0.635)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy 0 -1.27) (xy 1.27 1.27) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TVS-Uni,5.0SMDJ85CA_1_1"
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 3.81)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 3.81 270)
+					(length 3.81)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "JLCPCB-Resistors:0402,100kΩ"
 			(pin_numbers
 				(hide yes)
@@ -4649,16 +4980,16 @@
 		(uuid "22df8ebd-379e-450c-bd36-c1fcf9198988")
 	)
 	(junction
+		(at 140.97 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2c3dfde9-b604-483d-a19a-9d976e7bc2e3")
+	)
+	(junction
 		(at 171.45 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "36ed9569-d76e-43d8-9745-50430c78c15d")
-	)
-	(junction
-		(at 53.34 74.93)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "423125ee-2d5d-4a6a-af99-4ddb010197e2")
 	)
 	(junction
 		(at 27.94 163.83)
@@ -4685,6 +5016,12 @@
 		(uuid "77a29c9c-6ce4-48a5-b5ca-437dcac2a97d")
 	)
 	(junction
+		(at 53.34 74.93)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "783fffcc-d69b-4bab-ac9d-2e0a43cdb162")
+	)
+	(junction
 		(at 58.42 185.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4709,10 +5046,34 @@
 		(uuid "d2dd65ab-4112-48d6-a177-16f3859b7884")
 	)
 	(junction
+		(at 140.97 124.46)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d5fdde18-90f1-49c1-93d0-2720c881029a")
+	)
+	(junction
+		(at 140.97 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "de4fbcac-ab74-4154-a3bb-7b02fee24b6c")
+	)
+	(junction
 		(at 60.96 185.42)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e00d078b-ffb3-48bd-9803-164ac704af36")
+	)
+	(junction
+		(at 53.34 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e63bf519-8aa7-4dda-8e9b-153eb35e8ed2")
+	)
+	(junction
+		(at 140.97 154.94)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ed009fdc-c6fa-4b8c-9fde-45ac333eec07")
 	)
 	(junction
 		(at 40.64 99.06)
@@ -4771,6 +5132,16 @@
 			(type default)
 		)
 		(uuid "0db935cb-ad96-48bc-a636-df94b9862922")
+	)
+	(wire
+		(pts
+			(xy 132.08 132.08) (xy 140.97 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ead27a1-d758-4f52-b469-de5c0819c908")
 	)
 	(wire
 		(pts
@@ -4854,7 +5225,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 129.54) (xy 140.97 134.62)
+			(xy 140.97 129.54) (xy 140.97 132.08)
 		)
 		(stroke
 			(width 0)
@@ -4891,6 +5262,16 @@
 			(type default)
 		)
 		(uuid "274ebba6-f58d-494c-ae2d-d7a3cdb6546a")
+	)
+	(wire
+		(pts
+			(xy 140.97 124.46) (xy 140.97 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ead07af-306f-4776-9c86-cdef33adabee")
 	)
 	(wire
 		(pts
@@ -4964,6 +5345,16 @@
 	)
 	(wire
 		(pts
+			(xy 39.37 63.5) (xy 53.34 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "43a29a01-c5d8-4c7a-bc73-6ed88715e7d8")
+	)
+	(wire
+		(pts
 			(xy 57.15 162.56) (xy 59.69 162.56)
 		)
 		(stroke
@@ -5024,7 +5415,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 60.96) (xy 53.34 66.04)
+			(xy 53.34 60.96) (xy 53.34 63.5)
 		)
 		(stroke
 			(width 0)
@@ -5064,6 +5455,16 @@
 	)
 	(wire
 		(pts
+			(xy 132.08 154.94) (xy 140.97 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b3f56c1-3acb-48fd-88c4-b86174b9fbf8")
+	)
+	(wire
+		(pts
 			(xy 91.44 62.23) (xy 91.44 63.5)
 		)
 		(stroke
@@ -5071,6 +5472,16 @@
 			(type default)
 		)
 		(uuid "5d24af0f-264a-4539-931c-7e46c483b633")
+	)
+	(wire
+		(pts
+			(xy 132.08 162.56) (xy 140.97 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6daeac26-3736-4122-9f1b-1239a697daa8")
 	)
 	(wire
 		(pts
@@ -5134,16 +5545,6 @@
 	)
 	(wire
 		(pts
-			(xy 39.37 63.5) (xy 55.88 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "78ffb900-9d90-41cc-811b-5e2bf9804f05")
-	)
-	(wire
-		(pts
 			(xy 46.99 74.93) (xy 53.34 74.93)
 		)
 		(stroke
@@ -5204,7 +5605,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 124.46) (xy 140.97 127)
+			(xy 140.97 120.65) (xy 140.97 124.46)
 		)
 		(stroke
 			(width 0)
@@ -5221,6 +5622,16 @@
 			(type default)
 		)
 		(uuid "8607e900-f66d-47ca-81b9-120e10976504")
+	)
+	(wire
+		(pts
+			(xy 140.97 132.08) (xy 140.97 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88d42724-2339-430d-8c5f-709f810eb270")
 	)
 	(wire
 		(pts
@@ -5284,6 +5695,16 @@
 	)
 	(wire
 		(pts
+			(xy 140.97 154.94) (xy 140.97 157.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9b626b3e-a325-4ddf-a87a-791ef72a05b6")
+	)
+	(wire
+		(pts
 			(xy 91.44 76.2) (xy 107.95 76.2)
 		)
 		(stroke
@@ -5314,7 +5735,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 165.1) (xy 140.97 160.02)
+			(xy 140.97 165.1) (xy 140.97 162.56)
 		)
 		(stroke
 			(width 0)
@@ -5354,7 +5775,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 153.67) (xy 140.97 157.48)
+			(xy 140.97 153.67) (xy 140.97 154.94)
 		)
 		(stroke
 			(width 0)
@@ -5524,7 +5945,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 73.66) (xy 53.34 74.93)
+			(xy 53.34 72.39) (xy 53.34 74.93)
 		)
 		(stroke
 			(width 0)
@@ -5604,6 +6025,26 @@
 	)
 	(wire
 		(pts
+			(xy 53.34 63.5) (xy 53.34 64.77)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eaa24087-8571-480a-90f6-81458e514065")
+	)
+	(wire
+		(pts
+			(xy 140.97 162.56) (xy 140.97 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb71103e-af6f-4edf-a684-accec436ef4f")
+	)
+	(wire
+		(pts
 			(xy 39.37 152.4) (xy 60.96 152.4)
 		)
 		(stroke
@@ -5611,6 +6052,16 @@
 			(type default)
 		)
 		(uuid "ed011578-2694-4f03-be02-bf8a759dd3bb")
+	)
+	(wire
+		(pts
+			(xy 53.34 63.5) (xy 55.88 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee4e05bf-0abb-467e-ae33-3195e36c0373")
 	)
 	(wire
 		(pts
@@ -5691,6 +6142,16 @@
 			(type default)
 		)
 		(uuid "fe46c141-25e2-4995-8dd7-95e09edcde03")
+	)
+	(wire
+		(pts
+			(xy 132.08 124.46) (xy 140.97 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ff696060-e967-4254-84ed-723edff1e9ed")
 	)
 	(wire
 		(pts
@@ -6241,6 +6702,275 @@
 		)
 	)
 	(symbol
+		(lib_id "JLCPCB-Diodes:TVS-Uni,5.0SMDJ85CA")
+		(at 132.08 158.75 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "025b4cde-6cce-4a7e-a3bd-113d2de3de31")
+		(property "Reference" "D11"
+			(at 135.89 157.1624 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "85V"
+			(at 135.89 159.7025 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:D_SMC"
+			(at 133.858 158.75 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2501071555_hongjiacheng-5-0SMDJ85CA_C42394457.pdf"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "137V 36.5A 5uA 85V 5kW 104V -55°C~+150°C SMC ESD and Surge Protection (TVS/ESD)"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C42394457"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "1070"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.373USD"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "2"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "0"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Preferred Component"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "Circuit Protection,ESD And Surge Protection (TVS/ESD)"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "5.0SMDJ85CA"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Operating Temperature" "-55°C~+150°C"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Peak Pulse Power Dissipation (Ppp)" "5kW"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Clamping Voltage" "137V"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Peak Pulse Current (Ipp)" "36.5A"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage - Breakdown" "104V"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Reverse Stand-Off Voltage (Vrwm)" "85V"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Reverse Leakage Current (Ir)" "5uA"
+			(at 132.08 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "4ed03294-b611-4410-83eb-2504c5844fed")
+		)
+		(pin "1"
+			(uuid "85722db1-1ce4-4c08-b36c-0a2dc4723e84")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
+					(reference "D11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "JLCPCB-Resistors:0402,10kΩ")
 		(at 53.34 57.15 0)
 		(unit 1)
@@ -6509,6 +7239,275 @@
 		)
 	)
 	(symbol
+		(lib_id "JLCPCB-Diodes:TVS-Uni,5.0SMDJ85CA")
+		(at 132.08 128.27 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0c700440-6515-4e5a-92b6-b297614dcf02")
+		(property "Reference" "D10"
+			(at 135.89 126.6824 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "85V"
+			(at 135.89 129.2225 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:D_SMC"
+			(at 133.858 128.27 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2501071555_hongjiacheng-5-0SMDJ85CA_C42394457.pdf"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "137V 36.5A 5uA 85V 5kW 104V -55°C~+150°C SMC ESD and Surge Protection (TVS/ESD)"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C42394457"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "1070"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.373USD"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "2"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "0"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Preferred Component"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "Circuit Protection,ESD And Surge Protection (TVS/ESD)"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "5.0SMDJ85CA"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Operating Temperature" "-55°C~+150°C"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Peak Pulse Power Dissipation (Ppp)" "5kW"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Clamping Voltage" "137V"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Peak Pulse Current (Ipp)" "36.5A"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage - Breakdown" "104V"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Reverse Stand-Off Voltage (Vrwm)" "85V"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Reverse Leakage Current (Ir)" "5uA"
+			(at 132.08 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "a77bc8e0-2384-4ac1-b2cf-c536845edb4e")
+		)
+		(pin "1"
+			(uuid "7b34cf38-dda6-4783-b4aa-f2c80ea7764c")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
+					(reference "D10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "easyeda2kicad:PZ254V-11-02P")
 		(at 175.26 85.09 0)
 		(unit 1)
@@ -6625,7 +7624,7 @@
 	)
 	(symbol
 		(lib_id "ProPrj_STM-easyedapro:VIN")
-		(at 140.97 124.46 0)
+		(at 140.97 120.65 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6635,7 +7634,7 @@
 		(dnp no)
 		(uuid "1150fdd7-e2d9-4adf-b6d4-436ac5fff1e8")
 		(property "Reference" "#PWR026"
-			(at 140.97 124.46 0)
+			(at 140.97 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6646,7 +7645,7 @@
 			)
 		)
 		(property "Value" "VIN"
-			(at 139.7 121.666 0)
+			(at 139.7 117.856 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6657,7 +7656,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 140.97 124.46 0)
+			(at 140.97 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6668,7 +7667,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 140.97 124.46 0)
+			(at 140.97 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6679,7 +7678,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 140.97 124.46 0)
+			(at 140.97 120.65 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6959,7 +7958,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Capacitors:0402,1uF")
-		(at 53.34 69.85 0)
+		(at 53.34 68.58 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6970,7 +7969,7 @@
 		(fields_autoplaced yes)
 		(uuid "23bb7442-1676-49d9-aa48-fd85df9dcc45")
 		(property "Reference" "C30"
-			(at 55.88 67.3099 0)
+			(at 55.88 66.0399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6981,7 +7980,7 @@
 			)
 		)
 		(property "Value" "1uF"
-			(at 55.88 69.85 0)
+			(at 55.88 68.58 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6992,7 +7991,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:C_0402"
-			(at 51.562 69.85 90)
+			(at 51.562 68.58 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7003,7 +8002,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05A105KA5NQNC_C52923.pdf"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7014,7 +8013,7 @@
 			)
 		)
 		(property "Description" "25V 1uF X5R ±10% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7025,7 +8024,7 @@
 			)
 		)
 		(property "LCSC" "C52923"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7036,7 +8035,7 @@
 			)
 		)
 		(property "Stock" "7021828"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7047,7 +8046,7 @@
 			)
 		)
 		(property "Price" "0.006USD"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7058,7 +8057,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7069,7 +8068,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7080,7 +8079,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7091,7 +8090,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7102,7 +8101,7 @@
 			)
 		)
 		(property "Category" "Capacitors,Multilayer Ceramic Capacitors MLCC - SMD/SMT"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7113,7 +8112,7 @@
 			)
 		)
 		(property "Manufacturer" "Samsung Electro-Mechanics"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7124,7 +8123,7 @@
 			)
 		)
 		(property "Part" "CL05A105KA5NQNC"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7135,7 +8134,7 @@
 			)
 		)
 		(property "Voltage Rated" "25V"
-			(at 55.88 72.39 0)
+			(at 55.88 71.12 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7146,7 +8145,7 @@
 			)
 		)
 		(property "Tolerance" "±10%"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7157,7 +8156,7 @@
 			)
 		)
 		(property "Capacitance" "1uF"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7168,7 +8167,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "X5R"
-			(at 53.34 69.85 0)
+			(at 53.34 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

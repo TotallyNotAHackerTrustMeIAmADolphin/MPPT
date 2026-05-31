@@ -2282,6 +2282,294 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "JLCPCB-Diode-Packages:TVS-Uni, H12VH22U"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "H12VH22U"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PCM_JLCPCB:DFN2020-3_L2.0-W2.0-P0.65-BR-1"
+				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+				)
+			)
+			(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H12VH22U_C20615799.pdf"
+				(at -2.286 0.127 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Description" "210A 6kW 30V 16.5V Unidirectional 12V DFN2020-3L ESD and Surge Protection (TVS/ESD) ROHS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C20615799"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Stock" "1689"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Price" "0.066USD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Process" "SMT"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Minimum Qty" "5"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Attrition Qty" "4"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Class" "Preferred Component"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "hongjiacheng"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Part" "H12VH22U"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "C20615799"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TVS-Uni, H12VH22U_0_1"
+				(polyline
+					(pts
+						(xy -2.54 -2.54) (xy 2.54 -2.54) (xy 0 -2.54) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.778 1.778) (xy 1.27 1.27) (xy -1.27 1.27) (xy -1.778 0.762)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.778 -1.27) (xy 0 1.27) (xy -1.778 -1.27) (xy 1.778 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
+					(at -2.54 -5.08 90)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 2.54 -5.08 90)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 0 5.08 270)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "JLCPCB-Diodes:Schottky,SS510"
 			(pin_numbers
 				(hide yes)
@@ -2552,6 +2840,272 @@
 				)
 			)
 			(symbol "Schottky,SS510_1_1"
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 3.81)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 3.81 270)
+					(length 3.81)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "JLCPCB-Diodes:TVS-Bi,H3V3L06B"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 2.032 0.834 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "H3V3L06B"
+				(at 2.032 -1.2122 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 0.8 0.8)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "PCM_JLCPCB:D_DFN0603-2L"
+				(at -1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H3V3L06B_C20615778.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "8A 10V 80W 6V Bidirectional 3.3V DFN0603-2L ESD and Surge Protection (TVS/ESD) ROHS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C20615778"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Stock" "6297"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Price" "0.014USD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Process" "SMT"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Minimum Qty" "20"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Attrition Qty" "12"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Class" "Preferred Component"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "hongjiacheng"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Part" "H3V3L06B"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "D_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TVS-Bi,H3V3L06B_0_1"
+				(polyline
+					(pts
+						(xy -1.905 -0.635) (xy -1.27 0) (xy 1.27 0) (xy 1.905 0.635)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 2.54) (xy 0 0) (xy 1.27 2.54) (xy -1.27 2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0 0) (xy -1.27 -2.54) (xy 1.27 -2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TVS-Bi,H3V3L06B_1_1"
 				(pin passive line
 					(at 0 -3.81 90)
 					(length 3.81)
@@ -5484,6 +6038,12 @@
 		)
 	)
 	(junction
+		(at 149.86 78.74)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "007b8492-f348-495a-a64a-d73ee4101d73")
+	)
+	(junction
 		(at 55.88 78.74)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5494,6 +6054,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "04dce952-f3df-44a3-9ac5-eca71d596b95")
+	)
+	(junction
+		(at 144.78 66.04)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1c456877-db7b-4fb8-99ab-7c31b548703f")
 	)
 	(junction
 		(at 110.49 144.78)
@@ -5538,6 +6104,18 @@
 		(uuid "56b2919e-3425-41d8-a41f-8798dfd2b86a")
 	)
 	(junction
+		(at 64.77 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5e544d8e-caaf-47cf-a6b4-cbfe0a767d74")
+	)
+	(junction
+		(at 137.16 142.24)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "65ea800b-d254-42b7-b5aa-a2b7ffdea98a")
+	)
+	(junction
 		(at 81.28 128.27)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5568,12 +6146,6 @@
 		(uuid "6fb95ee6-ee68-4d85-bfea-34184127e534")
 	)
 	(junction
-		(at 137.16 78.74)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7841374c-4c16-41df-bd18-ea756f8653cb")
-	)
-	(junction
 		(at 55.88 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5592,6 +6164,12 @@
 		(uuid "94f72553-c5c2-41a7-bfe0-00547b163d6e")
 	)
 	(junction
+		(at 154.94 78.74)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a2daaf9d-3962-4191-ba0c-07979acdb501")
+	)
+	(junction
 		(at 81.28 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5604,7 +6182,7 @@
 		(uuid "b07d4d0b-7bfb-4218-ac3a-55ab27dd2958")
 	)
 	(junction
-		(at 151.13 58.42)
+		(at 165.1 58.42)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b4314164-9dc8-4dce-8d3f-83d56c2ca8a3")
@@ -5620,6 +6198,18 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "daa35d29-2183-412d-962b-1a2a7c5f01e9")
+	)
+	(junction
+		(at 137.16 78.74)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "dcef6635-56cb-453e-96b4-12da97f880e1")
+	)
+	(junction
+		(at 127 165.1)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "eb378424-4235-48ce-99c2-558174d88352")
 	)
 	(junction
 		(at 73.66 55.88)
@@ -5668,6 +6258,26 @@
 			(type default)
 		)
 		(uuid "03023faa-600a-4ea3-8b89-4d71f89d177d")
+	)
+	(wire
+		(pts
+			(xy 137.16 78.74) (xy 149.86 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0406c061-a9db-4646-972c-5527b4043190")
+	)
+	(wire
+		(pts
+			(xy 64.77 60.96) (xy 86.36 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "06237383-d7c3-4cb1-a3f1-f11879e2afd3")
 	)
 	(wire
 		(pts
@@ -5721,13 +6331,13 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 60.96) (xy 86.36 60.96)
+			(xy 154.94 77.47) (xy 154.94 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "12986e13-19b3-4c51-a1b5-26dc68870e34")
+		(uuid "13102685-614c-4da2-beeb-f424ddc54627")
 	)
 	(wire
 		(pts
@@ -5791,23 +6401,13 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 60.96) (xy 55.88 60.96)
+			(xy 50.8 60.96) (xy 64.77 60.96)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "284475c5-6c72-4afb-9e22-6c811df6b0ea")
-	)
-	(wire
-		(pts
-			(xy 106.68 58.42) (xy 151.13 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "29177595-7c3f-4960-ba57-87e7a5c193f3")
 	)
 	(wire
 		(pts
@@ -5861,7 +6461,7 @@
 	)
 	(wire
 		(pts
-			(xy 151.13 38.1) (xy 50.8 38.1)
+			(xy 165.1 38.1) (xy 64.77 38.1)
 		)
 		(stroke
 			(width 0)
@@ -5881,13 +6481,13 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 78.74) (xy 151.13 78.74)
+			(xy 152.4 67.31) (xy 152.4 66.04)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "420ea883-6391-4b32-99de-fb88575cd4b6")
+		(uuid "3ce68422-0701-4450-a8a6-28d6d7101e81")
 	)
 	(wire
 		(pts
@@ -5971,6 +6571,16 @@
 	)
 	(wire
 		(pts
+			(xy 106.68 58.42) (xy 165.1 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "546ce35b-1120-4c5b-bddc-939c188f00ea")
+	)
+	(wire
+		(pts
 			(xy 110.49 165.1) (xy 127 165.1)
 		)
 		(stroke
@@ -6011,6 +6621,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 78.74) (xy 154.94 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6272d26c-181d-498e-b78c-0aad3e8d80d6")
+	)
+	(wire
+		(pts
 			(xy 73.66 57.15) (xy 73.66 55.88)
 		)
 		(stroke
@@ -6038,16 +6658,6 @@
 			(type default)
 		)
 		(uuid "667818d5-8ff2-40b2-96dc-c780841228f6")
-	)
-	(wire
-		(pts
-			(xy 55.88 60.96) (xy 62.23 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6a3f993d-ee33-4c05-a311-85ea8cc9af64")
 	)
 	(wire
 		(pts
@@ -6111,6 +6721,16 @@
 	)
 	(wire
 		(pts
+			(xy 137.16 142.24) (xy 137.16 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81e14647-798d-4e2e-a98e-be3f23619bb9")
+	)
+	(wire
+		(pts
 			(xy 127 142.24) (xy 127 149.86)
 		)
 		(stroke
@@ -6121,7 +6741,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 66.04) (xy 137.16 66.04)
+			(xy 137.16 66.04) (xy 144.78 66.04)
 		)
 		(stroke
 			(width 0)
@@ -6141,13 +6761,23 @@
 	)
 	(wire
 		(pts
-			(xy 151.13 66.04) (xy 151.13 78.74)
+			(xy 165.1 66.04) (xy 165.1 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "86742316-25c4-41dd-9014-a4227e9f99aa")
+	)
+	(wire
+		(pts
+			(xy 154.94 78.74) (xy 165.1 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88bb5f93-1063-4a1b-9f5b-f5f3e2a76dbd")
 	)
 	(wire
 		(pts
@@ -6161,6 +6791,16 @@
 	)
 	(wire
 		(pts
+			(xy 144.78 66.04) (xy 152.4 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95203865-1372-4b16-a3a9-de3877b1da2f")
+	)
+	(wire
+		(pts
 			(xy 127 142.24) (xy 127 128.27)
 		)
 		(stroke
@@ -6171,7 +6811,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 142.24) (xy 139.7 142.24)
+			(xy 127 142.24) (xy 137.16 142.24)
 		)
 		(stroke
 			(width 0)
@@ -6231,6 +6871,16 @@
 	)
 	(wire
 		(pts
+			(xy 137.16 142.24) (xy 139.7 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a2022c25-4a6f-4287-a68a-f229652c16e7")
+	)
+	(wire
+		(pts
 			(xy 110.49 157.48) (xy 110.49 165.1)
 		)
 		(stroke
@@ -6238,6 +6888,16 @@
 			(type default)
 		)
 		(uuid "a36a381f-b992-4287-b3d6-35217fab1039")
+	)
+	(wire
+		(pts
+			(xy 137.16 157.48) (xy 137.16 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aabeb9de-08ea-4169-9f38-028a9d60b913")
 	)
 	(wire
 		(pts
@@ -6278,6 +6938,16 @@
 			(type default)
 		)
 		(uuid "b5a28a85-b8c2-455d-b551-42aba57c34f4")
+	)
+	(wire
+		(pts
+			(xy 137.16 165.1) (xy 127 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bac03ac8-5c8a-484f-afb1-8bb0151226f5")
 	)
 	(wire
 		(pts
@@ -6421,6 +7091,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 77.47) (xy 149.86 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e82e80d7-3239-4ead-b171-f45c3f051de9")
+	)
+	(wire
+		(pts
 			(xy 111.76 73.66) (xy 111.76 78.74)
 		)
 		(stroke
@@ -6491,7 +7171,7 @@
 	)
 	(wire
 		(pts
-			(xy 151.13 38.1) (xy 151.13 50.8)
+			(xy 165.1 38.1) (xy 165.1 50.8)
 		)
 		(stroke
 			(width 0)
@@ -6511,7 +7191,7 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 38.1) (xy 50.8 60.96)
+			(xy 64.77 38.1) (xy 64.77 60.96)
 		)
 		(stroke
 			(width 0)
@@ -7392,6 +8072,203 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C35")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "JLCPCB-Diode-Packages:TVS-Uni, H12VH22U")
+		(at 152.4 72.39 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2d1dbd46-d7eb-4479-81d2-bd1eacd167e2")
+		(property "Reference" "D8"
+			(at 156.21 71.1199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "12V"
+			(at 156.21 73.6599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:DFN2020-3_L2.0-W2.0-P0.65-BR-1"
+			(at 152.4 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+			)
+		)
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H12VH22U_C20615799.pdf"
+			(at 150.114 72.263 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Description" "210A 6kW 30V 16.5V Unidirectional 12V DFN2020-3L ESD and Surge Protection (TVS/ESD) ROHS"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C20615799"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "1689"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.066USD"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "5"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "4"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Preferred Component"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "H12VH22U"
+			(at 152.4 72.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e7a709b9-7977-4d0e-bfcb-2825db1658a4")
+		)
+		(pin "2"
+			(uuid "dd8eb859-69f6-4b18-aab8-acd290a5f274")
+		)
+		(pin "3"
+			(uuid "760965aa-757a-4c48-aff1-6466cf078a83")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
+					(reference "D8")
 					(unit 1)
 				)
 			)
@@ -8956,7 +9833,7 @@
 	)
 	(symbol
 		(lib_id "power:+10V")
-		(at 140.97 66.04 0)
+		(at 144.78 66.04 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8967,7 +9844,7 @@
 		(fields_autoplaced yes)
 		(uuid "630c76d6-8f90-4210-b523-9f72236280a8")
 		(property "Reference" "#PWR045"
-			(at 140.97 69.85 0)
+			(at 144.78 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8978,7 +9855,7 @@
 			)
 		)
 		(property "Value" "+10V"
-			(at 140.97 60.96 0)
+			(at 144.78 60.96 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8988,7 +9865,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 140.97 66.04 0)
+			(at 144.78 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8999,7 +9876,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 140.97 66.04 0)
+			(at 144.78 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9010,7 +9887,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+10V\""
-			(at 140.97 66.04 0)
+			(at 144.78 66.04 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10310,7 +11187,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Resistors:0603,47kΩ")
-		(at 151.13 62.23 0)
+		(at 165.1 62.23 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -10321,7 +11198,7 @@
 		(fields_autoplaced yes)
 		(uuid "891cbf5c-6d9d-400f-97aa-a52b1ef569a6")
 		(property "Reference" "R35"
-			(at 153.67 62.2299 0)
+			(at 167.64 62.2299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10332,7 +11209,7 @@
 			)
 		)
 		(property "Value" "47kΩ"
-			(at 151.13 62.23 90)
+			(at 165.1 62.23 90)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -10342,7 +11219,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:R_0603"
-			(at 149.352 62.23 90)
+			(at 163.322 62.23 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10353,7 +11230,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF4702T5E_C25819.pdf"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10364,7 +11241,7 @@
 			)
 		)
 		(property "Description" "100mW Thick Film Resistors 75V ±100ppm/°C ±1% 47kΩ 0603 Chip Resistor - Surface Mount ROHS"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10375,7 +11252,7 @@
 			)
 		)
 		(property "LCSC" "C25819"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10386,7 +11263,7 @@
 			)
 		)
 		(property "Stock" "2267414"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10397,7 +11274,7 @@
 			)
 		)
 		(property "Price" "0.004USD"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10408,7 +11285,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10419,7 +11296,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10430,7 +11307,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10441,7 +11318,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10452,7 +11329,7 @@
 			)
 		)
 		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10463,7 +11340,7 @@
 			)
 		)
 		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10474,7 +11351,7 @@
 			)
 		)
 		(property "Part" "0603WAF4702T5E"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10485,7 +11362,7 @@
 			)
 		)
 		(property "Resistance" "47kΩ"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10496,7 +11373,7 @@
 			)
 		)
 		(property "Power(Watts)" "100mW"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10507,7 +11384,7 @@
 			)
 		)
 		(property "Type" "Thick Film Resistors"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10518,7 +11395,7 @@
 			)
 		)
 		(property "Overload Voltage (Max)" "75V"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10529,7 +11406,7 @@
 			)
 		)
 		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10540,7 +11417,7 @@
 			)
 		)
 		(property "Tolerance" "±1%"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10551,7 +11428,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
-			(at 151.13 62.23 0)
+			(at 165.1 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10712,7 +11589,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Resistors:0603,430kΩ")
-		(at 151.13 54.61 0)
+		(at 165.1 54.61 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -10723,7 +11600,7 @@
 		(fields_autoplaced yes)
 		(uuid "97ddd530-5ed5-4d8f-8359-21a4ad2a6bab")
 		(property "Reference" "R34"
-			(at 153.67 54.6099 0)
+			(at 167.64 54.6099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10734,7 +11611,7 @@
 			)
 		)
 		(property "Value" "430kΩ"
-			(at 151.13 54.61 90)
+			(at 165.1 54.61 90)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -10744,7 +11621,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:R_0603"
-			(at 149.352 54.61 90)
+			(at 163.322 54.61 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10755,7 +11632,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF4303T5E_C25969.pdf"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10766,7 +11643,7 @@
 			)
 		)
 		(property "Description" "100mW Thick Film Resistors 75V ±100ppm/°C ±1% 430kΩ 0603 Chip Resistor - Surface Mount ROHS"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10777,7 +11654,7 @@
 			)
 		)
 		(property "LCSC" "C25969"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10788,7 +11665,7 @@
 			)
 		)
 		(property "Stock" "6088"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10799,7 +11676,7 @@
 			)
 		)
 		(property "Price" "0.004USD"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10810,7 +11687,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10821,7 +11698,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10832,7 +11709,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10843,7 +11720,7 @@
 			)
 		)
 		(property "Class" "Preferred Component"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10854,7 +11731,7 @@
 			)
 		)
 		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10865,7 +11742,7 @@
 			)
 		)
 		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10876,7 +11753,7 @@
 			)
 		)
 		(property "Part" "0603WAF4303T5E"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10887,7 +11764,7 @@
 			)
 		)
 		(property "Resistance" "430kΩ"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10898,7 +11775,7 @@
 			)
 		)
 		(property "Power(Watts)" "100mW"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10909,7 +11786,7 @@
 			)
 		)
 		(property "Type" "Thick Film Resistors"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10920,7 +11797,7 @@
 			)
 		)
 		(property "Overload Voltage (Max)" "75V"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10931,7 +11808,7 @@
 			)
 		)
 		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10942,7 +11819,7 @@
 			)
 		)
 		(property "Tolerance" "±1%"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10953,7 +11830,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
-			(at 151.13 54.61 0)
+			(at 165.1 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11614,6 +12491,198 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_OUT1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "JLCPCB-Diodes:TVS-Bi,H3V3L06B")
+		(at 137.16 153.67 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "def3b256-66a9-4917-b2b4-59938becaa3b")
+		(property "Reference" "D9"
+			(at 140.97 152.3999 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "3.3V"
+			(at 140.97 154.94 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:D_DFN0603-2L"
+			(at 135.382 153.67 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H3V3L06B_C20615778.pdf"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "8A 10V 80W 6V Bidirectional 3.3V DFN0603-2L ESD and Surge Protection (TVS/ESD) ROHS"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C20615778"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "6297"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.014USD"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "20"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "12"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Preferred Component"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "H3V3L06B"
+			(at 137.16 153.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a532e9c0-b397-489d-a93f-2c6664f612ad")
+		)
+		(pin "2"
+			(uuid "4834496e-36a7-454a-a9d2-2ffc3069e89f")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
+					(reference "D9")
 					(unit 1)
 				)
 			)
