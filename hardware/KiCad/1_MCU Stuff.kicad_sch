@@ -3494,7 +3494,7 @@
 	)
 	(text "Status LEDs"
 		(exclude_from_sim no)
-		(at 208.28 118.5672 0)
+		(at 200.66 90.6272 0)
 		(effects
 			(font
 				(face "宋体")
@@ -3535,34 +3535,16 @@
 		(uuid "1a6a6647-65ec-41b6-9dec-496637129f0b")
 	)
 	(junction
-		(at 69.85 177.8)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3290a25a-ea2b-4a5e-aa63-24a1e6205231")
-	)
-	(junction
 		(at 25.4 170.18)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "385acdd7-ebce-4211-9ad1-c394a0d80ec0")
 	)
 	(junction
-		(at 234.95 140.97)
+		(at 227.33 113.03)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3934d1f6-e051-433f-9e6a-d4e36ff7ee97")
-	)
-	(junction
-		(at 93.98 179.07)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "451849e0-c743-43fb-bc67-1f5d4d05dda5")
-	)
-	(junction
-		(at 48.26 177.8)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5ecd72d3-c373-4c59-b6ea-2d32368976a1")
 	)
 	(junction
 		(at 33.02 170.18)
@@ -3724,16 +3706,6 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 180.34) (xy 48.26 177.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "132f9b88-a298-4a21-a9e9-6c81b22740b5")
-	)
-	(wire
-		(pts
 			(xy 25.4 170.18) (xy 33.02 170.18)
 		)
 		(stroke
@@ -3804,7 +3776,7 @@
 	)
 	(wire
 		(pts
-			(xy 234.95 140.97) (xy 234.95 143.51)
+			(xy 227.33 113.03) (xy 227.33 115.57)
 		)
 		(stroke
 			(width 0)
@@ -3841,16 +3813,6 @@
 			(type default)
 		)
 		(uuid "3ccc5ae0-f351-439e-bc91-c146e17ca1ef")
-	)
-	(wire
-		(pts
-			(xy 69.85 177.8) (xy 69.85 180.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3ec064f9-e7af-482a-bc04-72ce909b6a15")
 	)
 	(wire
 		(pts
@@ -3944,7 +3906,7 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 43.18) (xy 62.23 44.45)
+			(xy 62.23 33.02) (xy 62.23 44.45)
 		)
 		(stroke
 			(width 0)
@@ -3964,7 +3926,7 @@
 	)
 	(wire
 		(pts
-			(xy 234.95 129.54) (xy 234.95 140.97)
+			(xy 227.33 101.6) (xy 227.33 113.03)
 		)
 		(stroke
 			(width 0)
@@ -3981,16 +3943,6 @@
 			(type default)
 		)
 		(uuid "6ab31e26-4ecf-4f78-978c-f3271bd4864a")
-	)
-	(wire
-		(pts
-			(xy 76.2 158.75) (xy 74.93 158.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6dc1940c-0a33-4116-abb2-3ddf0e0d2eaf")
 	)
 	(wire
 		(pts
@@ -4104,7 +4056,7 @@
 	)
 	(wire
 		(pts
-			(xy 45.72 57.15) (xy 46.99 57.15)
+			(xy 43.18 57.15) (xy 46.99 57.15)
 		)
 		(stroke
 			(width 0)
@@ -4124,7 +4076,7 @@
 	)
 	(wire
 		(pts
-			(xy 45.72 85.09) (xy 46.99 85.09)
+			(xy 34.29 85.09) (xy 46.99 85.09)
 		)
 		(stroke
 			(width 0)
@@ -4254,7 +4206,7 @@
 	)
 	(wire
 		(pts
-			(xy 95.25 109.22) (xy 95.25 107.95)
+			(xy 95.25 115.57) (xy 95.25 107.95)
 		)
 		(stroke
 			(width 0)
@@ -4274,7 +4226,7 @@
 	)
 	(wire
 		(pts
-			(xy 213.36 129.54) (xy 217.17 129.54)
+			(xy 205.74 101.6) (xy 209.55 101.6)
 		)
 		(stroke
 			(width 0)
@@ -4334,16 +4286,6 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 179.07) (xy 95.25 179.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d7fb8116-5e2e-4aaf-8353-46d8ad1f6c03")
-	)
-	(wire
-		(pts
 			(xy 48.26 167.64) (xy 48.26 170.18)
 		)
 		(stroke
@@ -4351,16 +4293,6 @@
 			(type default)
 		)
 		(uuid "d8f1a07e-41ed-4e74-99e9-3f9282e2be54")
-	)
-	(wire
-		(pts
-			(xy 74.93 158.75) (xy 74.93 157.48)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "de4e32f2-044a-4312-8088-4c3ed03a09b6")
 	)
 	(wire
 		(pts
@@ -4414,7 +4346,7 @@
 	)
 	(wire
 		(pts
-			(xy 213.36 128.27) (xy 213.36 129.54)
+			(xy 205.74 100.33) (xy 205.74 101.6)
 		)
 		(stroke
 			(width 0)
@@ -4454,7 +4386,7 @@
 	)
 	(wire
 		(pts
-			(xy 215.9 140.97) (xy 217.17 140.97)
+			(xy 208.28 113.03) (xy 209.55 113.03)
 		)
 		(stroke
 			(width 0)
@@ -4464,7 +4396,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 59.69) (xy 110.49 59.69)
+			(xy 124.46 59.69) (xy 110.49 59.69)
 		)
 		(stroke
 			(width 0)
@@ -4626,53 +4558,9 @@
 			)
 		)
 	)
-	(global_label "VSS"
-		(shape input)
-		(at 62.23 43.18 90)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify left)
-		)
-		(uuid "18021485-2057-403c-8cb6-cc0b49bff0d0")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 62.23 43.18 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VBAT"
-		(shape input)
-		(at 76.2 158.75 0)
-		(effects
-			(font
-				(size 1.7272 1.7272)
-			)
-			(justify left)
-		)
-		(uuid "1bedab4d-a7b9-4bfd-8c6e-49699c810cf2")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 76.2 158.75 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
 	(global_label "VDD"
 		(shape input)
-		(at 48.26 167.64 0)
+		(at 48.26 167.64 90)
 		(effects
 			(font
 				(size 1.7272 1.7272)
@@ -4681,29 +4569,7 @@
 		)
 		(uuid "21d01141-fe73-48b2-b7fd-872a9c022a04")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 48.26 167.64 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VSSA"
-		(shape input)
-		(at 95.25 179.07 0)
-		(effects
-			(font
-				(size 1.7272 1.7272)
-			)
-			(justify left)
-		)
-		(uuid "2507b60b-c0d4-4580-8f7f-f965298d09b2")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 95.25 179.07 0)
+			(at 48.26 167.64 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4868,28 +4734,6 @@
 			)
 		)
 	)
-	(global_label "VSSA"
-		(shape input)
-		(at 45.72 85.09 180)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify right)
-		)
-		(uuid "5a4ca6c0-2226-4503-b328-c8cd33057b60")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.72 85.09 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
 	(global_label "TIM1_CH2N"
 		(shape input)
 		(at 82.55 109.22 270)
@@ -4914,7 +4758,7 @@
 	)
 	(global_label "LED"
 		(shape input)
-		(at 215.9 140.97 180)
+		(at 208.28 113.03 180)
 		(effects
 			(font
 				(size 1.7272 1.7272)
@@ -4923,7 +4767,7 @@
 		)
 		(uuid "685903eb-d1b7-4f8f-83af-dd6741d4dc3d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 215.9 140.97 0)
+			(at 208.28 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5066,28 +4910,6 @@
 			)
 		)
 	)
-	(global_label "VSS"
-		(shape input)
-		(at 95.25 109.22 270)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify right)
-		)
-		(uuid "87401e50-30a9-4ad1-9a8d-16847ca7547b")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 95.25 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
 	(global_label "TIM1_CH2"
 		(shape input)
 		(at 111.76 72.39 0)
@@ -5154,28 +4976,6 @@
 			)
 		)
 	)
-	(global_label "VSS"
-		(shape input)
-		(at 111.76 59.69 0)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify left)
-		)
-		(uuid "a582ec93-60f3-4e69-af64-05d54383c6d5")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 111.76 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
 	(global_label "PB12"
 		(shape input)
 		(at 111.76 95.25 0)
@@ -5232,28 +5032,6 @@
 		(uuid "ad8065aa-6baf-45c5-8388-e68d68bdd403")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 111.76 74.93 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VSS"
-		(shape input)
-		(at 69.85 180.34 0)
-		(effects
-			(font
-				(size 1.7272 1.7272)
-			)
-			(justify left)
-		)
-		(uuid "af1332ef-f2fa-494b-ab89-d81da7cdd3c8")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 69.85 180.34 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5376,7 +5154,7 @@
 	)
 	(global_label "VDDIO2"
 		(shape input)
-		(at 69.85 167.64 0)
+		(at 69.85 167.64 90)
 		(effects
 			(font
 				(size 1.7272 1.7272)
@@ -5385,7 +5163,7 @@
 		)
 		(uuid "c5bb91a4-844c-40f0-9a5f-64c4a9bfb102")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 69.85 167.64 0)
+			(at 69.85 167.64 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5430,28 +5208,6 @@
 		(uuid "e0d31ae5-07cb-4deb-a0c4-1735afd80dfd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 111.76 67.31 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VSS"
-		(shape input)
-		(at 48.26 180.34 0)
-		(effects
-			(font
-				(size 1.7272 1.7272)
-			)
-			(justify left)
-		)
-		(uuid "e3013c4e-d64b-4032-af84-e518be8699a8")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 48.26 180.34 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5562,28 +5318,6 @@
 		(uuid "f77aa77f-1c7e-47a7-9f5c-882be5ff4661")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 45.72 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VBAT"
-		(shape input)
-		(at 45.72 57.15 180)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify right)
-		)
-		(uuid "ff07941d-90d7-4a44-b87d-e90f4be5c341")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.72 57.15 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5910,6 +5644,85 @@
 		)
 	)
 	(symbol
+		(lib_id "ProPrj_STM-easyedapro:GND")
+		(at 62.23 33.02 180)
+		(unit 1)
+		(body_style 0)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0bc1b288-acf7-4b3f-b0ce-d95801fa8e4d")
+		(property "Reference" "#PWR048"
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.0414 1.0414)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Footprint" ""
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 62.23 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin ""
+			(uuid "3245c200-9917-428e-8be4-f9c1543f7abf")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
+					(reference "#PWR048")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "JLCPCB-Capacitors:0402,4.7uF")
 		(at 48.26 173.99 0)
 		(unit 1)
@@ -6147,7 +5960,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Resistors:0402,510Ω")
-		(at 220.98 129.54 270)
+		(at 213.36 101.6 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6158,7 +5971,7 @@
 		(fields_autoplaced yes)
 		(uuid "302f6b12-2015-44fd-b421-4029940a3f0c")
 		(property "Reference" "R1"
-			(at 220.98 125.73 90)
+			(at 213.36 97.79 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6168,7 +5981,7 @@
 			)
 		)
 		(property "Value" "510Ω"
-			(at 220.98 129.54 90)
+			(at 213.36 101.6 90)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -6178,7 +5991,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:R_0402"
-			(at 220.98 127.762 90)
+			(at 213.36 99.822 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6189,7 +6002,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-0402WGF5100TCE_C25123.pdf"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6200,7 +6013,7 @@
 			)
 		)
 		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/°C ±1% 510Ω 0402 Chip Resistor - Surface Mount ROHS"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6211,7 +6024,7 @@
 			)
 		)
 		(property "LCSC" "C25123"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6222,7 +6035,7 @@
 			)
 		)
 		(property "Stock" "2434473"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6233,7 +6046,7 @@
 			)
 		)
 		(property "Price" "0.004USD"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6244,7 +6057,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6255,7 +6068,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6266,7 +6079,7 @@
 			)
 		)
 		(property "Attrition Qty" "12"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6277,7 +6090,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6288,7 +6101,7 @@
 			)
 		)
 		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6299,7 +6112,7 @@
 			)
 		)
 		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6310,7 +6123,7 @@
 			)
 		)
 		(property "Part" "0402WGF5100TCE"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6321,7 +6134,7 @@
 			)
 		)
 		(property "Resistance" "510Ω"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6332,7 +6145,7 @@
 			)
 		)
 		(property "Power(Watts)" "62.5mW"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6343,7 +6156,7 @@
 			)
 		)
 		(property "Type" "Thick Film Resistors"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6354,7 +6167,7 @@
 			)
 		)
 		(property "Overload Voltage (Max)" "50V"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6365,7 +6178,7 @@
 			)
 		)
 		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6376,7 +6189,7 @@
 			)
 		)
 		(property "Tolerance" "±1%"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6387,7 +6200,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
-			(at 220.98 129.54 0)
+			(at 213.36 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6650,7 +6463,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Resistors:0402,510Ω")
-		(at 220.98 140.97 270)
+		(at 213.36 113.03 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6661,7 +6474,7 @@
 		(fields_autoplaced yes)
 		(uuid "479bbc47-75ff-46f4-8b1a-1a31da6698b7")
 		(property "Reference" "R2"
-			(at 220.98 137.16 90)
+			(at 213.36 109.22 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6671,7 +6484,7 @@
 			)
 		)
 		(property "Value" "510Ω"
-			(at 220.98 140.97 90)
+			(at 213.36 113.03 90)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -6681,7 +6494,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:R_0402"
-			(at 220.98 139.192 90)
+			(at 213.36 111.252 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6692,7 +6505,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-0402WGF5100TCE_C25123.pdf"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6703,7 +6516,7 @@
 			)
 		)
 		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/°C ±1% 510Ω 0402 Chip Resistor - Surface Mount ROHS"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6714,7 +6527,7 @@
 			)
 		)
 		(property "LCSC" "C25123"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6725,7 +6538,7 @@
 			)
 		)
 		(property "Stock" "2434473"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6736,7 +6549,7 @@
 			)
 		)
 		(property "Price" "0.004USD"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6747,7 +6560,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6758,7 +6571,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6769,7 +6582,7 @@
 			)
 		)
 		(property "Attrition Qty" "12"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6780,7 +6593,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6791,7 +6604,7 @@
 			)
 		)
 		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6802,7 +6615,7 @@
 			)
 		)
 		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6813,7 +6626,7 @@
 			)
 		)
 		(property "Part" "0402WGF5100TCE"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6824,7 +6637,7 @@
 			)
 		)
 		(property "Resistance" "510Ω"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6835,7 +6648,7 @@
 			)
 		)
 		(property "Power(Watts)" "62.5mW"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6846,7 +6659,7 @@
 			)
 		)
 		(property "Type" "Thick Film Resistors"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6857,7 +6670,7 @@
 			)
 		)
 		(property "Overload Voltage (Max)" "50V"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6868,7 +6681,7 @@
 			)
 		)
 		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6879,7 +6692,7 @@
 			)
 		)
 		(property "Tolerance" "±1%"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6890,7 +6703,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
-			(at 220.98 140.97 0)
+			(at 213.36 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6910,6 +6723,85 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "R2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ProPrj_STM-easyedapro:GND")
+		(at 95.25 115.57 0)
+		(unit 1)
+		(body_style 0)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "4d65fddb-6f29-4a02-b775-49ded9aab171")
+		(property "Reference" "#PWR046"
+			(at 95.25 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 95.25 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.0414 1.0414)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Footprint" ""
+			(at 95.25 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin ""
+			(uuid "1e29e29c-3da4-4eb0-9e48-50476f80df13")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
+					(reference "#PWR046")
 					(unit 1)
 				)
 			)
@@ -7294,7 +7186,7 @@
 	)
 	(symbol
 		(lib_id "ProPrj_STM-easyedapro:GND")
-		(at 234.95 143.51 0)
+		(at 227.33 115.57 0)
 		(unit 1)
 		(body_style 0)
 		(exclude_from_sim no)
@@ -7304,7 +7196,7 @@
 		(dnp no)
 		(uuid "5bb313bf-a180-4798-9959-86890e111376")
 		(property "Reference" "#PWR09"
-			(at 234.95 143.51 0)
+			(at 227.33 115.57 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7315,7 +7207,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 234.95 143.51 0)
+			(at 227.33 115.57 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7327,7 +7219,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 234.95 143.51 0)
+			(at 227.33 115.57 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7338,7 +7230,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 234.95 143.51 0)
+			(at 227.33 115.57 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7349,7 +7241,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 234.95 143.51 0)
+			(at 227.33 115.57 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7530,7 +7422,7 @@
 	)
 	(symbol
 		(lib_id "ProPrj_STM-easyedapro:KT-0603R")
-		(at 229.87 140.97 180)
+		(at 222.25 113.03 180)
 		(unit 1)
 		(body_style 0)
 		(exclude_from_sim no)
@@ -7540,7 +7432,7 @@
 		(dnp no)
 		(uuid "64d028e7-291b-4536-b1af-9110a8acc961")
 		(property "Reference" "LED2"
-			(at 226.8982 136.2456 0)
+			(at 219.2782 108.3056 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7551,7 +7443,7 @@
 			)
 		)
 		(property "Value" "KT-0603R"
-			(at 226.8982 138.5316 0)
+			(at 219.2782 110.5916 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7562,7 +7454,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7573,7 +7465,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7584,7 +7476,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7595,7 +7487,7 @@
 			)
 		)
 		(property "Field42" ""
-			(at 13.97 187.96 0)
+			(at 6.35 160.02 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7605,7 +7497,7 @@
 			)
 		)
 		(property "Manufacturer Part" "KT-0603R"
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7616,7 +7508,7 @@
 			)
 		)
 		(property "Manufacturer" "KENTO"
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7627,7 +7519,7 @@
 			)
 		)
 		(property "Supplier Part" "C2286"
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7638,7 +7530,7 @@
 			)
 		)
 		(property "Supplier" "LCSC"
-			(at 229.87 140.97 0)
+			(at 222.25 113.03 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7665,7 +7557,7 @@
 	)
 	(symbol
 		(lib_id "ProPrj_STM-easyedapro:3V3")
-		(at 213.36 128.27 0)
+		(at 205.74 100.33 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7675,7 +7567,7 @@
 		(dnp no)
 		(uuid "6c3d09b2-267a-4909-b3d1-498bf399d161")
 		(property "Reference" "#PWR08"
-			(at 213.36 128.27 0)
+			(at 205.74 100.33 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7686,7 +7578,7 @@
 			)
 		)
 		(property "Value" "3V3"
-			(at 213.36 128.27 0)
+			(at 205.74 100.33 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7697,7 +7589,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 213.36 128.27 0)
+			(at 205.74 100.33 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7708,7 +7600,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 213.36 128.27 0)
+			(at 205.74 100.33 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7719,7 +7611,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 213.36 128.27 0)
+			(at 205.74 100.33 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7978,18 +7870,18 @@
 		)
 	)
 	(symbol
-		(lib_id "ProPrj_STM-easyedapro:3V3")
-		(at 74.93 157.48 0)
+		(lib_id "ProPrj_STM-easyedapro:GND")
+		(at 34.29 85.09 0)
 		(unit 1)
-		(body_style 1)
+		(body_style 0)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "97448800-cfd1-4ecf-9327-f9bf37ca7db9")
-		(property "Reference" "#PWR05"
-			(at 74.93 157.48 0)
+		(uuid "7eaf9038-d81a-478a-9eca-9f404372d882")
+		(property "Reference" "#PWR049"
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7999,8 +7891,9 @@
 				)
 			)
 		)
-		(property "Value" "3V3"
-			(at 74.93 157.48 0)
+		(property "Value" "GND"
+			(at 34.29 85.09 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8011,7 +7904,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 74.93 157.48 0)
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8022,7 +7915,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 74.93 157.48 0)
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8033,7 +7926,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 74.93 157.48 0)
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8044,12 +7937,12 @@
 			)
 		)
 		(pin ""
-			(uuid "6263ef04-8823-472f-8bab-f86d2c80a798")
+			(uuid "bca3f629-a77c-4cbb-abef-581208024896")
 		)
 		(instances
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
-					(reference "#PWR05")
+					(reference "#PWR049")
 					(unit 1)
 				)
 			)
@@ -8286,6 +8179,85 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ProPrj_STM-easyedapro:GND")
+		(at 124.46 59.69 0)
+		(unit 1)
+		(body_style 0)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "b81879cb-bbbd-4684-a2f6-58ad73e8b572")
+		(property "Reference" "#PWR047"
+			(at 124.46 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 124.46 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.0414 1.0414)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Footprint" ""
+			(at 124.46 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 124.46 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 124.46 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin ""
+			(uuid "3c49c92a-01ea-4ffa-872f-4dece298655e")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
+					(reference "#PWR047")
 					(unit 1)
 				)
 			)
@@ -8765,7 +8737,7 @@
 	)
 	(symbol
 		(lib_id "ProPrj_STM-easyedapro:19-213/Y2C-CQ2R2L/3T(CY)")
-		(at 229.87 129.54 180)
+		(at 222.25 101.6 180)
 		(unit 1)
 		(body_style 0)
 		(exclude_from_sim no)
@@ -8775,7 +8747,7 @@
 		(dnp no)
 		(uuid "c9d4deed-7e56-43e9-b834-2293e99113ef")
 		(property "Reference" "LED1"
-			(at 226.8982 125.3236 0)
+			(at 219.2782 97.3836 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8786,7 +8758,7 @@
 			)
 		)
 		(property "Value" "19-213/Y2C-CQ2R2L/3T(CY)"
-			(at 226.8982 127.6096 0)
+			(at 219.2782 99.6696 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8797,7 +8769,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8808,7 +8780,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8819,7 +8791,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8830,7 +8802,7 @@
 			)
 		)
 		(property "Field42" ""
-			(at 13.97 187.96 0)
+			(at 6.35 160.02 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8840,7 +8812,7 @@
 			)
 		)
 		(property "Manufacturer Part" "19-213/Y2C-CQ2R2L/3T(CY)"
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8851,7 +8823,7 @@
 			)
 		)
 		(property "Manufacturer" "EVERLIGHT(亿光)"
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8862,7 +8834,7 @@
 			)
 		)
 		(property "Supplier Part" "C72038"
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8873,7 +8845,7 @@
 			)
 		)
 		(property "Supplier" "LCSC"
-			(at 229.87 129.54 0)
+			(at 222.25 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9207,6 +9179,84 @@
 			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ProPrj_STM-easyedapro:3V3")
+		(at 43.18 57.15 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f22b106c-23a9-447a-b457-a32225f115ff")
+		(property "Reference" "#PWR050"
+			(at 43.18 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "3V3"
+			(at 41.656 54.356 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.0414 1.0414)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 43.18 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin ""
+			(uuid "e2129311-b722-475c-9242-10d7a249d669")
+		)
+		(instances
+			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
+					(reference "#PWR050")
 					(unit 1)
 				)
 			)
