@@ -1,5 +1,17 @@
 # openMPPT Hardware Documentation
 
+## v1.3 Component Selection Summary
+| Component | Part Number | Function | Rationale |
+| :--- | :--- | :--- | :--- |
+| Primary Buck IC | SCT2A25STER | 10V Aux Supply | High efficiency, 100V rating for 80V VIN |
+| Logic Buck IC | SY8120B1ABC | 3.3V Logic Supply | Cascaded architecture for MCU safety |
+| Power MOSFET | BRCS030N10SHRA | Buck-Boost Stage | Drop-in (TO-220), 100V/212A, matches $Q_g$ of 76nC |
+| Bootstrap Diode | US1M | Gate Driver Supply | 1kV rating for transient protection |
+| Gate-Off Diode | 1N4148W | MOSFET Turn-off | 4ns high-speed switching for low loss |
+| Current Sensor | CC6937S8-3FB020 | Hall Effect Sensing | 3.3V compatible, isolated, 20A range |
+
+*(See `CALCULATIONS.md` for full design justification and E24/E96 resistor value derivations.)*
+
 ## v1.1 Build Status: SUCCESS (Verified 2026-05-29)
 The v1.1 PCB has been fully assembled and verified, v1.1 means the v1.0 but with some patches hand soldered to the board. However, several physical patches are required to achieve full functionality. These must be implemented in the next KiCad revision.
 

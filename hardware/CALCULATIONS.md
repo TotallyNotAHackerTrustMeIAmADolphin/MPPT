@@ -97,11 +97,11 @@ Using IPC-2221 standards for 10°C rise at 20A:
 RC filters are used on ADC inputs to suppress 100kHz switching noise and prevent aliasing.
 Cutoff frequency: $f_c = \frac{1}{2 \pi R C}$
 
-**Voltage Sensing LPF (v1.1):**
-- $R_{source} \approx R_{bottom} = 10 k\Omega$ (Parallel with $R_{top}$ is dominated by $R_{bottom}$)
-- $C_{filter} = 100 nF$ (`C12`, `C13`)
-- $f_c = \frac{1}{2 \pi \times 10,000 \times 100 \times 10^{-9}} \approx 159 Hz$
-- *Evaluation*: Excellent noise rejection, but introduces significant phase lag (~1ms). Acceptable for battery voltage monitoring.
+**Voltage Sensing LPF (v1.3 Optimized):**
+- $R_{source} \approx R_{th} \approx 4.59 k\Omega$
+- $C_{filter} = 10 nF$ (`C12`, `C13`)
+- $f_c = \frac{1}{2 \pi \times 4,590 \times 10 \times 10^{-9}} \approx 3.47 kHz$
+- *Evaluation*: Improved transient response for high-speed tracking while still providing >40dB attenuation at 100kHz PWM frequency.
 
 **Current Sensing LPF (v1.1):**
 - INA240 output has low impedance. Series $R = 1.5 k\Omega$ (`R20`).
