@@ -45,6 +45,9 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 ## 🛠 Hardware & Platform
 
 ### Board: openMPPT v1.1 (Custom Architecture)
+
+![openMPPT assembled board on test bench](images/openmppt_assembled_board.jpg)
+
 - **MCU:** STM32F072RBT6 (ARM Cortex-M0 @ 48MHz).
 - **Topology:** 4-Switch Synchronous Non-Inverting Buck-Boost.
 - **Power Stage:** Four TI **CSD19505KCS** 80V N-Channel MOSFETs driven by two Infineon **IRS21867STRPBF** gate drivers. High-side drivers are powered by isolated **B1212S-1W** DC-DC converters for continuous high-voltage operation.
