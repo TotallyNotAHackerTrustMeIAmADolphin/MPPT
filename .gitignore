@@ -407,5 +407,3 @@ FodyWeavers.xsd
 *.sln.iml
 resume.sh
 
-.gemini/
-gha-creds-*.json
