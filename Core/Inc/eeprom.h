@@ -67,4 +67,9 @@ uint16_t EE_WriteVariable(uint16_t VirtAddress, uint16_t Data);
 #define VIRT_AMP_OUT_SLOPE      ((uint16_t)0x0007)
 #define VIRT_AMP_OUT_OFFSET     ((uint16_t)0x0008)
 
+/* Highest virtual address used by the application. Must stay in sync with
+ * settings.c: signature=0, calibration=1-16, device limits=20-33
+ * (DeviceLimits_t is 7 x int32_t = 14 words). */
+#define EE_MAX_VAR_ADDRESS      ((uint16_t)33)
+
 #endif /* __EEPROM_H */

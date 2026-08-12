@@ -35,6 +35,13 @@ static int32_t f_aOut_slow_fp = 0;
 
 static uint8_t ema_shift = 3; // Optimal for speed/stability (tuned)
 
+/* Guards against div-by-zero if a calibration span (RawHigh == RawLow) was
+ * saved without actually changing the applied voltage/current between the
+ * low/high calibration steps. */
+static inline int32_t nonzero_span(int32_t span) {
+    return (span == 0) ? 1 : span;
+}
+
 void SENSORS_Init(void) {
     memset(&measurements, 0, sizeof(Measurements_t));
     HAL_ADC_Start_DMA(&hadc, (uint32_t *)adc_buf, ADC_BUF_LEN);
@@ -113,21 +120,21 @@ void SENSORS_Process(uint16_t offset) {
     int64_t a_out_avg_x1000 = ((int64_t)f_aOut_raw_fp * 1000) / (samples_per_half << FILTER_SHIFT);
 
     // 4. Scaling to SI units (mV, mA) using the high-precision filtered values
-    measurements.voltageIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal->vInRawLow * 1000) * 
-        ((int32_t)cal->vInRealHigh_mV - (int32_t)cal->vInRealLow_mV) / 
-        ((int32_t)cal->vInRawHigh - (int32_t)cal->vInRawLow) / 1000 + cal->vInRealLow_mV);
+    measurements.voltageIn_mV = (int32_t)((v_in_avg_x1000 - (int64_t)cal->vInRawLow * 1000) *
+        ((int32_t)cal->vInRealHigh_mV - (int32_t)cal->vInRealLow_mV) /
+        nonzero_span((int32_t)cal->vInRawHigh - (int32_t)cal->vInRawLow) / 1000 + cal->vInRealLow_mV);
 
-    measurements.voltageOut_mV = (int32_t)((v_out_avg_x1000 - (int64_t)cal->vOutRawLow * 1000) * 
-        ((int32_t)cal->vOutRealHigh_mV - (int32_t)cal->vOutRealLow_mV) / 
-        ((int32_t)cal->vOutRawHigh - (int32_t)cal->vOutRawLow) / 1000 + cal->vOutRealLow_mV);
+    measurements.voltageOut_mV = (int32_t)((v_out_avg_x1000 - (int64_t)cal->vOutRawLow * 1000) *
+        ((int32_t)cal->vOutRealHigh_mV - (int32_t)cal->vOutRealLow_mV) /
+        nonzero_span((int32_t)cal->vOutRawHigh - (int32_t)cal->vOutRawLow) / 1000 + cal->vOutRealLow_mV);
 
-    measurements.currentIn_mA = (int32_t)((a_in_avg_x1000 - (int64_t)cal->aInRawLow * 1000) * 
-        ((int32_t)cal->aInRealHigh_mA - (int32_t)cal->aInRealLow_mA) / 
-        ((int32_t)cal->aInRawHigh - (int32_t)cal->aInRawLow) / 1000 + cal->aInRealLow_mA);
+    measurements.currentIn_mA = (int32_t)((a_in_avg_x1000 - (int64_t)cal->aInRawLow * 1000) *
+        ((int32_t)cal->aInRealHigh_mA - (int32_t)cal->aInRealLow_mA) /
+        nonzero_span((int32_t)cal->aInRawHigh - (int32_t)cal->aInRawLow) / 1000 + cal->aInRealLow_mA);
 
-    measurements.currentOut_mA = (int32_t)((a_out_avg_x1000 - (int64_t)cal->aOutRawLow * 1000) * 
-        ((int32_t)cal->aOutRealHigh_mA - (int32_t)cal->aOutRealLow_mA) / 
-        ((int32_t)cal->aOutRawHigh - (int32_t)cal->aOutRawLow) / 1000 + cal->aOutRealLow_mA);
+    measurements.currentOut_mA = (int32_t)((a_out_avg_x1000 - (int64_t)cal->aOutRawLow * 1000) *
+        ((int32_t)cal->aOutRealHigh_mA - (int32_t)cal->aOutRealLow_mA) /
+        nonzero_span((int32_t)cal->aOutRawHigh - (int32_t)cal->aOutRawLow) / 1000 + cal->aOutRealLow_mA);
 
     // 5. Temperature and Power (Non-filtered raw sums are fine for temperature)
     measurements.tempMosfets_C_x100 = (int32_t)((int64_t)tempMofets_sum * 100 / samples_per_half);
@@ -141,10 +148,28 @@ void SENSORS_Process(uint16_t offset) {
     measurements.powerIn_mW = (int32_t)(measurements.powerIn_uW / 1000);
     measurements.powerOut_mW = (int32_t)(measurements.powerOut_uW / 1000);
 
-    if (measurements.powerIn_mW > 10) {
-        measurements.efficiency_x100 = (uint16_t)((measurements.powerOut_uW * 10000) / measurements.powerIn_uW);
+    // Bidirectional Efficiency Calculation
+    // Forward (Discharging Battery): Efficiency = Pout / Pin
+    // Reverse (Charging Battery/Reverse): Efficiency = Pin / Pout
+    int64_t absPin = (measurements.powerIn_uW < 0) ? -measurements.powerIn_uW : measurements.powerIn_uW;
+    int64_t absPout = (measurements.powerOut_uW < 0) ? -measurements.powerOut_uW : measurements.powerOut_uW;
+
+    if (measurements.currentOut_mA >= 0) {
+        // Forward Mode
+        if (absPin > 10000) { // >10mW
+            int64_t eff = (absPout * 10000) / absPin;
+            measurements.efficiency_x100 = (eff > 9999) ? 9999 : (uint16_t)eff;
+        } else {
+            measurements.efficiency_x100 = 0;
+        }
     } else {
-        measurements.efficiency_x100 = 0;
+        // Reverse Mode (Reverse Flow)
+        if (absPout > 10000) { // >10mW
+            int64_t eff = (absPin * 10000) / absPout;
+            measurements.efficiency_x100 = (eff > 9999) ? 9999 : (uint16_t)eff;
+        } else {
+            measurements.efficiency_x100 = 0;
+        }
     }
 }
 

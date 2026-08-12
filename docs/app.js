@@ -270,6 +270,7 @@ function updateLimitsUI(data) {
     if (data.VinMax !== undefined) document.getElementById('limit_VinMax').value = (data.VinMax / 1000).toFixed(2);
     if (data.Imax !== undefined) document.getElementById('limit_Imax').value = (data.Imax / 1000).toFixed(2);
     if (data.Imin !== undefined) document.getElementById('limit_Imin').value = (Math.abs(data.Imin) / 1000).toFixed(2);
+    if (data.IinMin !== undefined) document.getElementById('limit_IinMin').value = (Math.abs(data.IinMin) / 1000).toFixed(2);
     appendToLog('Limits synchronized');
 }
 
@@ -323,8 +324,8 @@ window.sendLimit = async (cmdPrefix, inputId) => {
         valueInt = parseInt(value);
     } else {
         valueInt = Math.round(parseFloat(value) * 1000);
-        // Imin is a negative flow limit
-        if (inputId === 'limit_Imin') valueInt = -valueInt;
+        // Imin/IinMin are negative flow limits
+        if (inputId === 'limit_Imin' || inputId === 'limit_IinMin') valueInt = -valueInt;
     }
     await sendCommand(`CMD:${cmdPrefix}:${valueInt}`);
 };

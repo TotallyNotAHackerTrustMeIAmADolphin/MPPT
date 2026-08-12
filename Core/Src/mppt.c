@@ -142,6 +142,7 @@ int32_t MPPT_RunSweep(const Measurements_t *m, const DeviceLimits_t *limits, boo
     // Limit-Aware Termination (Stop sweep if we hit max voltage or max current)
     if (m->voltageOut_mV >= limits->vOutMax_mV || 
         m->currentOut_mA >= limits->iOutMax_mA ||
+        m->currentIn_mA <= limits->iInMin_mA ||
         m->currentOut_mA <= limits->iOutMin_mA ||
         m->voltageIn_mV >= limits->vInMax_mV) {
         *isFinished = true;
@@ -170,7 +171,9 @@ void MPPT_ResetSweep(int32_t startDuty) {
 }
 
 void MPPT_StartTracking(const Measurements_t *m) {
-    previousPowerIn_uW = m->powerIn_uW;
+    // Seed from powerOut_uW: both P&O and IncCond track/update this baseline
+    // against output power, not input power (see their respective update sites).
+    previousPowerIn_uW = m->powerOut_uW;
     previousVoltageIn_mV = m->voltageIn_mV;
     previousCurrentIn_mA = m->currentIn_mA;
 }

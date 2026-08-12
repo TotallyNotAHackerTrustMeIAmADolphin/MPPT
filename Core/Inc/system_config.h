@@ -24,7 +24,6 @@
 #define ADC_BUF_LEN           (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
 
 // --- Algorithm Constants ---
-#define MIN_VOLTAGE_IN_MV     14000  // Start voltage required
 #define POWER_THRESHOLD_UW    189769 // Optimal threshold for speed/stability
 #define SWEEP_STEP_SIZE_TICKS 8
 #define MPPT_STEP_SIZE_TICKS  13     // Tuned fixed step size (ticks)
@@ -41,6 +40,7 @@
 #define HARD_LIMIT_IIN_MAX_MA   20000  // 20A Max Input Current
 #define HARD_LIMIT_IOUT_MAX_MA  20000  // 20A Max Output Current
 #define HARD_LIMIT_TEMP_MAX_C   85     // 85°C Max Internal Temp
+#define HARD_BACKFLOW_MARGIN_MA 500    // Hard-fault backstop margin beyond iInMin_mA
 
 #define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
 

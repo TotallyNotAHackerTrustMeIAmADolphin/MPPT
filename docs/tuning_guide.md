@@ -8,13 +8,14 @@ The system has moved away from discrete state-based PID loops. It now uses a **U
 3.  **Velocity PI**: The selected $\Delta$ is accumulated into a 64-bit high-resolution integrator, which is then applied to the hardware PWM.
 
 ## Telemetry States
-The `state` string in the telemetry now provides granular feedback on which limit is currently "winning" the selector:
-- `ACTIVE_TRACKING`: No limits hit, MPPT is in control.
-- `ACTIVE_CV`: Output Voltage limit is active (Battery Full).
-- `ACTIVE_CC`: Output Current limit is active.
-- `ACTIVE_BROWNOUT`: Input Voltage is dropping below the soft-floor.
-- `ACTIVE_VIN_LIMIT`: Input Voltage is hitting the upper limit (Regen safety).
-- `ACTIVE_REVERSE`: Reverse current/regen limit is active.
+The `state` string in the telemetry provides granular feedback on which limit is currently "winning" the selector:
+- `MPPT`: No limits hit, MPPT (or the fixed setpoint in CV/CC/PSU modes) is in control.
+- `CV`: Output Voltage limit is active (Battery Full).
+- `CC`: Output Current limit is active.
+- `BROWNOUT`: Input Voltage is dropping below the soft-floor (`vInMin_mV`).
+- `REV_V`: Input Voltage is hitting the upper limit in reverse flow (`vInMax_mV`).
+- `REV_I_IN`: Reverse current limit is active on the input-side sensor (`iInMin_mA` - protects the source/battery being backfed).
+- `REV_I_OUT`: Reverse current limit is active on the output-side sensor (`iOutMin_mA`).
 
 ## Control Gains
 - `GAIN_KP`: Proportional gain. Currently tuned to **5** for stable transitions on openMPPT v1.1 hardware.

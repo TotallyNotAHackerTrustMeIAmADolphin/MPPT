@@ -314,9 +314,8 @@ static uint16_t EE_PageTransfer(uint16_t VirtAddress, uint16_t Data)
       if (FlashStatus != HAL_OK) return FlashStatus;
   }
 
-  /* Transfer all other variables */
-  /* For this project, we only have 8 variables. We can just iterate them. */
-  for (uint16_t var = 1; var <= 8; var++) {
+  /* Transfer all other variables (signature + calibration + device limits) */
+  for (uint16_t var = 0; var <= EE_MAX_VAR_ADDRESS; var++) {
       if (var != VirtAddress) {
           uint16_t read_val = 0;
           if (EE_ReadVariable(var, &read_val) == 0) {
