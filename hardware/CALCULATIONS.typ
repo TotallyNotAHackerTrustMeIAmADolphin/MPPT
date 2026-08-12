@@ -167,9 +167,24 @@ Targeting an output voltage ripple ($Delta V_"out"$) of *< 100mV*.
 $ "ESR"_"max" = frac(Delta V_"out", Delta I_L) = frac(0.1"V", 4.0"A") = *25 m Omega* $
 
 *v1.3 Capacitor Strategy:*
-- Use *4x 330µF 100V Low-ESR Electrolytic* (e.g., Ymin LKML series) in parallel.
-- *Total Bank ESR*: $approx 11.75 m Omega$ (Passes 25mΩ limit).
-- *Total Ripple Capacity*: $approx 8.5 "A"$ (Safe for 20A operation).
+- Use *4x 330µF 100V Low-ESR Electrolytic* (Ymin LKML2502A331MF, C443153) in parallel, per bulk
+  bank (input and output each get their own 4-cap bank, C15-C18 / C20-C23 in the schematic).
+- *Verified against the Ymin LKM series datasheet* (not assumed): the part number itself decodes
+  to series LKM + diameter code L (12.5mm) + height code 250 (25mm) + voltage code 2A (100V) +
+  capacitance code 331 (330µF) + M (±20%) - exactly LKML2502A331MF. The series' standard-item
+  table confirms the 12.5×25mm/100V/330µF row directly: *ESR = 47mΩ max* and *ripple current =
+  2.14A rms*, both specified at 100kHz/25°C - the exact figures this section already assumed.
+- *Total Bank ESR*: $frac(47 m Omega, 4) = *11.75 m Omega*$ (Passes the 25mΩ limit with 53% margin).
+- *Total Ripple Capacity*: $2.14 "A" times 4 = *8.56 "A"*$ per bank. The actual RMS ripple current
+  a bulk cap bank sees is $approx frac(Delta I_L, 2 sqrt(3)) approx 1.15 "A"$ - the 8.56A rating is
+  headroom against that, not a comparison to the 20A DC bus current.
+- *Voltage margin*: 100V rating on an 80V max bus is a 20% derating margin - inside the range
+  electrolytics are normally run at continuously, though tighter than the 25-30% some DC-link
+  guidance recommends.
+- The series' own ripple-current frequency correction table (0.40, 0.50, 0.80, 0.90, *1.00* at
+  50Hz, 120Hz, 1kHz, 10-50kHz, 100kHz respectively) confirms the rated ripple current is already
+  anchored at its ceiling by 100kHz, with no published derating beyond that - supporting the
+  "frequency-independent" call in the @sec-200khz re-check below.
 
 = Voltage Divider & ADC Scaling
 
