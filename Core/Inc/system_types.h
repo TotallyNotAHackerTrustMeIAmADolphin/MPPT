@@ -58,7 +58,8 @@ typedef enum
   LIMIT_I_OUT_MAX,  // Output Current Max (Forward CC)
   LIMIT_V_IN_MIN,   // Input Voltage Min (Brownout regulation)
   LIMIT_V_IN_MAX,   // Input Voltage Max (Reverse Flow CV)
-  LIMIT_I_OUT_MIN,  // Output Current Min (Reverse Flow CC or Backflow)
+  LIMIT_I_IN_MIN,   // Input Current Min (Reverse Flow CC - protects the source)
+  LIMIT_I_OUT_MIN,  // Output Current Min (Reverse Flow CC - protects the output side)
   LIMIT_SWEEPING    // Sweep in progress
 } SoftLimit_t;
 
@@ -109,7 +110,8 @@ typedef struct
   int32_t iOutMax_mA;
   int32_t vInMin_mV;
   int32_t vInMax_mV;
-  int32_t iOutMin_mA;  // Typically negative for reverse flow
+  int32_t iInMin_mA;   // Minimum allowed input current (negative = reverse/backflow into source), mA
+  int32_t iOutMin_mA;  // Minimum allowed output current (negative = reverse/backflow out), mA
 } DeviceLimits_t;
 
 /**

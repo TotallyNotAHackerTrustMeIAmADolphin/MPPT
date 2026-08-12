@@ -70,8 +70,9 @@ void setUp(void) {
     mock_l.iOutMax_mA = 2000;
     mock_l.vInMin_mV = 14000;
     mock_l.vInMax_mV = 80000;
+    mock_l.iInMin_mA = -500;
     mock_l.iOutMin_mA = -500;
-    
+
     // Reset state
     currentState = STATE_IDLE;
     currentFaultReason = FAULT_REASON_NONE;
@@ -80,6 +81,8 @@ void setUp(void) {
     targetDuty_ticks = 0;
     lastVout = 0;
     lastIout = 0;
+    softLimitHoldTimer = 0;
+    faultCounter = 0;
 }
 
 void tearDown(void) {}
@@ -136,18 +139,49 @@ void test_controller_brownout_limit(void) {
     TEST_ASSERT_LESS_THAN(1000, last_duty);
 }
 
-void test_controller_reverse_limit(void) {
+void test_controller_reverse_limit_output(void) {
     currentState = STATE_ACTIVE;
     globalDutyIntegral = 1000 * 1000;
     mock_l.mode = MODE_BIDIRECTIONAL; // Allow reverse current
-    
+
     mock_l.iOutMin_mA = -500;
     mock_m.currentOut_mA = -600; // More negative than limit
-    
+
     CONTROLLER_UpdateHighRate();
-    
+
     TEST_ASSERT_EQUAL(LIMIT_I_OUT_MIN, activeSoftLimit);
-    TEST_ASSERT_LESS_THAN(1000, last_duty);
+    // Reverse (regen/charge) flow: increasing duty reduces reverse current.
+    TEST_ASSERT_GREATER_THAN(1000, last_duty);
+}
+
+void test_controller_reverse_limit_input(void) {
+    currentState = STATE_ACTIVE;
+    globalDutyIntegral = 1000 * 1000;
+    mock_l.mode = MODE_BIDIRECTIONAL; // Allow reverse current
+
+    mock_l.iInMin_mA = -500;
+    mock_m.currentIn_mA = -600; // More negative than limit - protects the source
+
+    CONTROLLER_UpdateHighRate();
+
+    TEST_ASSERT_EQUAL(LIMIT_I_IN_MIN, activeSoftLimit);
+    // Reverse (regen/charge) flow: increasing duty reduces reverse current.
+    TEST_ASSERT_GREATER_THAN(1000, last_duty);
+}
+
+void test_controller_reverse_cv_limit(void) {
+    currentState = STATE_ACTIVE;
+    globalDutyIntegral = 1000 * 1000;
+    mock_l.mode = MODE_BIDIRECTIONAL;
+
+    mock_l.vInMax_mV = 40000;
+    mock_m.voltageIn_mV = 41000; // Over the reverse-charge ceiling
+
+    CONTROLLER_UpdateHighRate();
+
+    TEST_ASSERT_EQUAL(LIMIT_V_IN_MAX, activeSoftLimit);
+    // Equilibrium-duty physics: increasing duty corrects a reverse overvoltage.
+    TEST_ASSERT_GREATER_THAN(1000, last_duty);
 }
 
 void test_controller_mppt_tracking(void) {
@@ -196,21 +230,70 @@ void test_controller_min_selector_priority(void) {
     TEST_ASSERT_EQUAL(1000 - 2, last_duty); // -2000 / 1000 = -2 ticks
 }
 
-void test_controller_backflow_psu_protection(void) {
-    mock_m.voltageIn_mV = 20000;
-    mock_l.mode = MODE_POWER_SUPPLY;
-    
-    // Start active
+void test_controller_backflow_hard_fault_input(void) {
+    // 0 = no backflow allowed at all; hard backstop trips HARD_BACKFLOW_MARGIN_MA
+    // beyond the configured limit, uniformly in every mode (no more mode-gating).
+    mock_l.mode = MODE_BIDIRECTIONAL;
+    mock_l.iInMin_mA = 0;
     currentState = STATE_ACTIVE;
-    
-    // 1. Test tight threshold (-40mA should trip)
-    mock_m.voltageIn_mV = 19000; 
-    mock_m.currentOut_mA = -40; 
-    
-    CONTROLLER_UpdateHighRate();
-    
+
+    mock_m.currentIn_mA = -(HARD_BACKFLOW_MARGIN_MA + 100); // Past the backstop margin
+
+    // BACKFLOW uses the standard 3-frame integration window, giving the soft
+    // Reverse CC constraint a chance to correct first.
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+
     TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
     TEST_ASSERT_EQUAL(FAULT_REASON_BACKFLOW, currentFaultReason);
+}
+
+void test_controller_backflow_hard_fault_output(void) {
+    mock_l.mode = MODE_POWER_SUPPLY;
+    mock_l.iOutMin_mA = 0;
+    currentState = STATE_ACTIVE;
+
+    mock_m.currentOut_mA = -(HARD_BACKFLOW_MARGIN_MA + 100);
+
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_BACKFLOW, currentFaultReason);
+}
+
+void test_controller_hard_safety_input_oc(void) {
+    mock_m.voltageIn_mV = 20000;
+    currentState = STATE_ACTIVE;
+
+    // INPUT_OC uses a 3-frame integration window (not immediate)
+    mock_m.currentIn_mA = HARD_LIMIT_IIN_MAX_MA + 1000; // > +20A
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_INPUT_OC, currentFaultReason);
+
+    // Reverse direction should trip it too
+    CONTROLLER_ResetFault();
+    currentState = STATE_ACTIVE;
+    mock_m.currentIn_mA = -(HARD_LIMIT_IIN_MAX_MA + 1000); // < -20A
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_INPUT_OC, currentFaultReason);
+}
+
+void test_controller_hard_safety_output_oc(void) {
+    mock_m.voltageIn_mV = 20000;
+    currentState = STATE_ACTIVE;
+
+    mock_m.currentOut_mA = HARD_LIMIT_IOUT_MAX_MA + 1000; // > +20A
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_OUTPUT_OC, currentFaultReason);
+
+    CONTROLLER_ResetFault();
+    currentState = STATE_ACTIVE;
+    mock_m.currentOut_mA = -(HARD_LIMIT_IOUT_MAX_MA + 1000); // < -20A
+    for (int i = 0; i < FAULT_THRESHOLD_FRAMES; i++) CONTROLLER_UpdateHighRate();
+    TEST_ASSERT_EQUAL(STATE_FAULT, currentState);
+    TEST_ASSERT_EQUAL(FAULT_REASON_OUTPUT_OC, currentFaultReason);
 }
 
 void test_controller_hard_safety_uv_trip(void) {
@@ -218,8 +301,8 @@ void test_controller_hard_safety_uv_trip(void) {
     mock_l.mode = MODE_POWER_SUPPLY;
     currentState = STATE_ACTIVE;
 
-    // Drop Vin below mandatory 13V threshold
-    mock_m.voltageIn_mV = 12900; 
+    // Drop Vin below the mandatory 12.5V hard floor (HARD_LIMIT_VIN_MIN_MV)
+    mock_m.voltageIn_mV = 12400;
     
     CONTROLLER_UpdateHighRate();
     
@@ -248,10 +331,16 @@ int main(int argc, char **argv) {
     RUN_TEST(test_controller_transition_idle_to_active);
     RUN_TEST(test_controller_cv_limit);
     RUN_TEST(test_controller_cc_limit);
-    RUN_TEST(test_controller_reverse_limit);
+    RUN_TEST(test_controller_brownout_limit);
+    RUN_TEST(test_controller_reverse_limit_output);
+    RUN_TEST(test_controller_reverse_limit_input);
+    RUN_TEST(test_controller_reverse_cv_limit);
     RUN_TEST(test_controller_mppt_tracking);
     RUN_TEST(test_controller_min_selector_priority);
-    RUN_TEST(test_controller_backflow_psu_protection);
+    RUN_TEST(test_controller_backflow_hard_fault_input);
+    RUN_TEST(test_controller_backflow_hard_fault_output);
+    RUN_TEST(test_controller_hard_safety_input_oc);
+    RUN_TEST(test_controller_hard_safety_output_oc);
     RUN_TEST(test_controller_hard_safety_uv_trip);
     RUN_TEST(test_controller_hard_safety_uv_recovery);
     return UNITY_END();

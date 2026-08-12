@@ -189,18 +189,24 @@ void CONTROLLER_UpdateHighRate(void) {
         newFault = FAULT_REASON_OUTPUT_OC;
     } else if (m->tempMCU_C_x100 > (HARD_LIMIT_TEMP_MAX_C * 100)) {
         newFault = FAULT_REASON_OVERTEMP;
-    } else if (limits->mode != MODE_BIDIRECTIONAL && (m->currentOut_mA < -30 || (m->voltageIn_mV < 14000 && m->currentOut_mA < 0))) {
+    } else if (m->currentIn_mA < limits->iInMin_mA - HARD_BACKFLOW_MARGIN_MA ||
+               m->currentOut_mA < limits->iOutMin_mA - HARD_BACKFLOW_MARGIN_MA) {
+        // Hard backstop beyond the configured reverse-current limits, uniform
+        // across all modes. The soft Reverse CC constraints below should
+        // normally hold current at iInMin_mA/iOutMin_mA before this ever trips.
         newFault = FAULT_REASON_BACKFLOW;
     }
 
     if (newFault != FAULT_REASON_NONE && !SETTINGS_IsCalibrating()) {
         // High-priority safety faults trigger immediately (1 frame)
-        if (newFault == FAULT_REASON_BACKFLOW || newFault == FAULT_REASON_INPUT_OV || 
-            newFault == FAULT_REASON_OUTPUT_OV || newFault == FAULT_REASON_INPUT_UV) {
+        if (newFault == FAULT_REASON_INPUT_OV || newFault == FAULT_REASON_OUTPUT_OV ||
+            newFault == FAULT_REASON_INPUT_UV) {
             currentFaultReason = newFault;
             transitionTo(STATE_FAULT);
         } else {
-            // Other faults use a small integration window to avoid noise trips
+            // Other faults (including BACKFLOW - a backstop margin beyond
+            // iInMin_mA/iOutMin_mA) use a small integration window, giving the
+            // soft Reverse CC constraint a chance to correct first.
             faultCounter++;
             if (faultCounter >= FAULT_THRESHOLD_FRAMES) {
                 currentFaultReason = newFault;
@@ -212,14 +218,12 @@ void CONTROLLER_UpdateHighRate(void) {
     }
 
     // 2. Control Logic
-    if (softLimitHoldTimer > 0) softLimitHoldTimer--;
-    
     switch (currentState) {
         case STATE_FAULT:
             targetDuty_ticks = 0;
             // Auto-recovery: If input UV is gone OR if it was a transient fault (like backflow), wait then retry
             if (currentFaultReason == FAULT_REASON_INPUT_UV) {
-                if (m->voltageIn_mV > 14000) transitionTo(STATE_IDLE);
+                if (m->voltageIn_mV > limits->vInMin_mV) transitionTo(STATE_IDLE);
             } else if (currentTick - faultStateEntryTick >= FAULT_RECOVERY_DELAY_MS) {
                 // Try to recover from other faults after a delay
                 transitionTo(STATE_IDLE);
@@ -228,7 +232,7 @@ void CONTROLLER_UpdateHighRate(void) {
 
         case STATE_IDLE:
             targetDuty_ticks = 0;
-            if (m->voltageIn_mV > 14000) {
+            if (m->voltageIn_mV > limits->vInMin_mV) {
                 if (limits->mode == MODE_MPPT) transitionTo(STATE_SWEEPING);
                 else transitionTo(STATE_ACTIVE);
             }
@@ -255,43 +259,94 @@ void CONTROLLER_UpdateHighRate(void) {
             }
 
             // 2. The Constraints (Limits that pull duty DOWN)
-            
-            // Forward CV (Output Voltage Max)
-            int64_t error_Vout = (int64_t)limits->vOutMax_mV - m->voltageOut_mV;
-            int64_t dInput_Vout = (int64_t)m->voltageOut_mV - lastVout;
-            int64_t delta_Vout = (GAIN_KI * error_Vout) - (GAIN_KP * dInput_Vout);
-            if (delta_Vout < winning_delta) {
-                winning_delta = delta_Vout;
-                if (limits->mode != MODE_MPPT || delta_Vout <= 0) winner = LIMIT_V_OUT_MAX;
-            }
 
-            // Forward CC (Output Current Max)
-            int64_t error_IoutMax = (int64_t)limits->iOutMax_mA - m->currentOut_mA;
-            int64_t dInput_Iout = (int64_t)m->currentOut_mA - lastIout;
-            int64_t delta_IoutMax = (GAIN_KI * error_IoutMax) - (GAIN_KP * dInput_Iout);
-            if (delta_IoutMax < winning_delta) {
-                winning_delta = delta_IoutMax;
-                if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) winner = LIMIT_I_OUT_MAX;
-            }
+            // Reverse constraints (Reverse CC / Reverse CV) protect against excess
+            // backfeed into the source on the input side. All are evaluated first
+            // and given unconditional priority over the Forward constraints below:
+            // protecting the battery/source from a reverse-flow event takes
+            // precedence over precisely holding the output setpoint, since the
+            // hard HARD_LIMIT_VOUT_MAX_MV / HARD_LIMIT_IOUT_MAX_MA faults remain
+            // separate, always-active backstops against genuine hardware damage.
+            //
+            // Sign note (equilibrium-duty physics, see POWER_CalculateVoltageMatchDuty):
+            // duty below the Vin/Vout match point is what causes reverse flow in the
+            // first place, so INCREASING duty is what corrects a reverse-flow event
+            // (moves back toward/past the match point) - opposite of the forward
+            // constraints below, where decreasing duty is the correct response.
+            bool reverseFlowActive = false;
 
-            // Reverse CC (Battery Charge Current Limit - Input side)
-            // If currentIn is MORE negative than limit (e.g. -1000 < -500), error is negative.
-            int64_t error_IinMin = (int64_t)m->currentIn_mA - limits->iOutMin_mA;
+            // Reverse CC - Input side (protects the source from excess reverse/
+            // charge current). currentIn_mA is what the source on the input side
+            // actually experiences during backfeed (currentOut_mA differs by the
+            // buck-boost ratio, same as in forward operation).
+            int64_t error_IinMin = (int64_t)m->currentIn_mA - limits->iInMin_mA;
             if (error_IinMin < 0) {
-                int64_t delta_IinMin = (GAIN_KI * error_IinMin * 10); // High gain for safety
-                if (delta_IinMin < winning_delta) {
-                    winning_delta = delta_IinMin;
+                int64_t delta_IinMin = -(GAIN_KI * error_IinMin * 10); // High gain for safety
+                winning_delta = delta_IinMin;
+                winner = LIMIT_I_IN_MIN;
+                reverseFlowActive = true;
+            }
+
+            // Reverse CC - Output side (protects whatever's on the output side/
+            // converter path from excess reverse current, independent of what the
+            // input-side source itself experiences).
+            int64_t error_IoutMin = (int64_t)m->currentOut_mA - limits->iOutMin_mA;
+            if (error_IoutMin < 0) {
+                int64_t delta_IoutMin = -(GAIN_KI * error_IoutMin * 10); // High gain for safety
+                if (!reverseFlowActive || delta_IoutMin < winning_delta) {
+                    winning_delta = delta_IoutMin;
                     winner = LIMIT_I_OUT_MIN;
+                    reverseFlowActive = true;
                 }
             }
 
-            // Reverse CV (Input Over-Voltage Protection - Battery Full in reverse)
+            // Reverse CV (protects the source from over-charging in reverse - e.g.
+            // battery already full). Same equilibrium-duty sign as Reverse CC above.
             int64_t error_VinMax = (int64_t)limits->vInMax_mV - m->voltageIn_mV;
             if (error_VinMax < 0) {
-                int64_t delta_VinMax = (GAIN_KI * error_VinMax * 5);
-                if (delta_VinMax < winning_delta) {
+                int64_t delta_VinMax = -(GAIN_KI * error_VinMax * 5);
+                if (!reverseFlowActive || delta_VinMax < winning_delta) {
                     winning_delta = delta_VinMax;
                     winner = LIMIT_V_IN_MAX;
+                    reverseFlowActive = true;
+                }
+            }
+
+            // Forward CV (Output Voltage Max) and Forward CC (Output Current Max) -
+            // both suppressed while a reverse constraint is active (see priority
+            // note above). This isn't just about Forward CV: physically, genuine
+            // reverse flow means currentOut_mA is negative, far from iOutMax_mA, so
+            // Forward CC's delta is naturally large and harmless to suppress here -
+            // but suppressing it explicitly avoids relying on that coincidence, so
+            // a modest/artifactual Forward CC "wish" can never numerically outrank
+            // an active reverse-flow correction via magnitude comparison alone.
+            if (!reverseFlowActive) {
+                int64_t error_Vout = (int64_t)limits->vOutMax_mV - m->voltageOut_mV;
+                int64_t dInput_Vout = (int64_t)m->voltageOut_mV - lastVout;
+                int64_t delta_Vout = (GAIN_KI * error_Vout) - (GAIN_KP * dInput_Vout);
+                if (delta_Vout < winning_delta) {
+                    winning_delta = delta_Vout;
+                    if (limits->mode != MODE_MPPT || delta_Vout <= 0) winner = LIMIT_V_OUT_MAX;
+                }
+
+                int64_t error_IoutMax = (int64_t)limits->iOutMax_mA - m->currentOut_mA;
+                int64_t dInput_Iout = (int64_t)m->currentOut_mA - lastIout;
+                int64_t delta_IoutMax = (GAIN_KI * error_IoutMax) - (GAIN_KP * dInput_Iout);
+                if (delta_IoutMax < winning_delta) {
+                    winning_delta = delta_IoutMax;
+                    if (limits->mode != MODE_MPPT || delta_IoutMax <= 0) winner = LIMIT_I_OUT_MAX;
+                }
+            }
+
+            // Forward UV (Input Voltage Min - Brownout Protection)
+            // If voltageIn has sagged below the floor, pull duty down to
+            // reduce the load on the source and let it recover.
+            int64_t error_VinMin = (int64_t)m->voltageIn_mV - limits->vInMin_mV;
+            if (error_VinMin < 0) {
+                int64_t delta_VinMin = (GAIN_KI * error_VinMin * 5);
+                if (delta_VinMin < winning_delta) {
+                    winning_delta = delta_VinMin;
+                    winner = LIMIT_V_IN_MIN;
                 }
             }
 
@@ -392,7 +447,8 @@ const char* CONTROLLER_GetStateString(void) {
             if (activeSoftLimit == LIMIT_I_OUT_MAX) return "CC";
             if (activeSoftLimit == LIMIT_V_IN_MIN)  return "BROWNOUT";
             if (activeSoftLimit == LIMIT_V_IN_MAX)  return "REV_V";
-            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "REV_I";
+            if (activeSoftLimit == LIMIT_I_IN_MIN)  return "REV_I_IN";
+            if (activeSoftLimit == LIMIT_I_OUT_MIN) return "REV_I_OUT";
             return "MPPT";
         }
         case STATE_FAULT:    return "FAULT";

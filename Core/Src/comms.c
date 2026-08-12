@@ -105,26 +105,34 @@ void COMMS_HandleCommands(void) {
                     SETTINGS_SaveCalibration();
                     printf("ACK:CAL_SAVE_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MAX:", 14) == 0) {
-                    limits->vOutMax_mV = atoi(cmdBuffer + 14);
+                    limits->vOutMax_mV = constrain(atoi(cmdBuffer + 14), 0, HARD_LIMIT_VOUT_MAX_MV);
                     printf("ACK:SET_V_MAX_OK:%ld\n", limits->vOutMax_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_V_MIN:", 14) == 0) {
-                    limits->vInMin_mV = atoi(cmdBuffer + 14);
+                    limits->vInMin_mV = constrain(atoi(cmdBuffer + 14), HARD_LIMIT_VIN_MIN_MV, HARD_LIMIT_VIN_MAX_MV);
                     printf("ACK:SET_V_MIN_OK:%ld\n", limits->vInMin_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_VIN_MAX:", 16) == 0) {
-                    limits->vInMax_mV = atoi(cmdBuffer + 16);
+                    limits->vInMax_mV = constrain(atoi(cmdBuffer + 16), HARD_LIMIT_VIN_MIN_MV, HARD_LIMIT_VIN_MAX_MV);
                     printf("ACK:SET_VIN_MAX_OK:%ld\n", limits->vInMax_mV);
                 } else if (strncmp(cmdBuffer, "CMD:SET_I_MAX:", 14) == 0) {
-                    limits->iOutMax_mA = atoi(cmdBuffer + 14);
+                    limits->iOutMax_mA = constrain(atoi(cmdBuffer + 14), 0, HARD_LIMIT_IOUT_MAX_MA);
                     printf("ACK:SET_I_MAX_OK:%ld\n", limits->iOutMax_mA);
                 } else if (strncmp(cmdBuffer, "CMD:SET_I_MIN:", 14) == 0) {
-                    limits->iOutMin_mA = atoi(cmdBuffer + 14);
+                    limits->iOutMin_mA = constrain(atoi(cmdBuffer + 14), -HARD_LIMIT_IOUT_MAX_MA, HARD_LIMIT_IOUT_MAX_MA);
                     printf("ACK:SET_I_MIN_OK:%ld\n", limits->iOutMin_mA);
+                } else if (strncmp(cmdBuffer, "CMD:SET_I_IN_MIN:", 17) == 0) {
+                    limits->iInMin_mA = constrain(atoi(cmdBuffer + 17), -HARD_LIMIT_IIN_MAX_MA, HARD_LIMIT_IIN_MAX_MA);
+                    printf("ACK:SET_I_IN_MIN_OK:%ld\n", limits->iInMin_mA);
                 } else if (strncmp(cmdBuffer, "CMD:SET_MODE:", 13) == 0) {
-                    limits->mode = (OperationMode_t)atoi(cmdBuffer + 13);
-                    printf("ACK:SET_MODE_OK:%d\n", limits->mode);
+                    int modeVal = atoi(cmdBuffer + 13);
+                    if (modeVal >= MODE_MPPT && modeVal <= MODE_POWER_SUPPLY) {
+                        limits->mode = (OperationMode_t)modeVal;
+                        printf("ACK:SET_MODE_OK:%d\n", limits->mode);
+                    } else {
+                        printf("NACK:SET_MODE_INVALID:%d\n", modeVal);
+                    }
                 } else if (strcmp(cmdBuffer, "CMD:GET_LIMITS") == 0) {
-                    printf("{\"type\":\"limits\",\"mode\":%d,\"Vmax\":%ld,\"Vmin\":%ld,\"VinMax\":%ld,\"Imax\":%ld,\"Imin\":%ld}\n",
-                           limits->mode, limits->vOutMax_mV, limits->vInMin_mV, limits->vInMax_mV, limits->iOutMax_mA, limits->iOutMin_mA);
+                    printf("{\"type\":\"limits\",\"mode\":%d,\"Vmax\":%ld,\"Vmin\":%ld,\"VinMax\":%ld,\"Imax\":%ld,\"Imin\":%ld,\"IinMin\":%ld}\n",
+                           limits->mode, limits->vOutMax_mV, limits->vInMin_mV, limits->vInMax_mV, limits->iOutMax_mA, limits->iOutMin_mA, limits->iInMin_mA);
                 } else if (strcmp(cmdBuffer, "CMD:RESET_FAULT") == 0) {
                     CONTROLLER_ResetFault();
                     printf("ACK:RESET_FAULT_OK\n");

@@ -23,6 +23,7 @@ static DeviceLimits_t limits = {
     .iOutMax_mA = 2000,
     .vInMin_mV = 14000,
     .vInMax_mV = 80000,
+    .iInMin_mA = -500,
     .iOutMin_mA = -500
 };
 static bool isCalibrating = false;

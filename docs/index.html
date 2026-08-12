@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <h1>MPPT Controller Dashboard <span style="font-size: 0.4em; vertical-align: middle; opacity: 0.6;">v1.3</span></h1>
+        <h1>MPPT Controller Dashboard <span style="font-size: 0.4em; vertical-align: middle; opacity: 0.6;">v1.4</span></h1>
         <div style="display: flex; align-items: center;">
             <button id="connectBtn">Connect to Device</button>
             <span id="status" class="disconnected" style="margin-left: 10px;">Disconnected</span>
@@ -84,9 +84,14 @@
                     <button type="button" onclick="sendLimit('SET_I_MAX', 'limit_Imax')">Update</button>
                 </div>
                 <div class="form-group">
-                    <label>Max Reverse Current (A): <span class="info-icon" title="Maximum current allowed to flow back from Output to Input.">ⓘ</span></label>
+                    <label>Max Reverse Current - Output side (A): <span class="info-icon" title="Maximum reverse current allowed as measured at the Output terminal.">ⓘ</span></label>
                     <input type="number" step="0.01" id="limit_Imin" value="0.50">
                     <button type="button" onclick="sendLimit('SET_I_MIN', 'limit_Imin')">Update</button>
+                </div>
+                <div class="form-group">
+                    <label>Max Reverse Current - Input side (A): <span class="info-icon" title="Maximum reverse current allowed as measured at the Input terminal (protects the source/battery being backfed).">ⓘ</span></label>
+                    <input type="number" step="0.01" id="limit_IinMin" value="0.50">
+                    <button type="button" onclick="sendLimit('SET_I_IN_MIN', 'limit_IinMin')">Update</button>
                 </div>
                 <button type="button" id="saveLimitsBtn" class="primary">Save Configuration to EEPROM</button>
             </form>
