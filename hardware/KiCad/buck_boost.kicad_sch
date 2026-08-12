@@ -5597,7 +5597,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:FC-SE2822-150M"
+		(symbol "easyeda2kicad:HCZH-3218-150-M"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -5613,7 +5613,7 @@
 					)
 				)
 			)
-			(property "Value" "FC-SE2822-150M"
+			(property "Value" "HCZH-3218-150-M"
 				(at 0 -5.08 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5623,7 +5623,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:IND-TH_L28.0-W23.0_FC-SE2822"
+			(property "Footprint" "easyeda2kicad:IND-TH_L33.5-W23.0-P12.00_HCZH-3218"
 				(at 0 -7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5634,7 +5634,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C46553544.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C53699952.pdf"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5656,7 +5656,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "FC(方成)"
+			(property "Manufacturer" "YOUCHI(佑驰)"
 				(at 0 -12.7 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5667,7 +5667,7 @@
 					)
 				)
 			)
-			(property "MPN" "FC-SE2822-150M"
+			(property "MPN" "HCZH-3218-150-M"
 				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5678,7 +5678,7 @@
 					)
 				)
 			)
-			(property "LCSC Part" "C46553544"
+			(property "LCSC Part" "C53699952"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5689,11 +5689,11 @@
 					)
 				)
 			)
-			(symbol "FC-SE2822-150M_0_1"
+			(symbol "HCZH-3218-150-M_0_1"
 				(arc
-					(start -4.06 0.01)
-					(mid -3.035 1.02)
-					(end -2.03 -0.01)
+					(start -2.03 -0.01)
+					(mid -3.04 1.02)
+					(end -4.06 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5703,9 +5703,9 @@
 					)
 				)
 				(arc
-					(start -2.03 0.01)
-					(mid -1.005 1.02)
-					(end 0 -0.01)
+					(start 0.00 -0.01)
+					(mid -1.01 1.02)
+					(end -2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5715,9 +5715,9 @@
 					)
 				)
 				(arc
-					(start 0 0.01)
-					(mid 1.025 1.02)
-					(end 2.03 -0.01)
+					(start 4.06 -0.01)
+					(mid 3.05 1.02)
+					(end 2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5727,33 +5727,15 @@
 					)
 				)
 				(arc
-					(start 2.03 0.01)
-					(mid 3.055 1.02)
-					(end 4.06 -0.01)
+					(start 2.03 -0.01)
+					(mid 1.02 1.02)
+					(end 0.00 0.01)
 					(stroke
 						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
-					)
-				)
-				(pin unspecified line
-					(at -5.08 0 0)
-					(length 1.27)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
 					)
 				)
 				(pin unspecified line
@@ -5767,6 +5749,24 @@
 						)
 					)
 					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -10601,7 +10601,7 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:FC-SE2822-150M")
+		(lib_id "easyeda2kicad:HCZH-3218-150-M")
 		(at 144.78 43.18 0)
 		(unit 1)
 		(body_style 1)
@@ -10622,7 +10622,7 @@
 				)
 			)
 		)
-		(property "Value" "FC-SE2822-150M"
+		(property "Value" "HCZH-3218-150-M"
 			(at 144.78 39.37 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10632,7 +10632,7 @@
 				)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:IND-TH_L28.0-W23.0_FC-SE2822"
+		(property "Footprint" "easyeda2kicad:IND-TH_L33.5-W23.0-P12.00_HCZH-3218"
 			(at 144.78 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -10643,7 +10643,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C46553544.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C53699952.pdf"
 			(at 144.78 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -10665,7 +10665,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "FC(方成)"
+		(property "Manufacturer" "YOUCHI(佑驰)"
 			(at 144.78 55.88 0)
 			(hide yes)
 			(show_name no)
@@ -10676,7 +10676,7 @@
 				)
 			)
 		)
-		(property "MPN" "FC-SE2822-150M"
+		(property "MPN" "HCZH-3218-150-M"
 			(at 144.78 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -10687,7 +10687,7 @@
 				)
 			)
 		)
-		(property "LCSC Part" "C46553544"
+		(property "LCSC Part" "C53699952"
 			(at 144.78 60.96 0)
 			(hide yes)
 			(show_name no)

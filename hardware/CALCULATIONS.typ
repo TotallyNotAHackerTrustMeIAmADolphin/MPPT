@@ -49,7 +49,9 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
 - *Switching Frequency*: Fixed at 300kHz.
 - *Inductor* ($L_1$): For 10V out, a standard *33µH or 47µH* inductor (e.g., 6x6mm shielded) is suitable.
 - *UVLO Divider*: To set start at ~12.5V: $R_"UVLO_TOP" = 430 "k"Omega$, $R_"UVLO_BOT" = 47 "k"Omega$ (Both are E24).
-- *Bootstrap Diode*: *US1M* (1000V, 1A Ultrafast, $t_"rr" <= 75"ns"$).
+- *SW-node Freewheeling Diode*: D7, *SS510B* (100V, 5A Schottky, C7420368) between the
+  switch node and GND. (Previously documented here as "US1M" — never actually placed;
+  verified against the schematic's real net connections.)
 
 *Secondary Aux Supply (3.3V Logic) - SY8120:*
 - Uses a "Cascaded Buck" architecture: 10V $arrow.r$ Tiny Sync Buck (SY8120) $arrow.r$ 3.3V.
@@ -203,31 +205,63 @@ budgeting, but well within normal margins; *not* a hard blocker on 200kHz operat
 Output drive current (4.0A) is unchanged and still comfortably swings $Q_g$=76nC in the
 tens-of-ns range required. No datasheet-stated maximum switching frequency applies here.
 
-== Main Inductor (currently L4, FC-SE2822-150M, C46553544)
+== Main Inductor (L4)
 
 Re-deriving @sec-inductor's formula at 200kHz:
 
 $ L_"buck" (200"kHz") = frac(40 times 40, 4.0 times 200000 times 80) = *25.0 µ"H"* $
 
-This *halves* the 100kHz target (50µH → 25µH), which also shifts the "target range" from
-33-47µH down toward roughly *16.5-23.5µH* if the same 20%-ripple-target methodology and
-25A $I_"sat"$ margin are kept.
+This halves the 100kHz target (50µH → 25µH). The originally-placed part, `FC-SE2822-150M`
+(C46553544, verified via datasheet, not the name-convention guess this section originally
+used): *15µH ±20%, Isat 30.5A, rated 30A, DCR 3.5mΩ, 28x23mm THT, \$2.30 / 407 in stock*.
 
-#block(
-  fill: rgb("#e5f3ff"),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
-)[
-  *Ties back to the open L4 question in `STANDARDS.md`.* L4 (`FC-SE2822-150M`) was flagged
-  there because its part-name convention implies ≈15µH, well under the 33-47µH target for
-  *100kHz*. At *200kHz*, that same 15µH is much closer to (if still slightly under) the new
-  ≈16.5-23.5µH target — the frequency change would substantially close that gap rather than
-  widen it. This is *not* confirmation the two were chosen together on purpose; it's a
-  reason to verify the inductance value from the datasheet/markings rather than resolve it
-  by coincidence. $I_"sat"$ still needs independent confirmation against the 20-25A
-  requirement regardless of frequency.
-]
+#table(
+  columns: (1fr, auto, auto),
+  align: (left, center, center),
+  table.header([], [*100kHz (current firmware)*], [*200kHz (planned)*]),
+  [Ripple current $Delta I_L$], [13.3A], [6.67A],
+  [Peak current / $I_"sat"$ margin], [26.7A / 14%], [23.3A / 31%],
+  [Output ripple $Delta V_"out"$ (bank ESR 11.75mΩ)], [*157mV — 57% over the 100mV target*], [78mV ✓],
+  [Conduction loss ($I_"out"^2 times "DCR"$)], [1.40W], [1.40W (freq-independent)],
+)
+
+*L4 only meets the ripple spec at 200kHz — a real, accepted dependency, not a bug.* It
+was deliberately sized on the assumption that the 200kHz switch happens, specifically to
+avoid the "humongous" ~50µH part the 100kHz target would otherwise require. This is not
+something to fix by re-checking values; it's a documented design decision.
+
+*Candidate replacements evaluated* — two rounds. First pass (22-30µH / Isat≥30A,
+filtered to in-stock — 19 of 21 candidates found were out of stock and excluded)
+optimized purely for margin and found `C37634008` (RSEQ32-220M, Ruishen): 22µH, Isat
+90A, DCR 0.9mΩ, \$6.26/26 in stock — 304% Isat margin and 0.36W conduction loss at
+200kHz, a huge improvement. *Rejected after a second look*: this compared candidates
+against each other without ever checking the original part's own price/stock (\$2.30,
+407 in stock) — a 2.7x price and 15x stock gap that makes "maximum margin" the wrong
+optimization target for a prototype build.
+
+Second pass widened the inductance range (15-33µH) and weighed cost/stock properly:
+
+#table(
+  columns: (1fr, auto, auto, auto, auto),
+  align: (left, center, center, center, center),
+  table.header([], [*FC-SE2822-150M (orig.)*], [C54830921], [*HCZH-3218-150-M (chosen)*], [C37634008]),
+  [Manufacturer], [FANGCHENG], [Coilank], [YOUCHI], [Ruishen],
+  [Stock / Price], [407 / \$2.30], [69 / \$2.87], [88 / \$3.86], [26 / \$6.26],
+  [L / Isat / DCR], [15µH / 30.5A / 3.5mΩ], [15µH / 44A / 3.0mΩ], [15µH / 30A / 2.2mΩ], [22µH / 90A / 0.9mΩ],
+  [Package], [THT 28x23mm], [THT 33.5x28mm], [THT 33.5x28mm], [THT 33x31.5mm],
+  [200kHz ripple / Isat margin], [78mV / 31%], [78mV / 89%], [78mV / 29%], [53.4mV / 304%],
+  [200kHz conduction loss], [1.40W], [1.20W], [*0.88W*], [0.36W],
+)
+
+`C54830921` is the best pure value play (+\$0.57 for 89% Isat margin, same ripple).
+`HCZH-3218-150-M` was chosen instead for its lower DCR (0.88W conduction loss, a real
+efficiency win) at a still-modest \$1.56 premium over the original part — a deliberate
+prototype-stage trade-off (moderate cost increase for a meaningful efficiency gain, not
+chasing the maximum-margin `C37634008` pick, which cost 2.7x more for headroom this
+design doesn't need).
+
+*Chosen: `HCZH-3218-150-M`* (YOUCHI, `C53699952`). Applied to `buck_boost.kicad_sch`;
+PCB footprint not yet updated — see `STANDARDS.md`'s L4 note for status.
 
 == Summary
 
@@ -237,6 +271,6 @@ This *halves* the 100kHz target (50µH → 25µH), which also shifts the "target
   table.header([*Item*], [*Verdict at 200kHz*]),
   [MOSFETs (BSC030N08NS5)], [Electrically fine (Vds/Rds(on)/Qg headroom unchanged), but switching loss ≈doubles — thermal design (ROADMAP Phase 3) must land first],
   [Gate driver (IRS21867STRPBF)], [No concern — propagation delay and drive current have ample margin],
-  [Main inductor (L4)], [Required inductance halves to ≈25µH — worth re-deriving the target range and confirming L4's actual value/Isat before committing],
+  [Main inductor (L4)], [Replacement chosen: `HCZH-3218-150-M` (C53699952) — clears ripple target at 200kHz, DCR cut from 3.5mΩ to 2.2mΩ (0.88W conduction loss), for a modest \$1.56 premium over the original part],
   [Bulk caps / TVS / voltage sensing], [Frequency-independent, no re-check needed],
 )
