@@ -407,3 +407,10 @@ FodyWeavers.xsd
 *.sln.iml
 resume.sh
 
+# KiCad generated/session artifacts (not source of truth, regenerate on demand)
+hardware/KiCad/production/
+hardware/KiCad/*.dsn
+hardware/KiCad/*.ses
+hardware/drc_report_*.txt
+*.rar
+
