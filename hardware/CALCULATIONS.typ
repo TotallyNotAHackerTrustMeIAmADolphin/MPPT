@@ -110,12 +110,29 @@ $ "ESR"_"max" = frac(Delta V_"out", Delta I_L) = frac(0.1"V", 4.0"A") = *25 m Om
 - $f_c = frac(1, 2 pi times 4590 times 10 times 10^(-9)) approx 3.47 "kHz"$
 - _Evaluation_: Balanced for high-speed tracking and noise rejection.
 
-= Current Sense (CC6937)
+= Current Sense (CC6937S8-3FB020, U2/U3)
 
-- *Type*: Isolated Hall Effect.
-- *Sensitivity*: Check variant (e.g., 66mV/A for 20A).
-- *Range*: ±20A (Full scale $approx 2.97"V"$ on 3.3V ADC).
-- *VREF*: 100nF bypass to GND required.
+Verified against the CrossChip `CC6937` datasheet (not a name-convention guess).
+
+- *Type*: Isolated Hall Effect, 3750V#sub[RMS] isolation (pins 1-4 to 5-8) — ~47x margin
+  over the 80V bus.
+- *Sensitivity*: *66mV/A* (confirmed from the ordering table for the -3FB020 variant).
+- *Supply*: VCC 3.0-3.3V nominal — the "3" in "3FB" denotes the 3.3V-supply series,
+  matching the system's logic rail exactly.
+- *Range*: ±20A. Zero-current output $V_"OUTQ" approx 1.65"V"$ (VCC/2, confirmed), full
+  scale swings to $approx 0.33$-$2.97"V"$ — centered and within a 3.3V ADC's linear range.
+- *Response time*: 1.5µs (10-90% step) — well under one 200kHz switching period (5µs),
+  adequate for fast overcurrent/backflow trip.
+- *Bandwidth*: 230kHz -3dB, ~150x margin over the ~1.5kHz control loop sample rate. Margin
+  over switching frequency shrinks from 2.3x (100kHz) to 1.15x (200kHz) at full power —
+  not a concern for this design (average sensing + fast-trip response time, not raw
+  bandwidth, govern both use cases here), but worth knowing if the sensor's role ever
+  changes to reconstructing switching-ripple waveforms directly.
+- *Insertion loss*: 0.5mΩ internal conductor resistance — negligible, and the reason this
+  replaced the INA240+shunt approach from v1.1 (per `ROADMAP_V1.3.md`).
+- *Decoupling*: *1nF* VREF-to-GND (matches the datasheet's own `CREF=1nF` test condition;
+  confirmed in the schematic as C10/C26) and a separate *100nF (0.1µF)* VCC bypass
+  (confirmed as C12 near U2). Also 1nF at VOUT per the datasheet's `COUT=1nF` condition.
 
 = 200kHz Migration: Component Re-Check <sec-200khz>
 
