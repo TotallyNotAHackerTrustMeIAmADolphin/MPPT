@@ -36,6 +36,10 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 ## Phase 4: Architectural Optimization & Cost Reduction
 - [x] **SMD Migration**: Transition to **BSC030N08NS5** or keeping **BRCS030N10SHRA** (TO-220) based on board space.
 - [ ] **Unified Dev Header**: Combined Reset, UART, and SWD.
+- [ ] **Switching Frequency: 100kHz -> 200kHz**: Update `TIMER_PERIOD` (`mppt.h`/`MPPT.ioc`).
+      Component re-check done — see `CALCULATIONS.typ` Section 8: MOSFET switching loss
+      roughly doubles (thermal design from this phase must land first/alongside), gate
+      driver has ample margin, main inductor target halves to ~25uH.
 
 ## Phase 5: Verification & Manufacturing
 - [ ] **Full DRC/ERC Audit**: Zero errors in KiCad using `kicad-cli`.

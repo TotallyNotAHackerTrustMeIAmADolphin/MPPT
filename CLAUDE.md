@@ -87,7 +87,7 @@ Web Serial dashboard served at the GitHub Pages link in README.md; talks to the 
 
 ## Hardware (`hardware/`)
 
-KiCad source lives in `hardware/KiCad/`; component rationale and E24/E96 resistor derivations are in `hardware/CALCULATIONS.md`; current component/pinout mapping ("Hardware Universe") and engineering mandates are in `hardware/STANDARDS.md`; phase-by-phase v1.3 hardware plan is in `hardware/ROADMAP_V1.3.md`.
+KiCad source lives in `hardware/KiCad/`; component rationale and E24/E96 resistor derivations are in `hardware/CALCULATIONS.typ` (Typst — compile with `typst compile hardware/CALCULATIONS.typ` or read the source directly); current component/pinout mapping ("Hardware Universe") and engineering mandates are in `hardware/STANDARDS.md`; phase-by-phase v1.3 hardware plan is in `hardware/ROADMAP_V1.3.md`.
 
 - High-power traces (VIN, VOUT, GND, VS_A, VS_B) must be sized for 20A continuous (3.5mm standard width).
 - Prefer the PCM-JLCPCB library for new parts.
