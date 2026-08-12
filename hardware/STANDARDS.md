@@ -94,6 +94,7 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 - **KiCad CLI**: `C:\Program Files\KiCad\10.0\bin\kicad-cli.exe`
 - **Vendored Library**: `hardware\KiCad\libraries\easyeda2kicad\` (16 parts not available via PCM — symbols/footprints/3D models fetched with the `easyeda2kicad` tool, registered in `sym-lib-table`/`fp-lib-table`).
 - **JLCPCB Passives**: install the `CDFER/JLCPCB-Kicad-Library` package per-machine via KiCad's Plugin & Content Manager — not vendored into the repo.
+- **Component swap script**: `hardware/scripts/swap_part.py` — vendors a new LCSC part and swaps it into a schematic (and optionally the PCB), handling the reformatting/UUID/net-preservation details that are easy to get wrong by hand (and have been, repeatedly). Doesn't touch STANDARDS.md/CALCULATIONS.typ or run ERC/DRC — update the docs and open KiCad to check the result yourself, same as always. See the script's own docstring for usage and its current limitations (simple passives/2-terminal parts, legacy `module`-format footprints only).
 
 ## 4. Working with Claude
 
