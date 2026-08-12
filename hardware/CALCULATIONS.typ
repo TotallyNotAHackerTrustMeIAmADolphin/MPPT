@@ -77,12 +77,16 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
   not optional. Datasheet is marked "Preliminary Specification, Rev.0.8" by the
   manufacturer — worth knowing this is pre-release.
 
-  `SY8120B1ABC`: the only local datasheet on file is for `SY8120E1ABC` (different
-  order-code suffix) — LCSC's own listing for the actual C88474 part independently
-  confirms identical specs (4.5-18V in, 2A, 500kHz, SOT-23-6), so it's a valid
-  reference, but not a byte-for-byte match. $V_"FB"$=0.6V confirmed (validates the
-  68kΩ/15kΩ divider math above). Input range 4.5-18V vs. the ~10V it actually sees
-  (fed from SCT2A25's output, not the 80V bus directly) — good margin both directions.
+  `SY8120B1ABC`: verified against the actual `SY8120B1` datasheet (matching LCSC
+  C88474 exactly — the `SY8120E1ABC` datasheet used earlier was a same-family but
+  different order-code stand-in, since superseded). $V_"FB"$=0.6V confirmed
+  (validates the 68kΩ/15kΩ divider math above). Input range 4.5-18V vs. the ~10V it
+  actually sees (fed from SCT2A25's output, not the 80V bus directly) — good margin
+  both directions. Top FET current limit ($I_"LIM,TOP"$) is 2-3.6A, comfortably above
+  L3's 2A Isat — same category of fault-current gap as L2 had, but *not* upgraded:
+  the 3.3V rail only realistically feeds the MCU/logic, nowhere near saturating L3
+  even with headroom for extras, unlike L2's fan-load scenario. Decision, not an
+  oversight.
 
   *Why D7 stays SS510, not consolidated to SS210* (unlike D1-D6, see `STANDARDS.md`):
   SCT2A25's own 4A peak current limit exceeds SS210's 2A continuous rating — under
