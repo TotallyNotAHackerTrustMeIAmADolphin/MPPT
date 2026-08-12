@@ -49,7 +49,7 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
 - *Switching Frequency*: Fixed at 300kHz.
 - *Inductor* ($L_1$): For 10V out, a standard *33µH or 47µH* inductor (e.g., 6x6mm shielded) is suitable.
 - *UVLO Divider*: To set start at ~12.5V: $R_"UVLO_TOP" = 430 "k"Omega$, $R_"UVLO_BOT" = 47 "k"Omega$ (Both are E24).
-- *SW-node Freewheeling Diode*: D7, *SS510B* (100V, 5A Schottky, C7420368) between the
+- *SW-node Freewheeling Diode*: D7, *SS510* (100V, 5A Schottky, C18199171) between the
   switch node and GND. (Previously documented here as "US1M" — never actually placed;
   verified against the schematic's real net connections.)
 
@@ -60,6 +60,64 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
   - Using E24 series: $R_"up" = 68 "k"Omega$, $R_"down" = 15 "k"Omega arrow.r V_"OUT" = 0.6 times (1 + 68/15) = 3.32"V" approx 3.3"V"$
 - *Switching Frequency*: Fixed at 500kHz.
 - *Inductor* ($L$): *4.7µH* (recommended for 3.3V out).
+
+#block(
+  fill: rgb("#e5ffe5"),
+  inset: 10pt,
+  radius: 4pt,
+  width: 100%,
+)[
+  *Aux power chain verified against datasheets.* `SCT2A25STER`: input range 5.5-100V
+  (20V headroom over the 80V bus, comfortable margin below the 12.5V min startup
+  voltage), $V_"FB"$=1.2V±2% confirmed (validates the 110kΩ/15kΩ divider math above),
+  2A continuous/4A peak output vs. an estimated ~150-500mA actual load (gate driver
+  quiescent + switching current + SY8120's input-referred draw) — current isn't the
+  sizing constraint, voltage range is. It's an *asynchronous* buck (only the high-side
+  switch is integrated), which is why D7 (the freewheeling diode above) is required,
+  not optional. Datasheet is marked "Preliminary Specification, Rev.0.8" by the
+  manufacturer — worth knowing this is pre-release.
+
+  `SY8120B1ABC`: the only local datasheet on file is for `SY8120E1ABC` (different
+  order-code suffix) — LCSC's own listing for the actual C88474 part independently
+  confirms identical specs (4.5-18V in, 2A, 500kHz, SOT-23-6), so it's a valid
+  reference, but not a byte-for-byte match. $V_"FB"$=0.6V confirmed (validates the
+  68kΩ/15kΩ divider math above). Input range 4.5-18V vs. the ~10V it actually sees
+  (fed from SCT2A25's output, not the 80V bus directly) — good margin both directions.
+
+  *Why D7 stays SS510, not consolidated to SS210* (unlike D1-D6, see `STANDARDS.md`):
+  SCT2A25's own 4A peak current limit exceeds SS210's 2A continuous rating — under
+  fault/inrush/heavy-transient conditions the diode could see close to that 4A, which
+  would overstress SS210 but not SS510 (5A rated). D1-D6 avoided this problem because
+  their worst-case stress is nanosecond-scale gate-charge pulses, not sustained fault
+  current a diode has to survive thermally.
+]
+
+= Gate Driver / MOSFET Drive Synergy (IRS21867STRPBF, R36-R39, R9/R10/R17/R18)
+
+Verified against the Infineon `IRS21867S` datasheet (full electrical table, not just
+the summary timing specs already checked in @sec-200khz).
+
+- *Supply range*: 6.8-20V vs. the 10V design point — comfortably mid-range, not a
+  marginal operating point, so the propagation-delay specs (characterized at 15V)
+  should hold closely at 10V too.
+- *Driver output current*: $I_"O+"$ (source) 5.34-6.66A, $I_"O-"$ (sink) 4.90-6.10A
+  typ/max — higher than the "4.0A typ" headline spec. With 10V drive through the
+  2.2Ω gate resistor (R36-R39), resistor-limited peak current is
+  $10"V"/2.2Omega approx 4.55"A"$ — *below* the driver's ~5.5-6A capability, meaning
+  the resistor is deliberately the dominant current limiter (predictable dV/dt/EMI),
+  not the driver's raw max rating.
+- *Switching speed*: gate charge time ≈20-25ns (76nC max $Q_g$, current tapering from
+  ~4.55A toward ~2.45A through the Miller plateau at $V_"plateau" approx 4.6"V"$).
+  Combined with the driver's 170-250ns propagation delay, total turn-on latency
+  ≈200-275ns — about 4-5.5% of the 5000ns period at 200kHz, comfortable margin for
+  dead-time budgeting.
+- *100kΩ gate pulldown* (R9/R10/R17/R18): the driver's own UVLO drives HO/LO low when
+  VCC/VBS is present-but-insufficient, but can't do anything with zero power (e.g.
+  before the 10V rail comes up during power-on sequencing) — that's the specific gap
+  this resistor covers. Negligible power draw during normal operation (100µA @ 10V);
+  not intended for Miller-transient immunity during real switching (the driver's
+  actively-low output handles that), just a defined off-state before the driver is
+  powered. Sane, standard value for that job.
 
 = Transient Voltage Suppression (TVS) Strategy
 

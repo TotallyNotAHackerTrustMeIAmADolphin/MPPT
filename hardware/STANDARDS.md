@@ -38,7 +38,7 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 | D9 | **H3V3L06B** | 3.3V Logic protection | C20615778 |
 | D1/D4 | **SS210** | Gate Driver Bootstrap Diode | C14996 |
 | D2/D3/D5/D6 | **SS210** | Gate Discharge Diode | C14996 |
-| D7 | **SS510** | Aux Buck (SCT2A25) Catch Diode | C7420368 |
+| D7 | **SS510** | Aux Buck (SCT2A25) Catch Diode | C18199171 |
 | GPIO1/SPI-I2C1 | **2541WV-08P** | 8-pin Header (GPIO/SPI/I2C) | C5383116 |
 | ST_LINK1/UART1 | **B4B-XH-A** | 4-pin JST-XH (ST-Link/UART) | C144395 |
 | NTC1 | **PZ254V-11-02P** | 2-pin Header (NTC) | C492401 |
