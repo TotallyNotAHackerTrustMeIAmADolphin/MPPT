@@ -29,7 +29,7 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 | U4 | **SCT2A25STER** | 10V Primary Aux Buck | C5124114 |
 | U5 | **SY8120B1ABC** | 3.3V Logic Buck | C88474 |
 | L4 | **HCZH-3218-150-M** | Buck-Boost Stage Inductor | C53699952 |
-| L2 | **APS0650M470A** | Aux Supply Inductor | C47327224 |
+| L2 | **GXDR1207-470MT** | Aux Supply Inductor (SCT2A25/10V) | C52196367 |
 | L3 | **FTC201610S4R7MBCA** | Aux Supply Inductor | C5832346 |
 | C15-C18,C20-C23 | **LKML2502A331MF** | 330uF Bulk Electrolytic Cap | C443153 |
 | C_IN1/C_IN2 | **TCC1210X7R225K101MT** | Input Filter Cap | C5449052 |
@@ -64,6 +64,13 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 > (`RSEQ32-220M`/`C37634008`, $6.26, 22uH, 304% Isat margin, 0.36W conduction loss) was
 > evaluated and rejected as solving for more margin than the design needs, at a stock
 > and price cost that didn't justify it for a prototype build.
+
+> **L2 changed from `APS0650M470A` to `GXDR1207-470MT`** (FAUKU, LCSC `C52196367`,
+> $0.207, 11735 in stock) — applied to both `power.kicad_sch` and the PCB. Same 47uH,
+> but Isat goes from 2.62A to 4.0A, now matching `SCT2A25STER`'s own 4A peak current
+> limit instead of saturating well below it, and DCR drops from 227mOhm to 90mOhm.
+> Driven by a hypothetical heavier load (e.g. a fan) beyond the gate-driver/logic load
+> the rail was originally sized for. Package grew from 7.7x6.6mm to 12.5x12.5mm SMD.
 
 > **Why SS210 for both D1/D4 (bootstrap) and D2/D3/D5/D6 (gate discharge)**: D2/D3/D5/D6
 > only ever see the ~10V gate-drive swing, so SS210's 100V/2A rating is more margin than

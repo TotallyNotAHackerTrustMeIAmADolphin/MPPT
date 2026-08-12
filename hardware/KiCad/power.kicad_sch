@@ -4996,7 +4996,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:APS0650M470A"
+		(symbol "easyeda2kicad:GXDR1207-470MT"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -5012,7 +5012,7 @@
 					)
 				)
 			)
-			(property "Value" "APS0650M470A"
+			(property "Value" "GXDR1207-470MT"
 				(at 0 -5.08 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5022,7 +5022,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
+			(property "Footprint" "easyeda2kicad:IND-SMD_L12.5-W12.5-1"
 				(at 0 -7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5033,7 +5033,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C52196367.pdf"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5055,7 +5055,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "Coilank(驰兴电感)"
+			(property "Manufacturer" "FAUKU(高芯电子)"
 				(at 0 -12.7 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5066,7 +5066,7 @@
 					)
 				)
 			)
-			(property "MPN" "APS0650M470A"
+			(property "MPN" "GXDR1207-470MT"
 				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5077,7 +5077,7 @@
 					)
 				)
 			)
-			(property "LCSC Part" "C47327224"
+			(property "LCSC Part" "C52196367"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5088,11 +5088,11 @@
 					)
 				)
 			)
-			(symbol "APS0650M470A_0_1"
+			(symbol "GXDR1207-470MT_0_1"
 				(arc
-					(start -4.06 0.01)
-					(mid -3.035 1.0102)
-					(end -2.03 -0.01)
+					(start -2.03 -0.01)
+					(mid -3.04 1.02)
+					(end -4.06 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5102,9 +5102,9 @@
 					)
 				)
 				(arc
-					(start -2.03 0.01)
-					(mid -1.005 1.0102)
-					(end 0 -0.01)
+					(start 0.00 -0.01)
+					(mid -1.01 1.02)
+					(end -2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5114,9 +5114,9 @@
 					)
 				)
 				(arc
-					(start 0 0.01)
-					(mid 1.0249 1.0101)
-					(end 2.03 -0.01)
+					(start 4.06 -0.01)
+					(mid 3.05 1.02)
+					(end 2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5126,33 +5126,15 @@
 					)
 				)
 				(arc
-					(start 2.03 0.01)
-					(mid 3.0549 1.0101)
-					(end 4.06 -0.01)
+					(start 2.03 -0.01)
+					(mid 1.02 1.02)
+					(end 0.00 0.01)
 					(stroke
 						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
-					)
-				)
-				(pin unspecified line
-					(at -5.08 0 0)
-					(length 1.27)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
 					)
 				)
 				(pin unspecified line
@@ -5166,6 +5148,24 @@
 						)
 					)
 					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -8992,7 +8992,7 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:APS0650M470A")
+		(lib_id "easyeda2kicad:GXDR1207-470MT")
 		(at 119.38 66.04 0)
 		(unit 1)
 		(body_style 1)
@@ -9023,7 +9023,7 @@
 				)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
+		(property "Footprint" "easyeda2kicad:IND-SMD_L12.5-W12.5-1"
 			(at 119.38 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -9034,7 +9034,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C52196367.pdf"
 			(at 119.38 76.2 0)
 			(hide yes)
 			(show_name no)
@@ -9056,7 +9056,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "Coilank(驰兴电感)"
+		(property "Manufacturer" "FAUKU(高芯电子)"
 			(at 119.38 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -9067,7 +9067,7 @@
 				)
 			)
 		)
-		(property "MPN" "APS0650M470A"
+		(property "MPN" "GXDR1207-470MT"
 			(at 119.38 81.28 0)
 			(hide yes)
 			(show_name no)
@@ -9078,7 +9078,7 @@
 				)
 			)
 		)
-		(property "LCSC Part" "C47327224"
+		(property "LCSC Part" "C52196367"
 			(at 119.38 83.82 0)
 			(hide yes)
 			(show_name no)

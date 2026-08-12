@@ -90,6 +90,14 @@ Replaces the unstable 12V XL7005A with a robust 100V-rated step-down (SCT2A25).
   would overstress SS210 but not SS510 (5A rated). D1-D6 avoided this problem because
   their worst-case stress is nanosecond-scale gate-charge pulses, not sustained fault
   current a diode has to survive thermally.
+
+  *L2 changed for the same reason D7 stays SS510*: the original `APS0650M470A`
+  (47µH, Isat 2.62A, DCR 227mΩ) saturates well below SCT2A25's 4A peak limit — fine
+  for the ~150-500mA baseline load, not fine if a heavier load (e.g. a fan) gets added
+  to the 10V rail. Replaced with `GXDR1207-470MT` (FAUKU, C52196367, \$0.207, 11735 in
+  stock): same 47µH, Isat 4.0A (now matching the IC's own peak limit exactly instead of
+  saturating below it), DCR 90mΩ (vs. 227mΩ — meaningfully lower conduction loss
+  regardless of actual load). Package grew from 7.7×6.6mm to 12.5×12.5mm SMD.
 ]
 
 = Gate Driver / MOSFET Drive Synergy (IRS21867STRPBF, R36-R39, R9/R10/R17/R18)
