@@ -4,141 +4,92 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Embedded firmware (C, STM32Cube HAL) for **openMPPT**, a solar MPPT charge controller built on an
-**STM32F072RBT6** (ARM Cortex-M0 @ 48MHz, no FPU). Topology is a 4-switch synchronous non-inverting
-buck-boost converter that can also run as a bidirectional e-bike motor controller or a bench CV/CC
-power supply, selectable at runtime via `DeviceLimits_t.mode`. The board is headless — it boots and
-regulates without a serial connection; USB-CDC is used only for telemetry/config, and an integrated
-Nokia 5110 (PCD8544) LCD provides on-device readout.
+Firmware for **openMPPT**, a solar MPPT (Maximum Power Point Tracking) charge controller built around an **STM32F072RBT6** (ARM Cortex-M0 @ 48MHz, no FPU) using the **STM32Cube HAL** framework and **PlatformIO**. The board is a 4-switch synchronous non-inverting buck-boost converter that also supports bidirectional (e-bike motor) and bench power-supply (CV/CC) modes, with a Nokia 5110 LCD for local telemetry and a USB-CDC JSON serial protocol for remote telemetry/control. The repo also contains the KiCad hardware design (`hardware/`) and a Web Serial dashboard (`docs/`).
 
-There is also a `docs/` static web dashboard (Web Serial API) that talks to the firmware over USB-CDC,
-and a set of Python scripts under `scripts/` for calibration, tuning, and diagnostics.
-
-## Build, Test, Upload
-
-Build system is **PlatformIO**, driven by `platformio.ini` plus the custom `openmppt` board definition
-in `boards/openmppt.json`.
+## Build, Test, and Run Commands
 
 ```bash
-# Build firmware for the target (env:openmppt)
+# Build firmware for the real board
 pio run
 
-# Upload via Black Magic Probe (default upload_protocol; no NRST pin needed)
+# Upload (DFU by default; Black Magic Probe available via platformio.ini)
 pio run -t upload
 
 # Serial monitor (115200 baud)
 pio device monitor -b 115200
 
-# Run native unit tests (env:native, runs on host, not the MCU)
+# Run native unit tests (host-compiled, no hardware needed)
 pio test -e native
+
+# Run a single native test file (Unity test runner, filters by test case name substring)
+pio test -e native -f test_mppt --filter test_mppt_increase_power
 ```
 
-Notes on the build:
-- `env:openmppt` uses `framework = stm32cube` and a `pre:` extra script,
-  `scripts/setup_cubemx_env_auto.py`, which parses the Eclipse/CubeIDE `.project`/`.cproject` files to
-  derive source/include dirs and MCU compiler flags, and also scrapes `TIM1.Period=` out of `MPPT.ioc`
-  at build time to inject `-DTIMER_PERIOD=<n>`. If you change the PWM period in CubeMX/`MPPT.ioc`, no
-  manual firmware constant needs updating — it's picked up automatically. `lib/STLinkedResources/` is a
-  symlinked HAL/USB source tree managed by this script.
-- Global `build_flags` are `-Werror -Wall` for every environment — treat any new warning as a build
-  failure.
-- `env:native` builds `Core/Src/mppt.c` only (`build_src_filter = +<Core/Src/mppt.c> -<Core/Src/main.c>`)
-  against `test/test_mppt`, with hand-written mocks for `POWER_PWM_*`. It compiles the algorithm's `.c`
-  file directly into the test binary (`#include "../../Core/Src/mppt.c"`) rather than linking — the
-  fixed-point MPPT/IncCond math is the part of this codebase most amenable to fast host-side testing.
-  `test/test_controller` and `test/test_ebike` also exist with their own `SENSORS_/SETTINGS_` mocks but
-  are not included by the current `build_src_filter`; wire up a matching filter (or per-test
-  `test_build_src_filter`) before relying on `pio test -e native` to run them.
-- Per `GEMINI.md`'s branching policy, `main` must always compile cleanly (`-Werror`) and pass
-  `pio test -e native` before merging; feature work belongs on `feature/<name>` or `fix/<name>` branches.
+- The `native` PlatformIO environment compiles `Core/Src/mppt.c` (and `controller.c` via test includes) directly against Unity, with hand-written mocks for HAL/sensors/power/comms — see `test/test_controller/test_controller.c` and `test/test_mppt/test_mppt.c` for the mocking pattern used when adding new tests.
+- `-Werror -Wall` is set globally in `platformio.ini`; the firmware must compile warning-free.
+- `TIMER_PERIOD` and other PWM constants are auto-extracted from `MPPT.ioc` at build time by `scripts/pre:setup_cubemx_env_auto.py` — don't hardcode them separately.
+
+### Diagnostic / tuning scripts (Python, `pyserial`)
+
+```bash
+pip install pyserial
+
+python scripts/mppt_tool.py --monitor          # live telemetry -> mppt_log.csv, interactive command prompt
+python scripts/mppt_tool.py --watch            # watchdog; auto-saves fault_dump_XXX.json on fault
+python scripts/mppt_tool.py --cmd "CMD:RESET_FAULT"
+python scripts/tune_mppt.py --port /dev/ttyACM0  # hybrid (random search + local fine-tune) MPPT parameter tuning
+```
 
 ## Architecture
 
-### Control flow (`Core/Src/main.c`)
-`main()` does one-time init (`SETTINGS_Init` → `SENSORS_Init` → `POWER_Init` → `CONTROLLER_Init` →
-`COMMS_Init`, LCD init) then runs a superloop:
-1. `COMMS_HandleCommands()` — drain and dispatch any pending USB-CDC command each iteration.
-2. When the ADC ping-pong buffer half is ready (`SENSORS_IsBufferReady()`): `SENSORS_Process()` then
-   `CONTROLLER_UpdateHighRate()` — this is the high-rate (~1.5 kHz) safety + regulation path.
-3. `CONTROLLER_Task()` — lower-rate housekeeping: 10 Hz telemetry, fault LED blink codes, sweep
-   stepping/scheduling.
-4. A 10 Hz, non-blocking LCD redraw of Vin/Vout/Pout/state.
+### Control flow / module layering
 
-IWDG is refreshed once per loop; anything that blocks the superloop for >~1s will reset the board.
+`main.c` runs a superloop: ADC sampling → `sensors.c` (raw ADC → physical units via ping-pong DMA buffers) → `controller.c` (state machine) → `mppt.c` / `power.c` (duty cycle decision) → PWM output, plus a decoupled 10Hz LCD refresh and 100ms telemetry emit. Everything is fixed-point integer math (see below) — there is no RTOS; timing separation between the ~1.5kHz control loop and low-rate UI/telemetry is done by interval counters in the main loop, not preemption.
 
-### Unified Min-Selector control (`Core/Src/controller.c`)
-The regulator is **not** a set of discrete state-specific PID loops. Every control objective that could
-be active at once — MPPT tracking, output CV (`vOutMax_mV`), output CC (`iOutMax_mA`), reverse/backflow
-CC floor (`iOutMin_mA`), input CV ceiling for regen (`vInMax_mV`) — independently computes its own
-desired duty-cycle delta each tick in `CONTROLLER_UpdateHighRate()`. The **minimum** delta wins
-(min-selector), and whichever objective won is recorded as `activeSoftLimit` for telemetry/UI (`CV`,
-`CC`, `REVERSE`, `VIN_LIM`, `BROWNOUT`, or plain `MPPT`). The winning delta is accumulated into a 64-bit
-fixed-point integrator (`globalDutyIntegral`, ticks × 1000) — this is the "Velocity PI" scheme described
-in `docs/tuning_guide.md`: it eliminates double-integration windup/instability that a naive per-mode PID
-would have when switching modes. `GAIN_KP`/`GAIN_KI` in `controller.c` are the tuned gains; see
-`docs/tuning_guide.md` for their meaning and lab-bench tuning procedure.
+- **`controller.c`** — the unified state machine (`SystemState_t`: IDLE → SWEEPING → ACTIVE → FAULT → RECOVERY) and safety/limit logic. Uses a single "min-selector" architecture: one control loop simultaneously enforces `SoftLimit_t` (V_OUT_MAX, I_OUT_MAX, V_IN_MIN, V_IN_MAX, I_OUT_MIN/backflow) rather than separate mode-specific loops, so CV/CC/MPPT/reverse-flow all fall out of the same code path.
+- **`mppt.c`** — the perturb-and-observe / incremental-conductance tracking algorithms and the global sweep. Algorithm choice is compile-time via `ACTIVE_MPPT_ALGO` in `Core/Inc/mppt.h` (`MPPT_ALGO_INC_COND` default, or `MPPT_ALGO_P_AND_O`).
+- **`power.c`** — velocity-form PI regulation (not positional PI — avoids double-integration windup) and PWM/dithering management. Also computes pre-charge/voltage-match duty (`POWER_CalculateVoltageMatchDuty`) so the converter starts near equilibrium duty before closing the loop, preventing backflow-fault-on-startup.
+- **`sensors.c`** — ADC ping-pong DMA processing, 6 channels (Vin, Vout, Iin, Iout, MOSFET temp, MCU temp).
+- **`eeprom.c`** — ST EEPROM-emulation Flash storage for calibration/limits, guarded by a signature check (`0xABCD`) for safe defaults on first flash. PWM must be disabled (`POWER_PWM_Set(0)`) before any Flash write.
+- **`comms.c`** — USB-CDC JSON telemetry + `CMD:...` command parsing (calibration `CMD:CAL_...`, tuning `CMD:TUNE_...`, etc.).
+- **`settings.c`** — runtime limits/calibration accessors backing the above (`SETTINGS_GetLimits`, `SETTINGS_IsCalibrating`, ...).
+- **`system_types.h`** / **`system_config.h`** — shared structs (`Measurements_t`, `DeviceLimits_t`, `PID_t`, `Calibration_t`) and system-wide tunables (timing intervals, hardware safety limits, hysteresis). Read these first when touching control logic — they're the shared vocabulary across every module above.
 
-State machine (`SystemState_t`): `IDLE → SWEEPING → ACTIVE ⇄ FAULT/RECOVERY`. `SWEEPING` (MPPT mode
-only) runs a slow global sweep (`MPPT_RunSweep`, ~15s) to find a good starting point before handing off
-to `ACTIVE`. Hard hardware faults (over-voltage/current, backflow, over-temp) are detected in
-`CONTROLLER_UpdateHighRate()` against constants in `system_config.h`; some trip in a single frame
-(input/output OV, input UV, backflow), others need `FAULT_THRESHOLD_FRAMES` consecutive frames to avoid
-noise trips. `handleFaultBlink()` encodes the fault reason as an LED blink count (see fault codes in
-`GEMINI.md`).
+### Fixed-point math convention (STM32F0 has no FPU)
 
-### MPPT algorithms (`Core/Src/mppt.c`, `Core/Inc/mppt.h`)
-Two interchangeable algorithms, selected at compile time via `ACTIVE_MPPT_ALGO` in `mppt.h`
-(`MPPT_ALGO_INC_COND` is the current default, `MPPT_ALGO_P_AND_O` the classic alternative). Both return
-a duty-cycle **delta** (not an absolute value) that feeds into the min-selector. Step size, power
-threshold, and tracking interval are runtime-tunable (`MPPT_SetStepSize`/`SetThreshold`/`SetInterval`)
-via the serial `CMD:TUNE_*` protocol, which is what `scripts/tune_mppt.py` drives.
+- **Never use `float`/`double`.** All quantities are integers with a unit suffix baked into the variable name: `_mV`, `_mA`, `_uW`/`_mW` (power; 64-bit for microwatts), `_ticks` (PWM). Always multiply before dividing in scaling logic to preserve precision.
+- MPPT math cross-multiplies to avoid division (e.g. `dI * V` vs `-I * dV`) and explicitly handles the sign of `dV` in incremental-conductance code.
 
-### Fixed-point math discipline
-This MCU has no FPU — **never use `float`/`double`**. All physical quantities are scaled integers:
-millivolts (`_mV`), milliamps (`_mA`), microwatts (`_uW`, 64-bit), and raw dithered PWM ticks (`_ticks`).
-Always multiply before dividing to preserve precision. When deriving MPPT deltas, cross-multiply
-(`dI·V` vs `-I·dV`) instead of dividing, and keep sign handling for negative `dV` explicit.
+### PWM / sensing hardware details
 
-### PWM / power stage (`Core/Src/power.c`, `Core/Src/tim.c`)
-100 kHz PWM on TIM1 with a 3-bit dither table (`DITHER_TABLE_SIZE = 8`) driven by DMA, raising effective
-resolution from `TIMER_PERIOD` steps to `TIMER_PERIOD * 8` ticks. `POWER_CalculateVoltageMatchDuty()`
-pre-charges the duty cycle to the Vin/Vout equilibrium point before the power stage is enabled
-(`POWER_Start()`), avoiding a backflow fault on startup/state-entry. `POWER_PWM_Set(0)` (full shutdown)
-must precede any EEPROM/Flash write — see `SETTINGS_Save*`/`eeprom.c`.
+- 100kHz PWM via TIM1, with a 3-bit dither table (8 cycles) raising effective resolution from 240 to 1920 steps; DMA auto-updates duty per dither cycle.
+- ADC uses circular DMA with double buffering (ping-pong) across 6 channels — CPU processes one half while DMA fills the other.
+- Nokia 5110 (PCD8544) LCD on SPI1: CLK=PB3, DIN=PB5, DC=PB13, CE=PB14, RST=PB12. Non-blocking 10Hz refresh, isolated from the control loop.
+- Onboard LED (PC10) is the diagnostic heartbeat (slow blink = STATE_ACTIVE) and fault code indicator (N pulses + 1s pause; 1=Input OV, 2=Input UV, 3=Input OC, 4=Output OV, 5=Output OC, 6=Backflow, 7=Overtemp) — see `FaultReason_t` in `system_types.h`.
 
-### Sensing (`Core/Src/adc.c`, `Core/Src/sensors.c`)
-Circular DMA continuously samples 6 channels (Vin, Vout, Iin, Iout, MOSFET temp, MCU temp) into a
-ping-pong buffer (`ADC_BUF_LEN = ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT`). `SENSORS_IsBufferReady()`
-returns which half just filled; `main.c` computes the correct offset and calls `SENSORS_Process()` on
-that half while DMA fills the other — never touch the "hot" half from the main loop.
+### Hardware safety limits (do not relax without hardware justification)
 
-### Settings / calibration / EEPROM (`Core/Src/settings.c`, `Core/Src/eeprom.c`)
-`DeviceLimits_t` (mode + soft limits) and `Calibration_t` (ADC raw↔real linear cal points per channel)
-are persisted via ST's EEPROM-emulation-over-Flash layer, guarded by a `0xABCD` signature so first-flash
-boots fall back to safe defaults. `STM32F072RBTX_FLASH.ld` is modified to reserve the last 4KB for this.
-Calibration is interactive over serial (`CMD:CAL_ENTER/CAL_MODE_I|V/CAL_I_LOW|HIGH/CAL_V_LOW|HIGH/
-CAL_SAVE/CAL_EXIT`), driving one high-side switch at a time while the host script reads raw ADC sums.
+`Core/Inc/system_config.h`: Vin 80V max / 12.5V min, Vout 80V max, Iin/Iout 20A max, MCU temp 85°C max.
 
-### Serial protocol (`Core/Src/comms.c`)
-Command line protocol over USB-CDC, newline-terminated, `CMD:<NAME>[:<arg>]` in, `ACK:<NAME>_OK[:<val>]`
-or a JSON object out. Telemetry (`{"type":"telemetry",...}`) is pushed at 10 Hz from `CONTROLLER_Task()`;
-`{"type":"limits",...}` and `{"type":"cal_raw",...}` are query/calibration responses. If you add a new
-`CMD:`, add the matching branch in `COMMS_HandleCommands()` and, if it's a persistent setting, wire it
-into `SETTINGS_Save*`. The web dashboard (`docs/app.js`) and `scripts/mppt_tool.py`/`tune_mppt.py` are
-both clients of this same protocol — keep it a stable, machine-readable contract when changing it.
+## Git Workflow (Stable-Main, PR-based)
 
-### Display (`Core/Src/lcd_pcd8544.c`)
-Nokia 5110 over SPI1, wired per the pin table in `GEMINI.md` (CLK=PB3, DIN=PB5, DC=PB13, CE=PB14,
-RST=PB12). Redraws happen from the main loop's non-blocking 10 Hz task — keep any LCD-touching code off
-the high-rate control path.
+1. `main` must always compile cleanly (`-Werror`) and represent a hardware-safe, tested state — never commit broken/experimental code directly to `main`, and never push or merge directly to `main`.
+2. New features/fixes go on `feature/<name>` or `fix/<name>` branches, pushed to `origin`, and merged into `main` only via a Pull Request.
+3. Every PR must compile clean for the `openmppt` target and pass `pio test -e native` before it's mergeable; note what was tested (native suite, hardware bench, simulation) in the PR description.
+4. **The user must confirm hardware verification (or explicit simulation sign-off) before a PR touching control/safety logic is merged** — do not merge on your own judgment alone, even if CI is green.
+5. Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`) for individual commits; explain *why* in the message, especially for hardware timing constants or magic numbers. Keep unrelated concerns (e.g. tooling cleanup vs. firmware logic) as separate commits within the PR so history stays reviewable.
+6. Squash-merge once approved and checks pass (keeps `main` linear); delete the feature branch after merge.
+7. Handle hardware revisions via `platformio.ini` build environments or `#define` macros, not long-lived per-revision branches.
 
-## Conventions
+## Dashboard (`docs/`)
 
-- **Naming**: always suffix variables with their unit (`currentIn_mA`, `voltageOut_mV`,
-  `powerOut_uW`, `dutyCycle_ticks`).
-- **No floats.** Integer/fixed-point only, multiply-before-divide.
-- **Safety ordering**: disable the power stage (`POWER_PWM_Set(0)`) before any Flash/EEPROM write.
-- **Dashboard versioning**: bump the version string in the `<h1>` of `docs/index.html` whenever any file
-  under `docs/` changes.
-- Conventional Commits (`feat:`, `fix:`, `refactor:`, `docs:`) with commit messages explaining *why*,
-  especially for hardware timing constants or other "magic numbers."
+Web Serial dashboard served at the GitHub Pages link in README.md; talks to the board via USB CDC JSON telemetry. **Always bump the version number in the `<h1>` tag of `docs/index.html` when changing any file under `docs/`.**
+
+## Hardware (`hardware/`)
+
+KiCad source lives in `hardware/KiCad/`; component rationale and E24/E96 resistor derivations are in `hardware/CALCULATIONS.md`; current component/pinout mapping ("Hardware Universe") and engineering mandates are in `hardware/STANDARDS.md`; phase-by-phase v1.3 hardware plan is in `hardware/ROADMAP_V1.3.md`.
+
+- High-power traces (VIN, VOUT, GND, VS_A, VS_B) must be sized for 20A continuous (3.5mm standard width).
+- Prefer the PCM-JLCPCB library for new parts.
+- Any new component mapping or pinout must be added to the "Hardware Universe" table in `hardware/STANDARDS.md` immediately.
+- No hardware changes merge to `main` without a clean DRC/ERC report (`kicad-cli`, path noted in `hardware/STANDARDS.md`).
