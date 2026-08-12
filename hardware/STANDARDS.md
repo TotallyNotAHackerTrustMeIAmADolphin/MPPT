@@ -36,3 +36,29 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 ## 3. Tooling
 - **KiCad CLI**: `C:\Program Files\KiCad\10.0\bin\kicad-cli.exe`
 - **Library Path**: `hardware\KiCad\libraries\jlcpcb\`
+
+## 4. Working with Claude
+
+Claude reads/edits the KiCad project as plain text (`.kicad_sch`/`.kicad_pcb` are S-expression
+files) and runs `kicad-cli` for DRC/ERC — it cannot open KiCad's GUI or judge layout/routing
+visually without a screenshot. Workflow:
+
+- **Visual review**: paste a screenshot of a schematic sheet, PCB layout, or 3D view. Claude
+  cross-checks what's visible against this Hardware Universe table and `CALCULATIONS.md`, and
+  reads the underlying `.kicad_sch`/`.kicad_pcb` for anything a screenshot can't show precisely
+  (exact net names, trace widths, footprint bindings).
+- **Anti-staleness check**: before a hardware PR, or on request, Claude greps every reference
+  designator in the Hardware Universe table against the actual KiCad files and reports any drift
+  in footprint/value/net, rather than trusting the table from memory. Keep this table limited to
+  what's genuinely hard to derive from the files (rationale, "why this part") — the KiCad project
+  itself is the source of truth for raw pin/footprint data.
+- **Part selection & calculations**: for new components, Claude checks datasheet specs against
+  the operating envelope (MOSFET Vds/Rds(on)/Qg vs. 100kHz switching losses, inductor Isat/DCR vs.
+  the 20A continuous rating, TVS clamping voltage vs. the 80V rail margin, sensor bandwidth vs. the
+  ~1.5kHz control loop), checks LCSC/JLCPCB stock/package availability, and documents the
+  derivation in `CALCULATIONS.md` — not just the final part number.
+- **DRC/ERC enforcement**: Claude runs `kicad-cli` DRC/ERC on request or before a hardware PR and
+  reports violations, so the "no merge without a clean report" mandate above is actually checked.
+- **Change mechanics**: hardware edits (this file, `CALCULATIONS.md`, KiCad files) go through a
+  `hardware/<name>` branch and PR, per `CLAUDE.md` — never committed straight to `main`. Example:
+  `hardware/fix-resistor-values`.
