@@ -1514,221 +1514,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "ProPrj_STM-easyedapro:19-213/Y2C-CQ2R2L/3T(CY)"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "LED"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "ProPrj_STM-easyedapro:LED0603-RD-YELLOW"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Manufacturer Part" "19-213/Y2C-CQ2R2L/3T(CY)"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Manufacturer" "EVERLIGHT(亿光)"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Supplier Part" "C72038"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Supplier" "LCSC"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "19-213/Y2C-CQ2R2L/3T(CY)_1_0"
-				(polyline
-					(pts
-						(xy -2.286 3.81) (xy -1.27 3.302) (xy -1.27 3.302) (xy -1.778 2.794) (xy -1.778 2.794) (xy -2.286 3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.27 4.826) (xy -0.254 4.318) (xy -0.254 4.318) (xy -0.762 3.81) (xy -0.762 3.81) (xy -1.27 4.826)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.27 1.524) (xy -1.27 -1.524)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.508 2.032) (xy -2.286 3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.508 3.048) (xy -1.27 4.826)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -1.524) (xy -1.27 0) (xy -1.27 0) (xy 1.27 1.524) (xy 1.27 1.524) (xy 1.27 -1.524)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin input line
-					(at -5.08 0 0)
-					(length 3.81)
-					(name "C"
-						(effects
-							(font
-								(size 0.0254 0.0254)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 0.0254 0.0254)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "A"
-						(effects
-							(font
-								(size 0.0254 0.0254)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 0.0254 0.0254)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "ProPrj_STM-easyedapro:3V3"
 			(power global)
 			(pin_numbers
@@ -5372,7 +5157,7 @@
 			(uuid "035a08b1-a577-4ee2-b5d1-4d04387dd917")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDDIO2")
 					(unit 1)
@@ -5451,7 +5236,7 @@
 			(uuid "faedfbcf-23f3-4339-8314-3ffb70b0ae6f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR04")
 					(unit 1)
@@ -5530,7 +5315,7 @@
 			(uuid "3245c200-9917-428e-8be4-f9c1543f7abf")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR048")
 					(unit 1)
@@ -5765,7 +5550,7 @@
 			(uuid "def7003e-6977-4669-9b38-15d61349a548")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDD4")
 					(unit 1)
@@ -6032,7 +5817,7 @@
 			(uuid "3f336f34-7047-4f21-a013-5a696dc5c014")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "R1")
 					(unit 1)
@@ -6268,7 +6053,7 @@
 			(uuid "8ac24393-5178-4b96-bb67-7178fd661a95")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDD1")
 					(unit 1)
@@ -6535,7 +6320,7 @@
 			(uuid "352cd58b-b625-4a9e-9309-8037d2af6d01")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "R2")
 					(unit 1)
@@ -6614,9 +6399,144 @@
 			(uuid "1e29e29c-3da4-4eb0-9e48-50476f80df13")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR046")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ProPrj_STM-easyedapro:KT-0603R")
+		(at 222.25 101.6 180)
+		(unit 1)
+		(body_style 0)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "4e14f6a1-822d-4191-a149-2870570c584a")
+		(property "Reference" "LED1"
+			(at 219.2782 96.8756 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(justify right top)
+			)
+		)
+		(property "Value" "KT-0603R"
+			(at 219.2782 99.1616 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+				(justify right top)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Field42" ""
+			(at 6.35 148.59 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer Part" "KT-0603R"
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "KENTO"
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Supplier Part" "C2286"
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Supplier" "LCSC"
+			(at 222.25 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d89f51b6-f04b-4330-9b81-ed56d9aad9bb")
+		)
+		(pin "2"
+			(uuid "814b9269-3dde-48a7-a977-7c28d03f39f2")
+		)
+		(instances
+			(project "openMPPT_v1.3"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
+					(reference "LED1")
 					(unit 1)
 				)
 			)
@@ -6692,7 +6612,7 @@
 			(uuid "6aa011f3-e691-4cd1-b3d3-1ea42d730ff5")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR02")
 					(unit 1)
@@ -6990,7 +6910,7 @@
 			(uuid "aed6509e-36f9-4a6d-902e-cf9f211e1830")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "U1")
 					(unit 1)
@@ -7068,7 +6988,7 @@
 			(uuid "18958233-72be-48b2-8964-4e796ec32e25")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR05")
 					(unit 1)
@@ -7147,7 +7067,7 @@
 			(uuid "d326797a-1b42-48a4-a441-f5269df1906b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR09")
 					(unit 1)
@@ -7226,7 +7146,7 @@
 			(uuid "c039f330-f61e-4fc0-90ff-ddb344616a09")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR07")
 					(unit 1)
@@ -7304,7 +7224,7 @@
 			(uuid "33599f9b-fd01-4da8-84d5-717c267feb9e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR01")
 					(unit 1)
@@ -7439,7 +7359,7 @@
 			(uuid "f2abc76d-4a48-4159-a442-c7e50f57793f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "LED2")
 					(unit 1)
@@ -7517,7 +7437,7 @@
 			(uuid "87a3b35b-0af8-47ce-bddd-e08ad9023a62")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR08")
 					(unit 1)
@@ -7753,7 +7673,7 @@
 			(uuid "f9e0c82a-5b62-4d65-b33e-4be368fe2439")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDDA2")
 					(unit 1)
@@ -7832,7 +7752,7 @@
 			(uuid "bca3f629-a77c-4cbb-abef-581208024896")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR049")
 					(unit 1)
@@ -7910,7 +7830,7 @@
 			(uuid "847346de-6481-4e6f-9666-27804a0dcf22")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR053")
 					(unit 1)
@@ -7988,7 +7908,7 @@
 			(uuid "93eb4d4a-bdb3-444e-9aa2-fc83dd83fcdc")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR054")
 					(unit 1)
@@ -8224,7 +8144,7 @@
 			(uuid "cecdd8c5-6d88-45ed-b6b3-feb698896cd7")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDD3")
 					(unit 1)
@@ -8303,7 +8223,7 @@
 			(uuid "3c49c92a-01ea-4ffa-872f-4dece298655e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR047")
 					(unit 1)
@@ -8538,7 +8458,7 @@
 			(uuid "80f3b057-7d68-4681-bafe-23b75244818b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDDIO1")
 					(unit 1)
@@ -8774,144 +8694,9 @@
 			(uuid "5ff95f35-ab69-4eba-acca-ed07bd45d175")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDDA1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "ProPrj_STM-easyedapro:19-213/Y2C-CQ2R2L/3T(CY)")
-		(at 222.25 101.6 180)
-		(unit 1)
-		(body_style 0)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c9d4deed-7e56-43e9-b834-2293e99113ef")
-		(property "Reference" "LED1"
-			(at 219.2782 97.3836 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-				(justify right top)
-			)
-		)
-		(property "Value" "19-213/Y2C-CQ2R2L/3T(CY)"
-			(at 219.2782 99.6696 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-				(justify right top)
-			)
-		)
-		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Field42" ""
-			(at 6.35 160.02 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer Part" "19-213/Y2C-CQ2R2L/3T(CY)"
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "EVERLIGHT(亿光)"
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Supplier Part" "C72038"
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Supplier" "LCSC"
-			(at 222.25 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "308e7325-5fd2-4196-9592-7a2dfc7d9fc2")
-		)
-		(pin "2"
-			(uuid "9d55d4bb-32be-4e80-ab7f-6d8d859c4b32")
-		)
-		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
-				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
-					(reference "LED1")
 					(unit 1)
 				)
 			)
@@ -8987,7 +8772,7 @@
 			(uuid "bae2a52f-fb1a-4670-b4f6-60cd0f7fd468")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR051")
 					(unit 1)
@@ -9223,7 +9008,7 @@
 			(uuid "b7415dbd-cd71-44c8-b6bc-1bc9b871ab40")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "C_VDD2")
 					(unit 1)
@@ -9301,7 +9086,7 @@
 			(uuid "941b7e93-15cb-4f3b-afac-ab67fc33d425")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR052")
 					(unit 1)
@@ -9379,7 +9164,7 @@
 			(uuid "4a2663a0-c95e-4239-8611-2fc364c951fa")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR03")
 					(unit 1)
@@ -9457,7 +9242,7 @@
 			(uuid "e2129311-b722-475c-9242-10d7a249d669")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR050")
 					(unit 1)
@@ -9535,7 +9320,7 @@
 			(uuid "af1229fe-fd66-478e-9cb0-b5004f676e09")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c1155cc8-1b64-4d3f-ad18-5ff50ee2add8"
 					(reference "#PWR06")
 					(unit 1)

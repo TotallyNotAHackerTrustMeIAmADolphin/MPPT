@@ -2062,7 +2062,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "JLCPCB-Resistors:0402,47Ω"
+		(symbol "JLCPCB-Resistors:0603,110kΩ"
 			(pin_numbers
 				(hide yes)
 			)
@@ -2085,7 +2085,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "47Ω"
+			(property "Value" "110kΩ"
 				(at 0 0 90)
 				(show_name no)
 				(do_not_autoplace yes)
@@ -2095,7 +2095,7 @@
 					)
 				)
 			)
-			(property "Footprint" "PCM_JLCPCB:R_0402"
+			(property "Footprint" "PCM_JLCPCB:R_0603"
 				(at -1.778 0 90)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2106,7 +2106,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-0402WGF470JTCE_C25118.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF1103T5E_C25805.pdf"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2117,7 +2117,7 @@
 					)
 				)
 			)
-			(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/°C 47Ω 0402 Chip Resistor - Surface Mount ROHS"
+			(property "Description" "-55°C~+155°C 100mW 110kΩ 75V Thick Film Resistor ±1% ±100ppm/°C 0603 Chip Resistor - Surface Mount ROHS"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2128,7 +2128,7 @@
 					)
 				)
 			)
-			(property "LCSC" "C25118"
+			(property "LCSC" "C25805"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2139,7 +2139,7 @@
 					)
 				)
 			)
-			(property "Stock" "468126"
+			(property "Stock" "697743"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2183,7 +2183,7 @@
 					)
 				)
 			)
-			(property "Attrition Qty" "12"
+			(property "Attrition Qty" "10"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2227,7 +2227,7 @@
 					)
 				)
 			)
-			(property "Part" "0402WGF470JTCE"
+			(property "Part" "0603WAF1103T5E"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2238,7 +2238,7 @@
 					)
 				)
 			)
-			(property "Resistance" "47Ω"
+			(property "Resistance" "110kΩ"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2249,7 +2249,7 @@
 					)
 				)
 			)
-			(property "Power(Watts)" "62.5mW"
+			(property "Power(Watts)" "100mW"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2271,7 +2271,7 @@
 					)
 				)
 			)
-			(property "Overload Voltage (Max)" "50V"
+			(property "Overload Voltage (Max)" "75V"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2304,7 +2304,7 @@
 					)
 				)
 			)
-			(property "Temperature Coefficient" "±200ppm/°C"
+			(property "Temperature Coefficient" "±100ppm/°C"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2326,7 +2326,7 @@
 					)
 				)
 			)
-			(symbol "0402,47Ω_0_1"
+			(symbol "0603,110kΩ_0_1"
 				(rectangle
 					(start -1.016 2.54)
 					(end 1.016 -2.54)
@@ -2339,7 +2339,324 @@
 					)
 				)
 			)
-			(symbol "0402,47Ω_1_1"
+			(symbol "0603,110kΩ_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "JLCPCB-Resistors:0603,47Ω"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 1.778 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "47Ω"
+				(at 0 0 90)
+				(show_name no)
+				(do_not_autoplace yes)
+				(effects
+					(font
+						(size 0.8 0.8)
+					)
+				)
+			)
+			(property "Footprint" "PCM_JLCPCB:R_0603"
+				(at -1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF470JT5E_C23182.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "-55°C~+155°C 100mW 47Ω 75V Thick Film Resistor ±1% ±100ppm/°C 0603 Chip Resistor - Surface Mount ROHS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C23182"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Stock" "1499721"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Price" "0.004USD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Process" "SMT"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Minimum Qty" "20"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Attrition Qty" "10"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Class" "Basic Component"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Category" "Resistors,Chip Resistor - Surface Mount"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Part" "0603WAF470JT5E"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Resistance" "47Ω"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Power(Watts)" "100mW"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Type" "Thick Film Resistors"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Overload Voltage (Max)" "75V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Operating Temperature Range" "-55°C~+155°C"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Tolerance" "±1%"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Temperature Coefficient" "±100ppm/°C"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "0603,47Ω_0_1"
+				(rectangle
+					(start -1.016 2.54)
+					(end 1.016 -2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "0603,47Ω_1_1"
 				(pin passive line
 					(at 0 3.81 270)
 					(length 1.27)
@@ -6962,7 +7279,7 @@
 			(uuid "85722db1-1ce4-4c08-b36c-0a2dc4723e84")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "D11")
 					(unit 1)
@@ -7230,7 +7547,7 @@
 			(uuid "b0b511ff-6834-4103-bcec-68e11e76b14f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R23")
 					(unit 1)
@@ -7499,7 +7816,7 @@
 			(uuid "7b34cf38-dda6-4783-b4aa-f2c80ea7764c")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "D10")
 					(unit 1)
@@ -7513,13 +7830,13 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0e5ba111-5e8a-44f8-9595-58fca7b9132f")
-		(property "Reference" "H1"
+		(property "Reference" "NTC1"
 			(at 180.34 83.8199 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7614,9 +7931,9 @@
 			(uuid "ea88d0e6-4b95-45d9-9e01-5ff33704fe4d")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
-					(reference "H1")
+					(reference "NTC1")
 					(unit 1)
 				)
 			)
@@ -7692,7 +8009,7 @@
 			(uuid "290d5cdc-5fda-41db-93f6-d0142418ad91")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR026")
 					(unit 1)
@@ -7707,9 +8024,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "122e6e28-651d-403e-b1d3-d6281eb71758")
 		(property "Reference" "UART1"
@@ -7813,7 +8130,7 @@
 			(uuid "9458190a-150e-4eca-984a-5dd2f75905fd")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "UART1")
 					(unit 1)
@@ -7948,7 +8265,7 @@
 			(uuid "541c75ad-f616-4a32-9c72-19c44e3093af")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R21")
 					(unit 1)
@@ -8184,9 +8501,276 @@
 			(uuid "642e7a6a-cf51-4e7d-b4ee-8f90875ff3b5")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "C30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "JLCPCB-Resistors:0603,47Ω")
+		(at 97.79 63.5 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "25820c4c-c26e-4d5f-b3cc-5daec2bc029d")
+		(property "Reference" "R7"
+			(at 97.79 59.69 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47Ω"
+			(at 97.79 63.5 90)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:R_0603"
+			(at 97.79 65.278 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF470JT5E_C23182.pdf"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "-55°C~+155°C 100mW 47Ω 75V Thick Film Resistor ±1% ±100ppm/°C 0603 Chip Resistor - Surface Mount ROHS"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23182"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "1499721"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.004USD"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "20"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "10"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Basic Component"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "Resistors,Chip Resistor - Surface Mount"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "0603WAF470JT5E"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Resistance" "47Ω"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Power(Watts)" "100mW"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Type" "Thick Film Resistors"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Overload Voltage (Max)" "75V"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Operating Temperature Range" "-55°C~+155°C"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "±1%"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 97.79 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "98f9a16d-7929-4fc5-9705-c0281d2d3e2e")
+		)
+		(pin "1"
+			(uuid "d9efae92-5601-43b3-9529-dfe390474387")
+		)
+		(instances
+			(project "openMPPT_v1.3"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -8263,7 +8847,7 @@
 			(uuid "65744d32-af74-49db-8b35-ee9f1ec61deb")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR019")
 					(unit 1)
@@ -8341,7 +8925,7 @@
 			(uuid "9b2cf7d8-4442-4c46-afd9-5e5e892eb41d")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR036")
 					(unit 1)
@@ -8420,7 +9004,7 @@
 			(uuid "0d98a95b-ec70-4307-9d27-3f094ad38612")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR039")
 					(unit 1)
@@ -8569,7 +9153,7 @@
 			(uuid "7d6e7a6c-2e2a-4365-8b95-9ddac4724f24")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "USB1")
 					(unit 1)
@@ -8690,7 +9274,7 @@
 			(uuid "543d628c-7bfd-4e54-b840-d2b9f25c671b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "VIN1")
 					(unit 1)
@@ -8699,7 +9283,7 @@
 		)
 	)
 	(symbol
-		(lib_id "JLCPCB-Resistors:0402,47Ω")
+		(lib_id "JLCPCB-Resistors:0603,47Ω")
 		(at 97.79 66.04 90)
 		(unit 1)
 		(body_style 1)
@@ -8709,8 +9293,8 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "43f572b1-e197-4e62-85a0-ecda6eb94c2b")
-		(property "Reference" "R28"
+		(uuid "45435d93-e76e-4e02-8584-c1f7f9d852f0")
+		(property "Reference" "R8"
 			(at 97.79 62.23 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8730,7 +9314,7 @@
 				)
 			)
 		)
-		(property "Footprint" "PCM_JLCPCB:R_0402"
+		(property "Footprint" "PCM_JLCPCB:R_0603"
 			(at 97.79 67.818 90)
 			(hide yes)
 			(show_name no)
@@ -8741,7 +9325,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-0402WGF470JTCE_C25118.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF470JT5E_C23182.pdf"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8752,7 +9336,7 @@
 				)
 			)
 		)
-		(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/°C 47Ω 0402 Chip Resistor - Surface Mount ROHS"
+		(property "Description" "-55°C~+155°C 100mW 47Ω 75V Thick Film Resistor ±1% ±100ppm/°C 0603 Chip Resistor - Surface Mount ROHS"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8763,7 +9347,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25118"
+		(property "LCSC" "C23182"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8774,7 +9358,7 @@
 				)
 			)
 		)
-		(property "Stock" "468126"
+		(property "Stock" "1499721"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8818,7 +9402,7 @@
 				)
 			)
 		)
-		(property "Attrition Qty" "12"
+		(property "Attrition Qty" "10"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8829,7 +9413,7 @@
 				)
 			)
 		)
-		(property "Class" "Preferred Component"
+		(property "Class" "Basic Component"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8862,7 +9446,7 @@
 				)
 			)
 		)
-		(property "Part" "0402WGF470JTCE"
+		(property "Part" "0603WAF470JT5E"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8884,7 +9468,7 @@
 				)
 			)
 		)
-		(property "Power(Watts)" "62.5mW"
+		(property "Power(Watts)" "100mW"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8906,7 +9490,7 @@
 				)
 			)
 		)
-		(property "Overload Voltage (Max)" "50V"
+		(property "Overload Voltage (Max)" "75V"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8939,7 +9523,7 @@
 				)
 			)
 		)
-		(property "Temperature Coefficient" "±200ppm/°C"
+		(property "Temperature Coefficient" "±100ppm/°C"
 			(at 97.79 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8951,15 +9535,15 @@
 			)
 		)
 		(pin "2"
-			(uuid "56e37bbb-77ba-42fa-be06-997f0c190012")
+			(uuid "464759e0-b98d-406b-80c6-42b71804ecb8")
 		)
 		(pin "1"
-			(uuid "37702bc3-c9ab-40d0-a180-9ab95641f879")
+			(uuid "c686d825-d12a-4355-8ec5-010ae8f292e2")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
-					(reference "R28")
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -9225,7 +9809,7 @@
 			(uuid "8e2bebee-0000-4c9e-9dbb-cec2e19e9b54")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R26")
 					(unit 1)
@@ -9304,7 +9888,7 @@
 			(uuid "d881cc04-72fa-4eec-9a62-0e115d0509be")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR023")
 					(unit 1)
@@ -9383,7 +9967,7 @@
 			(uuid "32178d2b-5330-4473-8204-fd05d30d62d5")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR030")
 					(unit 1)
@@ -9398,9 +9982,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "542ecd51-72cc-4ba4-acc6-ff1923f60353")
 		(property "Reference" "ST_LINK1"
@@ -9504,7 +10088,7 @@
 			(uuid "542ff85f-8df1-4f85-849c-0c0248b64ba2")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "ST_LINK1")
 					(unit 1)
@@ -9772,276 +10356,9 @@
 			(uuid "50257849-2fb2-4c6a-a674-17a6daff5ae7")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R25")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "JLCPCB-Resistors:0402,47Ω")
-		(at 97.79 63.5 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5f3d9b87-3158-42f1-b66f-b8d04d4a1ca7")
-		(property "Reference" "R27"
-			(at 97.79 59.69 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "47Ω"
-			(at 97.79 63.5 90)
-			(show_name no)
-			(do_not_autoplace yes)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-			)
-		)
-		(property "Footprint" "PCM_JLCPCB:R_0402"
-			(at 97.79 65.278 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-0402WGF470JTCE_C25118.pdf"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "62.5mW Thick Film Resistors 50V ±1% ±200ppm/°C 47Ω 0402 Chip Resistor - Surface Mount ROHS"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C25118"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Stock" "468126"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Price" "0.004USD"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Process" "SMT"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Minimum Qty" "20"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Attrition Qty" "12"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Class" "Preferred Component"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Part" "0402WGF470JTCE"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Resistance" "47Ω"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Power(Watts)" "62.5mW"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Type" "Thick Film Resistors"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Overload Voltage (Max)" "50V"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Tolerance" "±1%"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Temperature Coefficient" "±200ppm/°C"
-			(at 97.79 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "7f9cd432-228a-42c6-b148-2bd811f1efea")
-		)
-		(pin "1"
-			(uuid "b247bfc6-9119-428d-a521-aafb4d7cab47")
-		)
-		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
-				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
-					(reference "R27")
 					(unit 1)
 				)
 			)
@@ -10118,7 +10435,7 @@
 			(uuid "4313a0e3-2a4e-4739-aed7-1451a6b4a56e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR035")
 					(unit 1)
@@ -10197,7 +10514,7 @@
 			(uuid "a55400ee-b583-4811-a1eb-e49051e7df4c")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR022")
 					(unit 1)
@@ -10275,7 +10592,7 @@
 			(uuid "3b3b5dd6-a5db-403d-9b8b-e7c76eb1bf4f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR034")
 					(unit 1)
@@ -10410,7 +10727,7 @@
 			(uuid "cc369fbc-6481-47d9-8b09-57d295c7b21f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R24")
 					(unit 1)
@@ -10488,7 +10805,7 @@
 			(uuid "eb73ad8b-c2be-4a3e-9a0a-1e48dcc5d4b7")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR021")
 					(unit 1)
@@ -10756,7 +11073,7 @@
 			(uuid "defdf280-671f-44ff-944b-40dd1472a9d5")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R22")
 					(unit 1)
@@ -10992,7 +11309,7 @@
 			(uuid "e4358946-7090-4243-805e-14ccbbefc20e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "C31")
 					(unit 1)
@@ -11070,7 +11387,7 @@
 			(uuid "4c8f5b17-ea2a-4b9d-875e-34cc30e47323")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR024")
 					(unit 1)
@@ -11085,9 +11402,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "9b9dcb9a-27e6-40a7-b6ac-40d50d6eda03")
 		(property "Reference" "H2"
@@ -11191,7 +11508,7 @@
 			(uuid "e2991f6e-969d-4414-92cc-4edadf7b0f4f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "H2")
 					(unit 1)
@@ -11269,7 +11586,7 @@
 			(uuid "9cfa9c07-c2ec-471a-9f30-69a0cce0f6d6")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR037")
 					(unit 1)
@@ -11284,9 +11601,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "a9f016ca-f7ef-412a-b28c-458df2c181d6")
 		(property "Reference" "SPI/I2C1"
@@ -11402,7 +11719,7 @@
 			(uuid "d13c9ef3-f1d9-4eef-b11b-17fad95d1efb")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "SPI/I2C1")
 					(unit 1)
@@ -11770,7 +12087,7 @@
 			(uuid "6c01272d-3a83-408d-99ad-4a90e46b2e52")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "RESET1")
 					(unit 1)
@@ -11849,7 +12166,7 @@
 			(uuid "304df6a5-eb95-42fc-b83e-b81fae396685")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR028")
 					(unit 1)
@@ -11927,7 +12244,7 @@
 			(uuid "7becfe88-6dac-41b2-82c6-951945aed9d2")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR032")
 					(unit 1)
@@ -12005,7 +12322,7 @@
 			(uuid "bbf02e05-e862-45c7-808f-3c441156bb57")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR027")
 					(unit 1)
@@ -12084,7 +12401,7 @@
 			(uuid "061be22b-f97f-41f2-9cbf-9afc1449ee34")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR033")
 					(unit 1)
@@ -12205,7 +12522,7 @@
 			(uuid "191ded2a-a554-480d-9bdf-37f931e6e1b9")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "VOUT1")
 					(unit 1)
@@ -12220,9 +12537,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "c8e2abe7-d48d-44dd-8c7a-f29baedde5d4")
 		(property "Reference" "GPIO1"
@@ -12338,7 +12655,7 @@
 			(uuid "2df36a23-cd6b-4286-93c0-2a32f6a4b154")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "GPIO1")
 					(unit 1)
@@ -12473,7 +12790,7 @@
 			(uuid "a9ba51ea-eb70-4f50-b885-48bd81923cb4")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R20")
 					(unit 1)
@@ -12552,7 +12869,7 @@
 			(uuid "c3f3481a-c5c7-4a96-b106-da774e103902")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR029")
 					(unit 1)
@@ -12820,7 +13137,7 @@
 			(uuid "4d156a7e-d3ea-45da-a17d-0bfe2f5fc716")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R29")
 					(unit 1)
@@ -12899,7 +13216,7 @@
 			(uuid "dea76793-5abf-4ffd-a9af-12b3ed5681f1")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR031")
 					(unit 1)
@@ -13034,9 +13351,277 @@
 			(uuid "255a5e7b-1494-4a6d-9710-21c35e006d8b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "C29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "JLCPCB-Resistors:0603,110kΩ")
+		(at 64.77 102.87 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ed7fd3df-fc81-4164-9e52-96f3692eedbd")
+		(property "Reference" "R15"
+			(at 67.31 102.8699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "110kΩ"
+			(at 64.77 102.87 90)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:R_0603"
+			(at 62.992 102.87 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF1103T5E_C25805.pdf"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "-55°C~+155°C 100mW 110kΩ 75V Thick Film Resistor ±1% ±100ppm/°C 0603 Chip Resistor - Surface Mount ROHS"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25805"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "697743"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.004USD"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "20"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "10"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Preferred Component"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "Resistors,Chip Resistor - Surface Mount"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "0603WAF1103T5E"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Resistance" "110kΩ"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Power(Watts)" "100mW"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Type" "Thick Film Resistors"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Overload Voltage (Max)" "75V"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Operating Temperature Range" "-55°C~+155°C"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "±1%"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 64.77 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "85370937-faa1-4a10-88ed-d23f61f79a6a")
+		)
+		(pin "1"
+			(uuid "956a2acc-5c5e-417d-bb40-13fc7066591f")
+		)
+		(instances
+			(project "openMPPT_v1.3"
+				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -13169,7 +13754,7 @@
 			(uuid "8017833f-23fe-4884-92fa-a16df29c2426")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "R19")
 					(unit 1)
@@ -13247,7 +13832,7 @@
 			(uuid "83b9edfd-ce20-429c-a5df-0a293e400710")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR020")
 					(unit 1)
@@ -13615,7 +14200,7 @@
 			(uuid "16998429-6839-4a2b-999b-e18fb9ffac18")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "BOOT1")
 					(unit 1)
@@ -13694,7 +14279,7 @@
 			(uuid "38d3be60-935f-4b19-a65f-28fa26d14e75")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR038")
 					(unit 1)
@@ -13773,7 +14358,7 @@
 			(uuid "42bc3294-8f04-4b88-9256-02144272513b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd"
 					(reference "#PWR025")
 					(unit 1)
