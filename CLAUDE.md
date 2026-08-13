@@ -74,7 +74,7 @@ python scripts/tune_mppt.py --port /dev/ttyACM0  # hybrid (random search + local
 ## Git Workflow (Stable-Main, PR-based)
 
 1. `main` must always compile cleanly (`-Werror`) and represent a hardware-safe, tested state — never commit broken/experimental code directly to `main`, and never push or merge directly to `main`.
-2. New features/fixes go on `feature/<name>` or `fix/<name>` branches, pushed to `origin`, and merged into `main` only via a Pull Request.
+2. New features/fixes go on `feature/<name>` or `fix/<name>` branches (firmware/docs/tooling) or `hardware/<name>` branches (anything under `hardware/`), pushed to `origin`, and merged into `main` only via a Pull Request.
 3. Every PR must compile clean for the `openmppt` target and pass `pio test -e native` before it's mergeable; note what was tested (native suite, hardware bench, simulation) in the PR description.
 4. **The user must confirm hardware verification (or explicit simulation sign-off) before a PR touching control/safety logic is merged** — do not merge on your own judgment alone, even if CI is green.
 5. Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`) for individual commits; explain *why* in the message, especially for hardware timing constants or magic numbers. Keep unrelated concerns (e.g. tooling cleanup vs. firmware logic) as separate commits within the PR so history stays reviewable.
@@ -87,7 +87,7 @@ Web Serial dashboard served at the GitHub Pages link in README.md; talks to the 
 
 ## Hardware (`hardware/`)
 
-KiCad source lives in `hardware/KiCad/`; component rationale and E24/E96 resistor derivations are in `hardware/CALCULATIONS.md`; current component/pinout mapping ("Hardware Universe") and engineering mandates are in `hardware/STANDARDS.md`; phase-by-phase v1.3 hardware plan is in `hardware/ROADMAP_V1.3.md`.
+KiCad source lives in `hardware/KiCad/`; component rationale and E24/E96 resistor derivations are in `hardware/CALCULATIONS.typ` (Typst — compile with `typst compile hardware/CALCULATIONS.typ` or read the source directly); current component/pinout mapping ("Hardware Universe") and engineering mandates are in `hardware/STANDARDS.md`; phase-by-phase v1.3 hardware plan is in `hardware/ROADMAP_V1.3.md`.
 
 - High-power traces (VIN, VOUT, GND, VS_A, VS_B) must be sized for 20A continuous (3.5mm standard width).
 - Prefer the PCM-JLCPCB library for new parts.

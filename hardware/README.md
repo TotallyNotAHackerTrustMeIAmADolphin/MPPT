@@ -5,7 +5,7 @@
 | :--- | :--- | :--- | :--- |
 | Primary Buck IC | SCT2A25STER | 10V Aux Supply | High efficiency, 100V rating for 80V VIN |
 | Logic Buck IC | SY8120B1ABC | 3.3V Logic Supply | Cascaded architecture for MCU safety |
-| Power MOSFET | BRCS030N10SHRA | Buck-Boost Stage | Drop-in (TO-220), 100V/212A, matches $Q_g$ of 76nC |
+| Power MOSFET | BSC030N08NS5 | Buck-Boost Stage | SMD (PG-TDSON-8-EP), 80V/100A, $R_{DS(on)}$ 3.0mΩ, $Q_g$ 76nC max |
 | Bootstrap Diode | US1M | Gate Driver Supply | 1kV rating for transient protection |
 | Gate-Off Diode | 1N4148W | MOSFET Turn-off | 4ns high-speed switching for low loss |
 | Current Sensor | CC6937S8-3FB020 | Hall Effect Sensing | 3.3V compatible, isolated, 20A range |
@@ -13,7 +13,7 @@
 | 80V TVS Diode | 5.0SMDJ85CA | Main Rail Protection | 85V standoff, industrial 5kW capacity |
 | 3.3V ESD Diode | H3V3L06B | Logic Protection | 3.3V standoff, DFN0603 for compact assembly |
 
-*(See `CALCULATIONS.md` for full design justification and E24/E96 resistor value derivations.)*
+*(See `CALCULATIONS.typ` for full design justification and E24/E96 resistor value derivations.)*
 
 ## v1.1 Build Status: SUCCESS (Verified 2026-05-29)
 The v1.1 PCB has been fully assembled and verified, v1.1 means the v1.0 but with some patches hand soldered to the board. However, several physical patches are required to achieve full functionality. These must be implemented in the next KiCad revision.

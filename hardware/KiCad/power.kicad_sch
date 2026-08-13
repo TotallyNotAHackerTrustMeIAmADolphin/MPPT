@@ -4996,7 +4996,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:APS0650M470A"
+		(symbol "easyeda2kicad:GXDR1207-470MT"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -5012,7 +5012,7 @@
 					)
 				)
 			)
-			(property "Value" "APS0650M470A"
+			(property "Value" "GXDR1207-470MT"
 				(at 0 -5.08 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5022,7 +5022,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
+			(property "Footprint" "easyeda2kicad:IND-SMD_L12.5-W12.5-1"
 				(at 0 -7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5033,7 +5033,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C52196367.pdf"
 				(at 0 -10.16 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5055,7 +5055,7 @@
 					)
 				)
 			)
-			(property "Manufacturer" "Coilank(驰兴电感)"
+			(property "Manufacturer" "FAUKU(高芯电子)"
 				(at 0 -12.7 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5066,7 +5066,7 @@
 					)
 				)
 			)
-			(property "MPN" "APS0650M470A"
+			(property "MPN" "GXDR1207-470MT"
 				(at 0 -15.24 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5077,7 +5077,7 @@
 					)
 				)
 			)
-			(property "LCSC Part" "C47327224"
+			(property "LCSC Part" "C52196367"
 				(at 0 -17.78 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5088,11 +5088,11 @@
 					)
 				)
 			)
-			(symbol "APS0650M470A_0_1"
+			(symbol "GXDR1207-470MT_0_1"
 				(arc
-					(start -4.06 0.01)
-					(mid -3.035 1.0102)
-					(end -2.03 -0.01)
+					(start -2.03 -0.01)
+					(mid -3.04 1.02)
+					(end -4.06 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5102,9 +5102,9 @@
 					)
 				)
 				(arc
-					(start -2.03 0.01)
-					(mid -1.005 1.0102)
-					(end 0 -0.01)
+					(start 0.00 -0.01)
+					(mid -1.01 1.02)
+					(end -2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5114,9 +5114,9 @@
 					)
 				)
 				(arc
-					(start 0 0.01)
-					(mid 1.0249 1.0101)
-					(end 2.03 -0.01)
+					(start 4.06 -0.01)
+					(mid 3.05 1.02)
+					(end 2.03 0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5126,33 +5126,15 @@
 					)
 				)
 				(arc
-					(start 2.03 0.01)
-					(mid 3.0549 1.0101)
-					(end 4.06 -0.01)
+					(start 2.03 -0.01)
+					(mid 1.02 1.02)
+					(end 0.00 0.01)
 					(stroke
 						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
-					)
-				)
-				(pin unspecified line
-					(at -5.08 0 0)
-					(length 1.27)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
 					)
 				)
 				(pin unspecified line
@@ -5166,6 +5148,24 @@
 						)
 					)
 					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -6056,6 +6056,12 @@
 		(uuid "04dce952-f3df-44a3-9ac5-eca71d596b95")
 	)
 	(junction
+		(at 111.76 78.74)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "153bd017-1d6a-4ce2-9fd2-63716c659b77")
+	)
+	(junction
 		(at 144.78 66.04)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6158,6 +6164,12 @@
 		(uuid "8a8d3437-7985-48cd-8839-eee5d86914eb")
 	)
 	(junction
+		(at 111.76 66.04)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8c6a7eb1-3a7c-4da7-8597-2820e0f63704")
+	)
+	(junction
 		(at 127 142.24)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6188,12 +6200,6 @@
 		(uuid "b4314164-9dc8-4dce-8d3f-83d56c2ca8a3")
 	)
 	(junction
-		(at 111.76 78.74)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "d7ff721f-1c32-4083-8b7d-d7b23498496d")
-	)
-	(junction
 		(at 109.22 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6216,12 +6222,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eecd399d-40c6-4653-a588-264e8fbce5bb")
-	)
-	(junction
-		(at 111.76 66.04)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f077d8c1-5b5b-4856-8ef6-d31e2960d050")
 	)
 	(junction
 		(at 81.28 147.32)
@@ -6538,6 +6538,16 @@
 			(type default)
 		)
 		(uuid "4d258b72-43ec-4f65-be09-14b56a839e9d")
+	)
+	(wire
+		(pts
+			(xy 111.76 68.58) (xy 111.76 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4de6a22c-da47-4f13-b2b6-f40044593d4a")
 	)
 	(wire
 		(pts
@@ -7101,7 +7111,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 73.66) (xy 111.76 78.74)
+			(xy 111.76 76.2) (xy 111.76 78.74)
 		)
 		(stroke
 			(width 0)
@@ -7327,7 +7337,7 @@
 			(uuid "d73405c0-ef68-438f-be15-3d10f31ba1bf")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "L3")
 					(unit 1)
@@ -7441,7 +7451,7 @@
 			(uuid "69ef28c2-4867-4163-8666-a2d5a1305b45")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_IN1")
 					(unit 1)
@@ -7709,7 +7719,7 @@
 			(uuid "2ebd54f8-1d44-4c40-85f7-596f84024c9e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R33")
 					(unit 1)
@@ -7834,7 +7844,7 @@
 			(uuid "91e63a8b-1d0d-4668-8eba-37c35a78c0dc")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "U5")
 					(unit 1)
@@ -8069,7 +8079,7 @@
 			(uuid "116044c1-c63b-4075-9d76-832c61adeb4b")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C35")
 					(unit 1)
@@ -8266,7 +8276,7 @@
 			(uuid "760965aa-757a-4c48-aff1-6466cf078a83")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "D8")
 					(unit 1)
@@ -8501,7 +8511,7 @@
 			(uuid "f6246563-2d8f-448a-b35e-c153896ac1ae")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_IN_BYPASS1")
 					(unit 1)
@@ -8737,7 +8747,7 @@
 			(uuid "07123982-d52c-4642-aee7-0406f1e2890a")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_OUT2")
 					(unit 1)
@@ -8973,7 +8983,7 @@
 			(uuid "1e131d03-ea67-4383-bd60-1078e192009d")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C36")
 					(unit 1)
@@ -8982,7 +8992,7 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:APS0650M470A")
+		(lib_id "easyeda2kicad:GXDR1207-470MT")
 		(at 119.38 66.04 0)
 		(unit 1)
 		(body_style 1)
@@ -9013,7 +9023,7 @@
 				)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:IND-SMD_L7.7-W6.6_APS07A30M220"
+		(property "Footprint" "easyeda2kicad:IND-SMD_L12.5-W12.5-1"
 			(at 119.38 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -9024,7 +9034,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/C47327224.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C52196367.pdf"
 			(at 119.38 76.2 0)
 			(hide yes)
 			(show_name no)
@@ -9046,7 +9056,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "Coilank(驰兴电感)"
+		(property "Manufacturer" "FAUKU(高芯电子)"
 			(at 119.38 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -9057,7 +9067,7 @@
 				)
 			)
 		)
-		(property "MPN" "APS0650M470A"
+		(property "MPN" "GXDR1207-470MT"
 			(at 119.38 81.28 0)
 			(hide yes)
 			(show_name no)
@@ -9068,7 +9078,7 @@
 				)
 			)
 		)
-		(property "LCSC Part" "C47327224"
+		(property "LCSC Part" "C52196367"
 			(at 119.38 83.82 0)
 			(hide yes)
 			(show_name no)
@@ -9086,7 +9096,7 @@
 			(uuid "c4b0cbbc-f4ca-47c4-a5af-d51ffc0497df")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "L2")
 					(unit 1)
@@ -9322,7 +9332,7 @@
 			(uuid "91224dd7-2deb-4bb5-94c8-4863765739a3")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C33")
 					(unit 1)
@@ -9590,7 +9600,7 @@
 			(uuid "0f02450e-28d3-4422-8dba-60f8d31bffe5")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R31")
 					(unit 1)
@@ -9823,7 +9833,7 @@
 			(uuid "04f7f6a9-7bb4-45f7-b244-ac32147c7bea")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "CC_Boot1")
 					(unit 1)
@@ -9901,7 +9911,7 @@
 			(uuid "88f25057-9645-4af6-9c59-540b6baac8b2")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR045")
 					(unit 1)
@@ -10134,7 +10144,7 @@
 			(uuid "a5592443-e7c3-4483-be44-b3fb817efb82")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C34")
 					(unit 1)
@@ -10213,7 +10223,7 @@
 			(uuid "e7c5c146-6ebc-44ac-9ebc-e671f3377641")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR042")
 					(unit 1)
@@ -10449,7 +10459,7 @@
 			(uuid "690f3189-f05d-4c11-a2fb-51c5e465b12e")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C32")
 					(unit 1)
@@ -10563,7 +10573,7 @@
 			(uuid "f4067a04-6603-48c6-8a6f-d8379eec412d")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_IN2")
 					(unit 1)
@@ -10641,7 +10651,7 @@
 			(uuid "08db37ec-3021-4fed-b447-566aa4d7c732")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR044")
 					(unit 1)
@@ -10909,7 +10919,7 @@
 			(uuid "0f12880c-fe55-40d4-b85b-8aecbcd60ebc")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R32")
 					(unit 1)
@@ -11177,7 +11187,7 @@
 			(uuid "d60e06f0-a539-405e-9311-c64bb2b4dede")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R30")
 					(unit 1)
@@ -11445,7 +11455,7 @@
 			(uuid "9808793e-d744-440a-95bd-b1a5bcd3c209")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R35")
 					(unit 1)
@@ -11579,7 +11589,7 @@
 			(uuid "a0273e6a-e745-4e45-90c7-306efaefd525")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "U4")
 					(unit 1)
@@ -11847,7 +11857,7 @@
 			(uuid "4668b969-76f0-4793-b6e6-fcdbdc94b0ce")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "R34")
 					(unit 1)
@@ -11857,7 +11867,7 @@
 	)
 	(symbol
 		(lib_id "JLCPCB-Diodes:Schottky,SS510")
-		(at 111.76 69.85 180)
+		(at 111.76 72.39 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -11868,7 +11878,7 @@
 		(fields_autoplaced yes)
 		(uuid "aa84a2a5-1031-40c9-b39d-ce0025244a89")
 		(property "Reference" "D7"
-			(at 114.3 68.2624 0)
+			(at 114.3 70.8024 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -11879,7 +11889,7 @@
 			)
 		)
 		(property "Value" "SS510"
-			(at 114.3 70.8025 0)
+			(at 114.3 73.3425 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -11890,7 +11900,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:D_SMA"
-			(at 113.538 69.85 90)
+			(at 113.538 72.39 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11901,7 +11911,7 @@
 			)
 		)
 		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2310131745_hongjiacheng-SS510_C18199171.pdf"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11912,7 +11922,7 @@
 			)
 		)
 		(property "Description" "100V Independent Type 850mV@5A 5A SMA(DO-214AC) Schottky Diodes ROHS"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11922,8 +11932,8 @@
 				)
 			)
 		)
-		(property "LCSC" "C18199171"
-			(at 111.76 69.85 0)
+		(property "LCSC" "C7420368"
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11934,7 +11944,7 @@
 			)
 		)
 		(property "Stock" "70200"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11945,7 +11955,7 @@
 			)
 		)
 		(property "Price" "0.058USD"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11956,7 +11966,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11967,7 +11977,7 @@
 			)
 		)
 		(property "Minimum Qty" "5"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11978,7 +11988,7 @@
 			)
 		)
 		(property "Attrition Qty" "4"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11989,7 +11999,7 @@
 			)
 		)
 		(property "Class" "Preferred Component"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12000,7 +12010,7 @@
 			)
 		)
 		(property "Category" "Diodes,Schottky Diodes"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12011,7 +12021,7 @@
 			)
 		)
 		(property "Manufacturer" "hongjiacheng"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12022,7 +12032,7 @@
 			)
 		)
 		(property "Part" "SS510"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12033,7 +12043,7 @@
 			)
 		)
 		(property "Rectified Current" "5A"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12044,7 +12054,7 @@
 			)
 		)
 		(property "Forward Voltage (Vf@If)" "850mV@5A"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12055,7 +12065,7 @@
 			)
 		)
 		(property "Reverse Voltage (Vr)" "100V"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12066,7 +12076,7 @@
 			)
 		)
 		(property "Diode Configuration" "Independent Type"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12077,7 +12087,7 @@
 			)
 		)
 		(property "Reverse Leakage Current (Ir)" "50uA@100V"
-			(at 111.76 69.85 0)
+			(at 111.76 72.39 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12094,7 +12104,7 @@
 			(uuid "701da6c4-0390-40aa-b42f-129532e26179")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "D7")
 					(unit 1)
@@ -12173,7 +12183,7 @@
 			(uuid "b6643227-535f-45dc-98d0-c814841f0c86")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR040")
 					(unit 1)
@@ -12252,7 +12262,7 @@
 			(uuid "7aa16c80-448c-4781-b90d-67b30e39e797")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR041")
 					(unit 1)
@@ -12488,7 +12498,7 @@
 			(uuid "4789622e-5437-438b-a276-ee5990eca0b3")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_OUT1")
 					(unit 1)
@@ -12680,7 +12690,7 @@
 			(uuid "4834496e-36a7-454a-a9d2-2ffc3069e89f")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "D9")
 					(unit 1)
@@ -12759,7 +12769,7 @@
 			(uuid "938369db-74f9-46ef-b99a-80575a1b2277")
 		)
 		(instances
-			(project "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30"
+			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "#PWR043")
 					(unit 1)

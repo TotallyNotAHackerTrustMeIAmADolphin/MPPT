@@ -156,7 +156,7 @@
         "min_track_width": 0.2,
         "min_via_annular_width": 0.1,
         "min_via_diameter": 0.5,
-        "solder_mask_to_copper_clearance": 0.0,
+        "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
       "teardrop_options": [
@@ -488,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30.kicad_pro",
+    "filename": "openMPPT_v1.3.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -511,6 +511,36 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "clearance": 0.2,
+        "diff_pair_gap": 0.2,
+        "diff_pair_width": 0.2,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power_20A",
+        "pcb_color": "rgb(0, 255, 7)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3
+      },
+      {
+        "clearance": 0.2,
+        "diff_pair_gap": 0.2,
+        "diff_pair_width": 0.2,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "thicker",
+        "pcb_color": "rgb(255, 81, 12)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3
       }
     ],
     "meta": {
@@ -520,8 +550,24 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "Default",
+        "netclass": "Power_20A",
+        "pattern": "VIN"
+      },
+      {
+        "netclass": "Power_20A",
+        "pattern": "IN_CAP"
+      },
+      {
+        "netclass": "thicker",
         "pattern": "3V3"
+      },
+      {
+        "netclass": "thicker",
+        "pattern": "+10V"
+      },
+      {
+        "netclass": "Default",
+        "pattern": ""
       }
     ]
   },
@@ -530,7 +576,7 @@
       "idf": "",
       "netlist": "",
       "plot": "",
-      "specctra_dsn": "",
+      "specctra_dsn": "openMPPT_v1.3.dsn",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -656,12 +702,12 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "ProPrj_STM32 MPPT_2024-07-25_15-40-35_2026-05-30.kicad_sch",
+        "filename": "openMPPT_v1.3.kicad_sch",
         "name": "STM32 MPPT",
         "uuid": "b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
       }
     ],
-    "used_designators": "#PWR5,#PWR16,#PWR51-54,D8-11,U3,RESET1,C26-28",
+    "used_designators": "D1-6,D12-14,R7-8,R15,C25,C49,LED3,H1,H3",
     "variants": []
   },
   "sheets": [
@@ -686,7 +732,9 @@
       "STM32 MPPT"
     ]
   ],
-  "text_variables": {},
+  "text_variables": {
+    "EASYEDA2KICAD": "${KIPRJMOD}/libraries/easyeda2kicad"
+  },
   "tuning_profiles": {
     "meta": {
       "version": 0
