@@ -330,6 +330,19 @@ $ P_"gate" = Q_g times V_"GS" times f_"sw" = 76 times 10^(-9) times 10 times f_"
 At 100kHz: 76mW/MOSFET. At 200kHz: 152mW/MOSFET. Not a concern for the driver IC's
 thermal budget either way.
 
+*Cost pass (checked, not adopted)*: a cheaper 100V candidate, Huixin `H80N10FB`
+(C49823472), was evaluated to replace `BSC030N08NS5` - similar $R_"DS(on)"$ (3.0/3.6mΩ)
+and $Q_g$ (67/100.5nC) made it look like a clean upgrade at first pass. It was *not*
+adopted: its datasheet lists $t_r$=92.0ns / $t_f$=82.4ns typ (comparable test conditions
+to the table above) - *6-7x slower* than `BSC030N08NS5`'s 12/13ns, despite the similar
+$Q_g$. Re-running the switching-loss formula above with those numbers gives
+$approx 14 "W"$ per MOSFET at 100kHz alone (vs. the *2.5W* PCB-only thermal ceiling this
+section already flags), instead of the expected 2.0W. *Lesson for future MOSFET swaps on
+this board*: $R_"DS(on)"$ and $Q_g$ alone don't predict switching speed - $Q_g$ is gate
+*charge*, not switching *time*, and depends heavily on a part's internal gate resistance
+and Miller-plateau behavior. Always check $t_r$/$t_f$ (or $t_"d(on)"$/$t_"d(off)"$) against
+a comparable test condition before treating a swap as electrically equivalent.
+
 == Gate Driver (IRS21867STRPBF, C52290)
 
 Source: Infineon `IRS21867S` datasheet v01.00.
