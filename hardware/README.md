@@ -11,7 +11,6 @@
 | Current Sensor | CC6937S8-3FB020 | Hall Effect Sensing | 3.3V compatible, isolated, 20A range |
 | 10V TVS Diode | H12VH22U | Gate Drive Protection | 12V standoff, 6kW surge handled |
 | 80V TVS Diode | 5.0SMDJ85CA | Main Rail Protection | 85V standoff, industrial 5kW capacity |
-| 3.3V ESD Diode | H3V3L06B | Logic Protection | 3.3V standoff, DFN0603 for compact assembly |
 
 *(See `CALCULATIONS.typ` for full design justification and E24/E96 resistor value derivations.)*
 
@@ -24,7 +23,12 @@ The v1.1 PCB has been fully assembled and verified, v1.1 means the v1.0 but with
 - **Aux Power**: Replaced XL7005A with **SCT2A25/SY8120** cascaded setup.
 - **Connectors**: Standardized on **Male XT60PW-M**.
 - **Gate Drive**: Standardized on **5.1Ω** resistors with high-speed **1N4148W** bypass.
-- **Protection**: Added comprehensive TVS/ESD protection on all rails.
+- **Protection**: TVS protection on the 80V main rail and 10V gate-drive rail. The 3.3V logic
+  rail's originally-planned TVS (H3V3L06B, D9) was removed after datasheet verification showed
+  it's an ESD-class part whose own clamping voltage exceeds the STM32's 4.0V absolute max at any
+  current beyond a trivial ESD event — no purpose-built power-rail TVS clears 4.0V either (a
+  physics limit of 3.3V-class parts). That rail's fault protection now rests on the SY8120B1's
+  own regulation and the upstream Vin OV/UV limits already enforced in firmware.
 
 ## PCB Design Files
 - **KiCad Source**: `hardware/KiCad/`

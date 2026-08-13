@@ -31,7 +31,11 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 - [ ] **20A Thermal Design**: 
     - Widen high-power traces.
     - Implement massive thermal via grid for SMD MOSFETs (if used).
-- [x] **Overvoltage Protection**: Integrated **5.0SMDJ85CA** (80V), **H12VH22U** (10V), and **H3V3L06B** (3.3V). [DONE]
+- [x] **Overvoltage Protection**: Integrated **5.0SMDJ85CA** (80V) and **H12VH22U** (10V). The
+      planned 3.3V TVS (**H3V3L06B**, D9) was removed after datasheet verification found it
+      couldn't clear the STM32's 4.0V absolute max at any current beyond a trivial ESD event —
+      see `CALCULATIONS.typ`. That rail's protection now rests on the SY8120B1's own regulation
+      plus the upstream Vin OV/UV limits. [DONE]
 
 ## Phase 4: Architectural Optimization & Cost Reduction
 - [x] **SMD Migration**: Transition to **BSC030N08NS5** or keeping **BRCS030N10SHRA** (TO-220) based on board space.
