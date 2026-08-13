@@ -707,7 +707,7 @@
         "uuid": "b4d74b55-d9ad-45d1-9f37-bb84a2194cf7"
       }
     ],
-    "used_designators": "D1-6,D12-14,R7-8,R15,C25,C49,LED3,H1,H3",
+    "used_designators": "D1-6,D12-14,R7-8,R15,LED3,C25,C49,H1,H3",
     "variants": []
   },
   "sheets": [
