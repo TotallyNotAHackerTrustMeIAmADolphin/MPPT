@@ -139,13 +139,6 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
     if (hardwareDuty > maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS) {
         hardwareDuty = maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS;
     }
-    
-    // Near-passthrough dead-band (prevents switching noise/instability at crossover)
-    if (hardwareDuty < CEILING_TICKS && hardwareDuty > CEILING_TICKS - PWM_DEAD_BAND_TICKS) {
-        hardwareDuty = CEILING_TICKS;
-    } else if (hardwareDuty > CEILING_TICKS && hardwareDuty < CEILING_TICKS + PWM_DEAD_BAND_TICKS) {
-        hardwareDuty = CEILING_TICKS;
-    }
 
     // 3. Hardware PWM Map
     // Referencing both channels against CEILING_TICKS (rather than clamping
@@ -154,6 +147,20 @@ void POWER_PWM_Set(int32_t dutyCycleTicks) {
     // instead of stretching it into a flat, resolution-losing band - while
     // still guaranteeing every value stays <= CEILING_TICKS, so the leg that
     // isn't actively switching always gets its bootstrap refresh window.
+    //
+    // An earlier version of this map (back when high-side gate drive came
+    // from an isolated supply, not bootstrap caps) snapped hardwareDuty to
+    // a fixed value across a band around crossover, to avoid flip-flopping
+    // a leg between "fully static" and "actively switching". That binary
+    // static/switching distinction doesn't exist any more: with bootstrap
+    // caps, whichever leg is "pinned" is already switching every single
+    // cycle everywhere in the range (its BOOTSTRAP_REFRESH_TICKS-wide
+    // low-side notch is unconditional), so crossing CEILING_TICKS only
+    // redistributes which leg's notch width tracks the duty command - no
+    // new switching edges appear or disappear at the boundary. The snap is
+    // deliberately gone: this map is fully continuous end-to-end with no
+    // frozen band, so the "other" leg starts walking the instant this one
+    // saturates, and MPPT never loses gradient information near crossover.
     if (hardwareDuty == 0) {
         CH1Value = 0;
         CH2Value = 0;

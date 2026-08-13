@@ -36,9 +36,9 @@ void test_bootstrap_ceiling_never_exceeded_across_full_range(void) {
         PWM_DEAD_BAND_TICKS + 10,                                   // just past hard-zero dead-band (deep buck)
         CEILING_TICKS / 4,                                          // deep buck
         CEILING_TICKS / 2,                                          // mid buck
-        CEILING_TICKS - 200,                                        // buck side, outside crossover snap zone
+        CEILING_TICKS - 200,                                        // buck side, near crossover
         CEILING_TICKS,                                              // exact crossover
-        CEILING_TICKS + 200,                                        // boost side, outside crossover snap zone
+        CEILING_TICKS + 200,                                        // boost side, near crossover
         CEILING_TICKS + (maxDutyCycle_ticks - CEILING_TICKS) / 2,    // mid boost
         maxDutyCycle_ticks - PWM_DEAD_BAND_TICKS - 10,               // deep boost extreme
     };
@@ -91,6 +91,23 @@ void test_crossover_is_single_point_not_plateau(void) {
     TEST_ASSERT_EQUAL_UINT32((uint32_t)(CEILING_TICKS - 100), sumDither(ditherTableCH1));
 }
 
+// No near-passthrough snap band any more (removed - bootstrap caps mean
+// neither leg is ever truly static, so the old isolated-supply-era
+// chatter guard no longer applies): full single-tick resolution must hold
+// all the way up to and through the crossover point, not just far from it.
+void test_full_resolution_holds_right_up_to_crossover(void) {
+    for (int32_t offset = -5; offset <= 5; offset++) {
+        int32_t duty = CEILING_TICKS + offset;
+        POWER_PWM_Set(duty);
+
+        uint32_t expectedCh2 = (offset <= 0) ? (uint32_t)duty : (uint32_t)CEILING_TICKS;
+        uint32_t expectedCh1 = (offset >= 0) ? (uint32_t)(2 * CEILING_TICKS - duty) : (uint32_t)CEILING_TICKS;
+
+        TEST_ASSERT_EQUAL_UINT32(expectedCh2, sumDither(ditherTableCH2));
+        TEST_ASSERT_EQUAL_UINT32(expectedCh1, sumDither(ditherTableCH1));
+    }
+}
+
 // POWER_CalculateVoltageMatchDuty must aim at the same logical crossover
 // point (CEILING_TICKS) as the hardware map, or startup precharge duty is
 // mis-aimed and risks a backflow fault.
@@ -129,6 +146,7 @@ int main(int argc, char **argv) {
     RUN_TEST(test_deep_buck_pins_boost_leg_at_ceiling);
     RUN_TEST(test_deep_boost_pins_buck_leg_at_ceiling);
     RUN_TEST(test_crossover_is_single_point_not_plateau);
+    RUN_TEST(test_full_resolution_holds_right_up_to_crossover);
     RUN_TEST(test_voltage_match_duty_uses_ceiling_reference);
     RUN_TEST(test_ch1_never_negative_at_max_boost_duty);
     return UNITY_END();
