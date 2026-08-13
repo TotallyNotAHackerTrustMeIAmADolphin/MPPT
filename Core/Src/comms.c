@@ -63,13 +63,16 @@ void COMMS_HandleCommands(void) {
                     printf("ACK:CAL_ENTER_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:CAL_EXIT") == 0) {
                     SETTINGS_SetCalibrating(false);
-                    SETTINGS_SetCalHighSideOn(false);
                     printf("ACK:CAL_EXIT_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:CAL_MODE_I") == 0) {
-                    SETTINGS_SetCalHighSideOn(true);
+                    // No firmware-side effect: calibration now relies on an
+                    // external wire bridging +BULK_IN to +BULK_OUT rather than
+                    // a driven PWM state, so there's no "high side on" duty to
+                    // switch to any more. Kept as a no-op ACK so the dashboard's
+                    // existing calibration wizard (docs/app.js) still gets a
+                    // response for this step.
                     printf("ACK:CAL_MODE_I_OK\n");
                 } else if (strcmp(cmdBuffer, "CMD:CAL_MODE_V") == 0) {
-                    SETTINGS_SetCalHighSideOn(false);
                     printf("ACK:CAL_MODE_V_OK\n");
                 } else if (strncmp(cmdBuffer, "CMD:CAL_I_LOW:", 14) == 0) {
                     uint32_t vIn, vOut, aIn, aOut;

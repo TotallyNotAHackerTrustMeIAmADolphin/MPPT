@@ -21,7 +21,6 @@ const Measurements_t* SENSORS_GetMeasurements(void) { return &mock_m; }
 /* Mock Settings */
 DeviceLimits_t* SETTINGS_GetLimits(void) { return &mock_l; }
 bool SETTINGS_IsCalibrating(void) { return false; }
-bool SETTINGS_IsCalHighSideOn(void) { return false; }
 
 /* Mock Power */
 void POWER_PWM_Set(int32_t duty) { last_duty = duty; }
