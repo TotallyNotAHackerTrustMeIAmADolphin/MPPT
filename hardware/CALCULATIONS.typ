@@ -265,6 +265,36 @@ Verified against the CrossChip `CC6937` datasheet (not a name-convention guess).
   confirmed in the schematic as C10/C26) and a separate *100nF (0.1µF)* VCC bypass
   (confirmed as C12 near U2). Also 1nF at VOUT per the datasheet's `COUT=1nF` condition.
 
+= Factory Calibration Defaults (`settings.c`)
+
+`Calibration_t` needs sane defaults so a fresh board reads roughly-correct values before
+real calibration is run (per the EEPROM signature-check pattern in `CLAUDE.md`). Derived
+from the hardware specs above, not bench-measured — replaces stale v1.1-era defaults that
+were still assuming the pre-v1.3 divider ratio (~3.3x off from the actual 200k/4.7k parts).
+
+*Voltage (Vin/Vout share identical R5/R6 and R13/R14 200k/4.7k dividers):*
+
+$ "raw" = V_"real,mV" times frac(4.7, 204.7) div 3300"mV" times 4096 $
+
+(12-bit ADC, $V_"DDA"$ ≈ 3300mV.) Gives *285* @ 10V, *855* @ 30V — used as the Low/High
+calibration pair for both channels.
+
+*Current (Iin/Iout share identical CC6937S8-3FB020, 66mV/A, $V_"OUTQ"$ = VCC/2 = 1.65V @ 0A):*
+
+$ "raw" = V_"adc,mV" div 3300"mV" times 4096 $
+
+Gives *2048* @ 0A exactly (the datasheet's own zero-current condition) - this point is
+polarity-independent, always correct regardless of sign. The *10A* high point (*1229*
+raw) assumes higher current reads as a *lower* raw value, matching the slope direction
+of the previous (bench-measured, v1.1-era) defaults for this field - *not independently
+verified against the physical board*. The polarity depends on which way current actually
+flows through U2/U3 relative to their pin 1-4/5-8 orientation, which isn't something
+derivable from the datasheet alone. Bench-verify the sign before trusting these current
+defaults in the field; if it's backwards, the fix is recomputing the high point with the
+opposite sign (2048 + 10000×0.066/3300×4096 ≈ *2867* instead of 2048 − ... ≈ *1229*) -
+not simply swapping the two existing numbers, which would produce a different wrong pair,
+not the correct one.
+
 = 200kHz Operation: Component Verification <sec-200khz>
 
 This section verifies the selected parts against the switching frequency the firmware
