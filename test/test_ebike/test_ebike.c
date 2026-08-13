@@ -25,7 +25,7 @@ bool SETTINGS_IsCalHighSideOn(void) { return false; }
 
 /* Mock Power */
 void POWER_PWM_Set(int32_t duty) { last_duty = duty; }
-int32_t POWER_PWM_GetMax(void) { return 240 * 8; }
+int32_t POWER_PWM_GetMax(void) { return 240 * 16; }
 void POWER_Start(void) {}
 void POWER_Shutdown(void) { last_duty = 0; }
 int32_t POWER_CalculateVoltageMatchDuty(int32_t vin, int32_t vout) { return 0; }

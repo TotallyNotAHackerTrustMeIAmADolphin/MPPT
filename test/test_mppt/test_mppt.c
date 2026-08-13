@@ -7,7 +7,7 @@
 static int32_t mock_duty = 0;
 void POWER_PWM_Set(int32_t duty) { mock_duty = duty; }
 int32_t POWER_PWM_Get(void) { return mock_duty; }
-int32_t POWER_PWM_GetMax(void) { return 240 * 8; }
+int32_t POWER_PWM_GetMax(void) { return 240 * 16; }
 
 void setUp(void) {
     mock_duty = 500;
