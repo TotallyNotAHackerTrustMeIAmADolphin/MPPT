@@ -411,6 +411,7 @@ resume.sh
 hardware/KiCad/production/
 hardware/KiCad/*.dsn
 hardware/KiCad/*.ses
+hardware/KiCad/*.lck
 hardware/drc_report_*.txt
 *.rar
 

@@ -1,5 +1,18 @@
 # openMPPT Hardware Documentation
 
+## ⚙️ Setup Requirements (per machine)
+Before opening `hardware/KiCad/openMPPT_v1.3.kicad_pro`:
+- **KiCad 10.0** — matches this project's file format (`generator_version "10.0"`); an older
+  major version will prompt to upgrade the files.
+- **Install the `JLCPCB-Kicad-Library` package** (author: CDFER) via KiCad's
+  **Tools → Plugin and Content Manager**. This is the *official* PCM package — don't manually
+  download/vendor a copy of it yourself, that's what causes the `KICAD8_3RD_PARTY` environment
+  variable to stay unset and 3D models (switches, TVS diodes, generic passives - anything from
+  the `PCM_JLCPCB` footprint library) to silently fail to render. Restart KiCad after installing
+  so the variable takes effect.
+- Everything else (the `easyeda2kicad`-sourced symbols/footprints/3D models for parts not on
+  LCSC's basic-parts list) is already vendored in `hardware/KiCad/libraries/` and needs no setup.
+
 ## v1.3 Component Selection Summary
 | Component | Part Number | Function | Rationale |
 | :--- | :--- | :--- | :--- |
@@ -33,4 +46,5 @@ The v1.1 PCB has been fully assembled and verified, v1.1 means the v1.0 but with
 ## PCB Design Files
 - **KiCad Source**: `hardware/KiCad/`
 - **Production Files**: `hardware/PCB manufacturing/`
-- **3D Models**: `hardware/models/`
+- **Vendored 3D Models/Symbols/Footprints**: `hardware/KiCad/libraries/easyeda2kicad/` (see
+  "Setup Requirements" above for the one library that isn't vendored)
