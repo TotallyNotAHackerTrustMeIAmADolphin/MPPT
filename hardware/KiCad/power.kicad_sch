@@ -2879,272 +2879,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "JLCPCB-Diodes:TVS-Bi,H3V3L06B"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "D"
-				(at 2.032 0.834 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "H3V3L06B"
-				(at 2.032 -1.2122 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 0.8 0.8)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "PCM_JLCPCB:D_DFN0603-2L"
-				(at -1.778 0 90)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H3V3L06B_C20615778.pdf"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "8A 10V 80W 6V Bidirectional 3.3V DFN0603-2L ESD and Surge Protection (TVS/ESD) ROHS"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "LCSC" "C20615778"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Stock" "6297"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Price" "0.014USD"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Process" "SMT"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Minimum Qty" "20"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Attrition Qty" "12"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Class" "Preferred Component"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Manufacturer" "hongjiacheng"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Part" "H3V3L06B"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "D_*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "TVS-Bi,H3V3L06B_0_1"
-				(polyline
-					(pts
-						(xy -1.905 -0.635) (xy -1.27 0) (xy 1.27 0) (xy 1.905 0.635)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.27 2.54) (xy 0 0) (xy 1.27 2.54) (xy -1.27 2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0 0) (xy -1.27 -2.54) (xy 1.27 -2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "TVS-Bi,H3V3L06B_1_1"
-				(pin passive line
-					(at 0 -3.81 90)
-					(length 3.81)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 3.81 270)
-					(length 3.81)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "JLCPCB-Resistors:0603,110kΩ"
 			(pin_numbers
 				(hide yes)
@@ -5090,9 +4824,9 @@
 			)
 			(symbol "GXDR1207-470MT_0_1"
 				(arc
-					(start -2.03 -0.01)
-					(mid -3.04 1.02)
-					(end -4.06 0.01)
+					(start -4.06 0.01)
+					(mid -3.035 1.02)
+					(end -2.03 -0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5102,9 +4836,9 @@
 					)
 				)
 				(arc
-					(start 0.00 -0.01)
-					(mid -1.01 1.02)
-					(end -2.03 0.01)
+					(start -2.03 0.01)
+					(mid -1.005 1.02)
+					(end 0 -0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5114,9 +4848,9 @@
 					)
 				)
 				(arc
-					(start 4.06 -0.01)
-					(mid 3.05 1.02)
-					(end 2.03 0.01)
+					(start 0 0.01)
+					(mid 1.025 1.02)
+					(end 2.03 -0.01)
 					(stroke
 						(width 0)
 						(type default)
@@ -5126,33 +4860,15 @@
 					)
 				)
 				(arc
-					(start 2.03 -0.01)
-					(mid 1.02 1.02)
-					(end 0.00 0.01)
+					(start 2.03 0.01)
+					(mid 3.055 1.02)
+					(end 4.06 -0.01)
 					(stroke
 						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
-					)
-				)
-				(pin unspecified line
-					(at 5.08 0 180)
-					(length 1.27)
-					(name "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
 					)
 				)
 				(pin unspecified line
@@ -5166,6 +4882,24 @@
 						)
 					)
 					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 5.08 0 180)
+					(length 1.27)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -6116,12 +5850,6 @@
 		(uuid "5e544d8e-caaf-47cf-a6b4-cbfe0a767d74")
 	)
 	(junction
-		(at 137.16 142.24)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "65ea800b-d254-42b7-b5aa-a2b7ffdea98a")
-	)
-	(junction
 		(at 81.28 128.27)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6210,12 +5938,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dcef6635-56cb-453e-96b4-12da97f880e1")
-	)
-	(junction
-		(at 127 165.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "eb378424-4235-48ce-99c2-558174d88352")
 	)
 	(junction
 		(at 73.66 55.88)
@@ -6731,16 +6453,6 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 142.24) (xy 137.16 149.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "81e14647-798d-4e2e-a98e-be3f23619bb9")
-	)
-	(wire
-		(pts
 			(xy 127 142.24) (xy 127 149.86)
 		)
 		(stroke
@@ -6821,7 +6533,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 142.24) (xy 137.16 142.24)
+			(xy 127 142.24) (xy 139.7 142.24)
 		)
 		(stroke
 			(width 0)
@@ -6881,16 +6593,6 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 142.24) (xy 139.7 142.24)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a2022c25-4a6f-4287-a68a-f229652c16e7")
-	)
-	(wire
-		(pts
 			(xy 110.49 157.48) (xy 110.49 165.1)
 		)
 		(stroke
@@ -6898,16 +6600,6 @@
 			(type default)
 		)
 		(uuid "a36a381f-b992-4287-b3d6-35217fab1039")
-	)
-	(wire
-		(pts
-			(xy 137.16 157.48) (xy 137.16 165.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "aabeb9de-08ea-4169-9f38-028a9d60b913")
 	)
 	(wire
 		(pts
@@ -6948,16 +6640,6 @@
 			(type default)
 		)
 		(uuid "b5a28a85-b8c2-455d-b551-42aba57c34f4")
-	)
-	(wire
-		(pts
-			(xy 137.16 165.1) (xy 127 165.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bac03ac8-5c8a-484f-afb1-8bb0151226f5")
 	)
 	(wire
 		(pts
@@ -12501,198 +12183,6 @@
 			(project "openMPPT_v1.3"
 				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
 					(reference "C_OUT1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "JLCPCB-Diodes:TVS-Bi,H3V3L06B")
-		(at 137.16 153.67 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "def3b256-66a9-4917-b2b4-59938becaa3b")
-		(property "Reference" "D9"
-			(at 140.97 152.3999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "3.3V"
-			(at 140.97 154.94 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "PCM_JLCPCB:D_DFN0603-2L"
-			(at 135.382 153.67 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401261524_hongjiacheng-H3V3L06B_C20615778.pdf"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "8A 10V 80W 6V Bidirectional 3.3V DFN0603-2L ESD and Surge Protection (TVS/ESD) ROHS"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C20615778"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Stock" "6297"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Price" "0.014USD"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Process" "SMT"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Minimum Qty" "20"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Attrition Qty" "12"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Class" "Preferred Component"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "hongjiacheng"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Part" "H3V3L06B"
-			(at 137.16 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a532e9c0-b397-489d-a93f-2c6664f612ad")
-		)
-		(pin "2"
-			(uuid "4834496e-36a7-454a-a9d2-2ffc3069e89f")
-		)
-		(instances
-			(project "openMPPT_v1.3"
-				(path "/b4d74b55-d9ad-45d1-9f37-bb84a2194cf7/ca1cc5b5-a4dc-4cd9-9266-bf9eee57361d"
-					(reference "D9")
 					(unit 1)
 				)
 			)
