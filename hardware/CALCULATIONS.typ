@@ -134,17 +134,52 @@ the summary timing specs already checked in @sec-200khz).
 = Transient Voltage Suppression (TVS) Strategy
 
 *Primary Bus Protection (80V):*
-- *Component*: *5.0SMDJ85CA* (Bidirectional, 5kW).
-- *Rationale*: Standoff ($V_"RWM"$) of 85V ensures no leakage at 80V. 5kW rating handles massive inductive kickback and solar surges.
+- *Component*: *5.0SMDJ85CA* (Bidirectional, 5kW). Verified against the Hongjiacheng 5.0SMDJ
+  series datasheet, 85V row: VRWM=85V, VBR=94.4-104V min/max, *VC=137V @ IPP=36.5A* (the exact
+  5000W spec point: 137V times 36.5A approx 5000W). Part number carries the `CA` suffix, which
+  the datasheet's own numbering note defines as bidirectional - matches the "Bidirectional" call
+  here, though the schematic's library symbol is filed as `TVS-Uni,5.0SMDJ85CA` (worth confirming
+  in KiCad that the symbol's polarity graphic doesn't visually mislead a schematic reader).
+- *Rationale*: Standoff ($V_"RWM"$) of 85V ensures no leakage at 80V (IR only 5µA at VRWM,
+  confirmed). The 5000W/10-1000µs rating (a lightning-surge waveform, appropriate for
+  externally-coupled solar/connector transients) lets it absorb genuine surge energy without
+  self-destructing.
+- *Known limitation, not a defect*: this TVS *cannot* clamp the bus below the main MOSFETs'
+  rating. `BSC030N08NS5`'s own datasheet lists VDS absolute max as exactly 80V - zero headroom
+  above the system's own 80V bus limit - while this TVS's breakdown floor is 94.4V minimum, by
+  construction (it has to sit above the 85V standoff to avoid nuisance conduction at normal bus
+  voltage, same underlying reason any TVS needs separation from its own breakdown voltage). No
+  TVS standing off near 85V could protect a MOSFET with zero voltage margin; that's a MOSFET
+  voltage-margin decision (e.g. a 100V-rated part), not something this component can fix. This
+  TVS's real job is preventing catastrophic board failure (fire, ruptured caps) from an external
+  surge - not guaranteeing the MOSFETs stay in-spec during one.
 - *Placement*: Immediately adjacent to VIN/VOUT XT60 connectors.
 
 *Gate Drive Protection (10V):*
-- *Component*: *H12VH22U* (6kW Surge).
+- *Component*: *H12VH22U* (6kW Surge). Verified against its datasheet: VRWM=12V (20% headroom
+  over the 10V rail, IR=1µA at VRWM - confirmed low-leakage), PPP=6000W / IPP=210A at 8/20µs
+  (matches the "6kW Surge" call), clamping voltage *13-15V @ 20A pulse* - comfortably under the
+  IRS21867's 25V absolute max. Only exceeds that (30V) at the extreme edge of its own 200A
+  rating, far beyond anything this rail could realistically deliver (the SCT2A25 aux buck feeding
+  it is already current-limited to ~4A, per the earlier gate-driver verification). Unlike D9's
+  H3V3L06B, this is a genuine surge-capable part (DFN2020-3L, 75x the pulse power), not a
+  phone-ESD chip-scale device wearing a similar part-family name - no changes needed.
 - *Rationale*: 12V standoff ensures invisibility at 10V rail. Protects sensitive IRS21867 drivers (25V max) from regulator failure.
 
-*Logic Protection (3.3V):*
-- *Component*: *H3V3L06B* (ESD).
-- *Rationale*: 3.3V standoff is required because STM32 Absolute Max is only 4.0V. Provides last line of defense against ESD and noise.
+*Logic Protection (3.3V): removed (v1.3), D9 deleted.*
+- Previously *H3V3L06B*. Datasheet verification found it's an ESD-class part (DFN0603-2L,
+  IEC 61000-4-2 rated, 80W / 8A pulse rating) rather than a power-rail transient absorber, and its
+  own clamping-voltage table (3.5-6V at 1A, up to 10V at its rated 8A) exceeds the STM32's 4.0V
+  absolute max (confirmed against the STM32F072 datasheet, Table 21: Voltage characteristics) at
+  any current beyond a trivial ESD-level event - it could not do the job its own rationale claimed.
+- Checked purpose-built power-rail TVS alternatives before removing it: Nexperia PTVS3V3S1UR
+  (400W) clamps at 8V, Littelfuse SMF3.3 (200-1200W) clamps at 6.8V. Neither clears 4.0V either -
+  this is a physics limit of 3.3V-class TVS diodes (they need real separation from their own
+  breakdown voltage to keep leakage low at rest), not a part-selection mistake. No drop-in
+  replacement exists that actually satisfies the original "keeps the rail under 4.0V" rationale.
+- Decision: remove D9 rather than keep a component that can't do its stated job. The 3.3V rail's
+  fault protection now rests on the SY8120B1's own regulation and the upstream Vin OV/UV limits
+  already enforced in `system_config.h`, not an additional clamp on this rail.
 
 = Inductor Sizing (Main Power Stage) <sec-inductor>
 
@@ -167,9 +202,32 @@ Targeting an output voltage ripple ($Delta V_"out"$) of *< 100mV*.
 $ "ESR"_"max" = frac(Delta V_"out", Delta I_L) = frac(0.1"V", 4.0"A") = *25 m Omega* $
 
 *v1.3 Capacitor Strategy:*
-- Use *4x 330µF 100V Low-ESR Electrolytic* (e.g., Ymin LKML series) in parallel.
-- *Total Bank ESR*: $approx 11.75 m Omega$ (Passes 25mΩ limit).
-- *Total Ripple Capacity*: $approx 8.5 "A"$ (Safe for 20A operation).
+- Use *4x 330µF 100V Low-ESR Electrolytic* (Ymin LKML2502A331MF, C443153) in parallel, per bulk
+  bank (input and output each get their own 4-cap bank, C15-C18 / C20-C23 in the schematic).
+- *Verified against the Ymin LKM series datasheet* (not assumed): the part number itself decodes
+  to series LKM + diameter code L (12.5mm) + height code 250 (25mm) + voltage code 2A (100V) +
+  capacitance code 331 (330µF) + M (±20%) - exactly LKML2502A331MF. The series' standard-item
+  table confirms the 12.5×25mm/100V/330µF row directly: *ESR = 47mΩ max* and *ripple current =
+  2.14A rms*, both specified at 100kHz/25°C - the exact figures this section already assumed.
+- *Total Bank ESR*: $frac(47 m Omega, 4) = *11.75 m Omega*$ (Passes the 25mΩ limit with 53% margin).
+- *Total Ripple Capacity*: $2.14 "A" times 4 = *8.56 "A"*$ per bank. The actual RMS ripple current
+  a bulk cap bank sees is $approx frac(Delta I_L, 2 sqrt(3)) approx 1.15 "A"$ - the 8.56A rating is
+  headroom against that, not a comparison to the 20A DC bus current.
+- *Voltage margin*: 100V rating on an 80V max bus is a 20% derating margin - inside the range
+  electrolytics are normally run at continuously, though tighter than the 25-30% some DC-link
+  guidance recommends.
+- The series' own ripple-current frequency correction table (0.40, 0.50, 0.80, 0.90, *1.00* at
+  50Hz, 120Hz, 1kHz, 10-50kHz, 100kHz respectively) confirms the rated ripple current is already
+  anchored at its ceiling by 100kHz, with no published derating beyond that - supporting the
+  "frequency-independent" call in the @sec-200khz re-check below.
+- *Cost pass (checked, not adopted)*: cheaper and SMD alternatives were surveyed against this
+  same spec. Nothing beats LKML2502A331MF on cost, ESR, ripple, and life simultaneously - every
+  cheaper part found trades away life rating (10000h to 5000h) to hit its price point. The one
+  genuine free improvement: *3 caps per bank would already suffice* - $frac(47 m Omega, 3) approx
+  15.7 m Omega$ still clears the 25mΩ limit with 37% margin, and ripple capacity ($2.14 "A" times 3
+  approx 6.4 "A"$) stays far above the ~1.15A actual RMS need. Staying at *4x* for the extra ESR/
+  ripple headroom and to keep it symmetric with the input/output bank layout - not a requirement,
+  a margin choice.
 
 = Voltage Divider & ADC Scaling
 
@@ -271,6 +329,19 @@ $ P_"gate" = Q_g times V_"GS" times f_"sw" = 76 times 10^(-9) times 10 times f_"
 
 At 100kHz: 76mW/MOSFET. At 200kHz: 152mW/MOSFET. Not a concern for the driver IC's
 thermal budget either way.
+
+*Cost pass (checked, not adopted)*: a cheaper 100V candidate, Huixin `H80N10FB`
+(C49823472), was evaluated to replace `BSC030N08NS5` - similar $R_"DS(on)"$ (3.0/3.6mΩ)
+and $Q_g$ (67/100.5nC) made it look like a clean upgrade at first pass. It was *not*
+adopted: its datasheet lists $t_r$=92.0ns / $t_f$=82.4ns typ (comparable test conditions
+to the table above) - *6-7x slower* than `BSC030N08NS5`'s 12/13ns, despite the similar
+$Q_g$. Re-running the switching-loss formula above with those numbers gives
+$approx 14 "W"$ per MOSFET at 100kHz alone (vs. the *2.5W* PCB-only thermal ceiling this
+section already flags), instead of the expected 2.0W. *Lesson for future MOSFET swaps on
+this board*: $R_"DS(on)"$ and $Q_g$ alone don't predict switching speed - $Q_g$ is gate
+*charge*, not switching *time*, and depends heavily on a part's internal gate resistance
+and Miller-plateau behavior. Always check $t_r$/$t_f$ (or $t_"d(on)"$/$t_"d(off)"$) against
+a comparable test condition before treating a swap as electrically equivalent.
 
 == Gate Driver (IRS21867STRPBF, C52290)
 
