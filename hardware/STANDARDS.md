@@ -35,7 +35,6 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 | C_IN1/C_IN2 | **TCC1210X7R225K101MT** | Input Filter Cap | C5449052 |
 | D10/D11 | **5.0SMDJ85CA** | 80V Bus Protection | C42394457 |
 | D8 | **H12VH22U** | 10V Gate protection | C20615799 |
-| D9 | **H3V3L06B** | 3.3V Logic protection | C20615778 |
 | D1/D4 | **SS210** | Gate Driver Bootstrap Diode | C14996 |
 | D2/D3/D5/D6 | **SS210** | Gate Discharge Diode | C14996 |
 | D7 | **SS510** | Aux Buck (SCT2A25) Catch Diode | C18199171 |

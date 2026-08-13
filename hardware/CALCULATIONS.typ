@@ -142,9 +142,20 @@ the summary timing specs already checked in @sec-200khz).
 - *Component*: *H12VH22U* (6kW Surge).
 - *Rationale*: 12V standoff ensures invisibility at 10V rail. Protects sensitive IRS21867 drivers (25V max) from regulator failure.
 
-*Logic Protection (3.3V):*
-- *Component*: *H3V3L06B* (ESD).
-- *Rationale*: 3.3V standoff is required because STM32 Absolute Max is only 4.0V. Provides last line of defense against ESD and noise.
+*Logic Protection (3.3V): removed (v1.3), D9 deleted.*
+- Previously *H3V3L06B*. Datasheet verification found it's an ESD-class part (DFN0603-2L,
+  IEC 61000-4-2 rated, 80W / 8A pulse rating) rather than a power-rail transient absorber, and its
+  own clamping-voltage table (3.5-6V at 1A, up to 10V at its rated 8A) exceeds the STM32's 4.0V
+  absolute max (confirmed against the STM32F072 datasheet, Table 21: Voltage characteristics) at
+  any current beyond a trivial ESD-level event - it could not do the job its own rationale claimed.
+- Checked purpose-built power-rail TVS alternatives before removing it: Nexperia PTVS3V3S1UR
+  (400W) clamps at 8V, Littelfuse SMF3.3 (200-1200W) clamps at 6.8V. Neither clears 4.0V either -
+  this is a physics limit of 3.3V-class TVS diodes (they need real separation from their own
+  breakdown voltage to keep leakage low at rest), not a part-selection mistake. No drop-in
+  replacement exists that actually satisfies the original "keeps the rail under 4.0V" rationale.
+- Decision: remove D9 rather than keep a component that can't do its stated job. The 3.3V rail's
+  fault protection now rests on the SY8120B1's own regulation and the upstream Vin OV/UV limits
+  already enforced in `system_config.h`, not an additional clamp on this rail.
 
 = Inductor Sizing (Main Power Stage) <sec-inductor>
 
