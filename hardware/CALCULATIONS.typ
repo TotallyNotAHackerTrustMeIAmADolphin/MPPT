@@ -134,12 +134,36 @@ the summary timing specs already checked in @sec-200khz).
 = Transient Voltage Suppression (TVS) Strategy
 
 *Primary Bus Protection (80V):*
-- *Component*: *5.0SMDJ85CA* (Bidirectional, 5kW).
-- *Rationale*: Standoff ($V_"RWM"$) of 85V ensures no leakage at 80V. 5kW rating handles massive inductive kickback and solar surges.
+- *Component*: *5.0SMDJ85CA* (Bidirectional, 5kW). Verified against the Hongjiacheng 5.0SMDJ
+  series datasheet, 85V row: VRWM=85V, VBR=94.4-104V min/max, *VC=137V @ IPP=36.5A* (the exact
+  5000W spec point: 137V times 36.5A approx 5000W). Part number carries the `CA` suffix, which
+  the datasheet's own numbering note defines as bidirectional - matches the "Bidirectional" call
+  here, though the schematic's library symbol is filed as `TVS-Uni,5.0SMDJ85CA` (worth confirming
+  in KiCad that the symbol's polarity graphic doesn't visually mislead a schematic reader).
+- *Rationale*: Standoff ($V_"RWM"$) of 85V ensures no leakage at 80V (IR only 5µA at VRWM,
+  confirmed). The 5000W/10-1000µs rating (a lightning-surge waveform, appropriate for
+  externally-coupled solar/connector transients) lets it absorb genuine surge energy without
+  self-destructing.
+- *Known limitation, not a defect*: this TVS *cannot* clamp the bus below the main MOSFETs'
+  rating. `BSC030N08NS5`'s own datasheet lists VDS absolute max as exactly 80V - zero headroom
+  above the system's own 80V bus limit - while this TVS's breakdown floor is 94.4V minimum, by
+  construction (it has to sit above the 85V standoff to avoid nuisance conduction at normal bus
+  voltage, same underlying reason any TVS needs separation from its own breakdown voltage). No
+  TVS standing off near 85V could protect a MOSFET with zero voltage margin; that's a MOSFET
+  voltage-margin decision (e.g. a 100V-rated part), not something this component can fix. This
+  TVS's real job is preventing catastrophic board failure (fire, ruptured caps) from an external
+  surge - not guaranteeing the MOSFETs stay in-spec during one.
 - *Placement*: Immediately adjacent to VIN/VOUT XT60 connectors.
 
 *Gate Drive Protection (10V):*
-- *Component*: *H12VH22U* (6kW Surge).
+- *Component*: *H12VH22U* (6kW Surge). Verified against its datasheet: VRWM=12V (20% headroom
+  over the 10V rail, IR=1µA at VRWM - confirmed low-leakage), PPP=6000W / IPP=210A at 8/20µs
+  (matches the "6kW Surge" call), clamping voltage *13-15V @ 20A pulse* - comfortably under the
+  IRS21867's 25V absolute max. Only exceeds that (30V) at the extreme edge of its own 200A
+  rating, far beyond anything this rail could realistically deliver (the SCT2A25 aux buck feeding
+  it is already current-limited to ~4A, per the earlier gate-driver verification). Unlike D9's
+  H3V3L06B, this is a genuine surge-capable part (DFN2020-3L, 75x the pulse power), not a
+  phone-ESD chip-scale device wearing a similar part-family name - no changes needed.
 - *Rationale*: 12V standoff ensures invisibility at 10V rail. Protects sensitive IRS21867 drivers (25V max) from regulator failure.
 
 *Logic Protection (3.3V): removed (v1.3), D9 deleted.*
