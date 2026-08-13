@@ -62,7 +62,7 @@ python scripts/tune_mppt.py --port /dev/ttyACM0  # hybrid (random search + local
 
 ### PWM / sensing hardware details
 
-- 100kHz PWM via TIM1, with a 3-bit dither table (8 cycles) raising effective resolution from 240 to 1920 steps; DMA auto-updates duty per dither cycle.
+- 200kHz PWM via TIM1 (`TIMER_PERIOD=240`), with a 4-bit dither table (16 cycles) raising effective resolution from 240 to 3840 steps; DMA auto-updates duty per dither cycle. v1.3 has no isolated high-side gate supply (bootstrap caps only), so `POWER_PWM_Set` (`Core/Src/power.c`) reserves a small guaranteed low-side window (`BOOTSTRAP_REFRESH_TICKS`/`CEILING_TICKS`) so the non-switching leg's bootstrap cap keeps recharging even during sustained single-mode (deep buck/deep boost) operation.
 - ADC uses circular DMA with double buffering (ping-pong) across 6 channels — CPU processes one half while DMA fills the other.
 - Nokia 5110 (PCD8544) LCD on SPI1: CLK=PB3, DIN=PB5, DC=PB13, CE=PB14, RST=PB12. Non-blocking 10Hz refresh, isolated from the control loop.
 - Onboard LED (PC10) is the diagnostic heartbeat (slow blink = STATE_ACTIVE) and fault code indicator (N pulses + 1s pause; 1=Input OV, 2=Input UV, 3=Input OC, 4=Output OV, 5=Output OC, 6=Backflow, 7=Overtemp) — see `FaultReason_t` in `system_types.h`.

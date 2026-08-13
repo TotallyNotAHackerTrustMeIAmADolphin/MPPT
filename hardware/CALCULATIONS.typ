@@ -18,7 +18,7 @@
   columns: (auto, auto, auto, 1fr),
   align: (left, center, center, left),
   table.header([*Parameter*], [*Symbol*], [*Value*], [*Notes*]),
-  [Switching Frequency], [$f_"sw"$], [100 kHz], [Defined in `mppt.h` (`TIMER_PERIOD = 240`)],
+  [Switching Frequency], [$f_"sw"$], [200 kHz], [`TIMER_PERIOD = 240` in `system_config.h`/`MPPT.ioc` — confirmed via git history to have been the standing config for a year, not a future change],
   [Maximum Input Voltage], [$V_"in,max"$], [80 V], [Hardware limit],
   [Maximum Output Current], [$I_"out,max"$], [20 A], [Safety limit],
   [Nominal System Voltage], [$V_"sys"$], [12V / 24V / 48V], [Target batteries],
@@ -31,11 +31,14 @@
   radius: 4pt,
   width: 100%,
 )[
-  *Planned change: 100kHz → 200kHz main switching frequency.* Not yet implemented —
-  `TIMER_PERIOD` in `mppt.h` (currently 240) and the table above still reflect 100kHz.
-  `setup_cubemx_env_auto.py` already derives `TIMER_PERIOD` from `MPPT.ioc` and `main.c`'s
-  PWM limits/dead-bands are dynamic, so the firmware side should follow from changing the
-  timer config. See @sec-200khz for the full component re-check.
+  *200kHz is the actual, standing firmware config — not a planned migration.*
+  `TIMER_PERIOD = 240` has computed to 200kHz since the earliest commit in this repo's
+  history; this was previously undocumented and this table incorrectly described it as a
+  future 100kHz→200kHz change. What genuinely *was* outstanding until this PR: the PWM
+  dither table (`DITHER_TABLE_SIZE`) was never paired with the halved period, so the
+  firmware was silently running at half the duty-cycle resolution 200kHz should have —
+  fixed by bumping `DITHER_TABLE_SIZE` 8→16 alongside a bootstrap-cap-safe PWM map for
+  v1.3 (no isolated gate supply). See @sec-200khz for the full component re-check.
 ]
 
 = Gate Drive & Auxiliary Power Optimization (v1.3)
@@ -262,13 +265,14 @@ Verified against the CrossChip `CC6937` datasheet (not a name-convention guess).
   confirmed in the schematic as C10/C26) and a separate *100nF (0.1µF)* VCC bypass
   (confirmed as C12 near U2). Also 1nF at VOUT per the datasheet's `COUT=1nF` condition.
 
-= 200kHz Migration: Component Re-Check <sec-200khz>
+= 200kHz Operation: Component Verification <sec-200khz>
 
-This section re-verifies the parts already selected for 100kHz operation against a
-doubled switching frequency, using values pulled directly from the vendored datasheets
-(not assumed). Nothing here has been implemented in firmware or hardware yet — this is
-the pre-check called for by the `STANDARDS.md` "Part selection & calculations" mandate
-before the `ROADMAP_V1.3.md` Phase 4 checklist item is closed.
+This section verifies the selected parts against the switching frequency the firmware
+actually runs at (200kHz, confirmed via git history — not a future migration), using
+values pulled directly from the vendored datasheets (not assumed). Comparisons against
+100kHz are kept below for reference/context, not because 100kHz is a live alternative.
+This is the check called for by the `STANDARDS.md` "Part selection & calculations"
+mandate for the `ROADMAP_V1.3.md` Phase 4 checklist item.
 
 == Main Switching MOSFETs (Q1-Q4, BSC030N08NS5, C501507)
 
@@ -298,7 +302,7 @@ $ P_"sw" = frac(1,2) times V_"DS" times I_D times (t_r + t_f) times f_"sw" $
 #table(
   columns: (1fr, auto, auto),
   align: (left, center, center),
-  table.header([], [*100 kHz (current)*], [*200 kHz (proposed)*]),
+  table.header([], [*100 kHz (reference only)*], [*200 kHz (actual)*]),
   [$P_"sw"$ per hard-switched MOSFET], [2.0 W], [4.0 W],
   [$P_"cond"$ per MOSFET], [1.2 W], [1.2 W (unchanged)],
   [*Total est. loss*], [*≈3.2 W*], [*≈5.2 W*],
@@ -310,10 +314,11 @@ $ P_"sw" = frac(1,2) times V_"DS" times I_D times (t_r + t_f) times f_"sw" $
   radius: 4pt,
   width: 100%,
 )[
-  *Thermal flag.* With PCB-only cooling ($R_"th JA"$=50 K/W, no heatsink/thermal vias),
-  the datasheet's own max package dissipation at $T_A$=25°C is
-  $P_"tot" = (150-25)/50 = *2.5 "W"*$ — already below the ≈3.2W estimate at *100kHz*,
-  let alone ≈5.2W at 200kHz. This assumes worst-case $V_"DS"$/$I_D$ coincidence and a
+  *Thermal flag — live at the firmware's actual 200kHz, not hypothetical.* With
+  PCB-only cooling ($R_"th JA"$=50 K/W, no heatsink/thermal vias), the datasheet's own
+  max package dissipation at $T_A$=25°C is $P_"tot" = (150-25)/50 = *2.5 "W"*$ — already
+  below the ≈3.2W estimate at 100kHz, let alone the ≈5.2W the board actually sees at its
+  real 200kHz operating point. This assumes worst-case $V_"DS"$/$I_D$ coincidence and a
   simplified switching-loss model (real loss depends on which of Q1-Q4 is hard-switched
   vs. synchronous-rectifying in the actual buck-boost topology, and gate resistance/drive
   strength affect $t_r$/$t_f$ in-circuit). This is exactly what `ROADMAP_V1.3.md` Phase 3's
@@ -376,7 +381,7 @@ used): *15µH ±20%, Isat 30.5A, rated 30A, DCR 3.5mΩ, 28x23mm THT, \$2.30 / 40
 #table(
   columns: (1fr, auto, auto),
   align: (left, center, center),
-  table.header([], [*100kHz (current firmware)*], [*200kHz (planned)*]),
+  table.header([], [*100kHz (reference only)*], [*200kHz (actual firmware)*]),
   [Ripple current $Delta I_L$], [13.3A], [6.67A],
   [Peak current / $I_"sat"$ margin], [26.7A / 14%], [23.3A / 31%],
   [Output ripple $Delta V_"out"$ (bank ESR 11.75mΩ)], [*157mV — 57% over the 100mV target*], [78mV ✓],
@@ -384,9 +389,10 @@ used): *15µH ±20%, Isat 30.5A, rated 30A, DCR 3.5mΩ, 28x23mm THT, \$2.30 / 40
 )
 
 *L4 only meets the ripple spec at 200kHz — a real, accepted dependency, not a bug.* It
-was deliberately sized on the assumption that the 200kHz switch happens, specifically to
-avoid the "humongous" ~50µH part the 100kHz target would otherwise require. This is not
-something to fix by re-checking values; it's a documented design decision.
+was deliberately sized against the firmware's actual 200kHz operating point (confirmed
+via git history, not merely assumed), specifically to avoid the "humongous" ~50µH part
+a 100kHz target would otherwise require. This is not something to fix by re-checking
+values; it's a documented design decision.
 
 *Candidate replacements evaluated* — two rounds. First pass (22-30µH / Isat≥30A,
 filtered to in-stock — 19 of 21 candidates found were out of stock and excluded)

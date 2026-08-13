@@ -51,10 +51,12 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 > needs a deliberate footprint swap in KiCad, not a drop-in text edit).
 >
 > Same 15uH as the original part, so the ripple picture is unchanged: clears the
-> <100mV target at 200kHz (78mV) but not at the current 100kHz firmware setting (157mV)
-> — a real, accepted gap since L4 was deliberately sized on the assumption that the
-> 200kHz switch happens. What changed is DCR (3.5mOhm -> 2.2mOhm, cutting conduction
-> loss from 1.40W to 0.88W) for a $1.56 premium over the original part.
+> <100mV target at the firmware's actual 200kHz operating point (78mV) but would not
+> clear it at a hypothetical 100kHz (157mV) — L4 was deliberately sized against the real
+> 200kHz operating point (`TIMER_PERIOD=240` has computed to 200kHz since the earliest
+> commit in this repo's history, confirmed via git log, not merely assumed). What changed
+> is DCR (3.5mOhm -> 2.2mOhm, cutting conduction loss from 1.40W to 0.88W) for a $1.56
+> premium over the original part.
 >
 > This was chosen over several alternatives considered along the way (see
 > `CALCULATIONS.typ` Section 8 for the full comparison): the absolute cheapest option
@@ -111,7 +113,7 @@ Workflow:
   what's genuinely hard to derive from the files (rationale, "why this part") — the KiCad project
   itself is the source of truth for raw pin/footprint data.
 - **Part selection & calculations**: for new components, Claude checks datasheet specs against
-  the operating envelope (MOSFET Vds/Rds(on)/Qg vs. 100kHz switching losses, inductor Isat/DCR vs.
+  the operating envelope (MOSFET Vds/Rds(on)/Qg vs. 200kHz switching losses, inductor Isat/DCR vs.
   the 20A continuous rating, TVS clamping voltage vs. the 80V rail margin, sensor bandwidth vs. the
   ~1.5kHz control loop), checks LCSC/JLCPCB stock/package availability, and documents the
   derivation in `CALCULATIONS.typ` — not just the final part number.
