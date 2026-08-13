@@ -185,6 +185,14 @@ $ "ESR"_"max" = frac(Delta V_"out", Delta I_L) = frac(0.1"V", 4.0"A") = *25 m Om
   50Hz, 120Hz, 1kHz, 10-50kHz, 100kHz respectively) confirms the rated ripple current is already
   anchored at its ceiling by 100kHz, with no published derating beyond that - supporting the
   "frequency-independent" call in the @sec-200khz re-check below.
+- *Cost pass (checked, not adopted)*: cheaper and SMD alternatives were surveyed against this
+  same spec. Nothing beats LKML2502A331MF on cost, ESR, ripple, and life simultaneously - every
+  cheaper part found trades away life rating (10000h to 5000h) to hit its price point. The one
+  genuine free improvement: *3 caps per bank would already suffice* - $frac(47 m Omega, 3) approx
+  15.7 m Omega$ still clears the 25mΩ limit with 37% margin, and ripple capacity ($2.14 "A" times 3
+  approx 6.4 "A"$) stays far above the ~1.15A actual RMS need. Staying at *4x* for the extra ESR/
+  ripple headroom and to keep it symmetric with the input/output bank layout - not a requirement,
+  a margin choice.
 
 = Voltage Divider & ADC Scaling
 
