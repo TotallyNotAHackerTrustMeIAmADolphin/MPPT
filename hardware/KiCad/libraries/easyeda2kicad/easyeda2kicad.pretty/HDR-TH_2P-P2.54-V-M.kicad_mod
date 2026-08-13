@@ -1,30 +1,203 @@
-(module easyeda2kicad:HDR-TH_2P-P2.54-V-M (layer F.Cu) (tedit 5DC5F6A4)
+(footprint "HDR-TH_2P-P2.54-V-M"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -4 0)
+		(layer "F.SilkS")
+		(uuid "5f4e5478-bec1-4e40-b0e7-e7f33766a0ae")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "HDR-TH_2P-P2.54-V-M"
+		(at 0 4 0)
+		(layer "F.Fab")
+		(uuid "ddc2ad5e-95d0-4ffc-ac42-e1a3752d67de")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9b0a7879-ba92-4fc9-9f8d-38ca609c072a")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a3cbce0c-863b-4c80-8451-8ddf50c253ce")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "LCSC Part" "C492401"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0b261a45-4c2d-47ab-bf7b-37ea94d76845")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
 	(attr through_hole)
-	(fp_text reference REF** (at 0.000 -4.000) (layer F.SilkS)
-		(effects (font (size 1 1) (thickness 0.15)))
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -2.54 -1.27)
+		(end -0.63 -1.27)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "a4ee12d0-83bc-4248-89e0-f86eb7290fef")
 	)
-	(fp_text value HDR-TH_2P-P2.54-V-M (at 0.000 4.000) (layer F.Fab)
-		(effects (font (size 1 1) (thickness 0.15)))
+	(fp_line
+		(start -2.54 1.27)
+		(end -2.54 -1.27)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "094dd831-75cf-413b-8ba5-a40fb561dd19")
 	)
-	(fp_text user %R (at 0 0) (layer F.Fab)
-		(effects (font (size 1 1) (thickness 0.15)))
+	(fp_line
+		(start 2.54 -1.27)
+		(end -0.63 -1.27)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "204fd9dc-f832-47a8-bc7f-6e443e236f29")
 	)
-	(property "LCSC Part" "C492401")
-	(fp_line (start 2.54 -1.27) (end 2.54 1.27) (layer F.SilkS) (width 0.20))
-	(fp_line (start 2.54 1.27) (end -2.54 1.27) (layer F.SilkS) (width 0.20))
-	(fp_line (start -2.54 1.27) (end -2.54 -1.27) (layer F.SilkS) (width 0.20))
-	(fp_line (start -2.54 -1.27) (end -0.63 -1.27) (layer F.SilkS) (width 0.20))
-	(fp_line (start 2.54 -1.27) (end -0.63 -1.27) (layer F.SilkS) (width 0.20))
-	(pad 1 thru_hole rect (at -1.27 0.00 0.00) (size 2.000 2.000) (layers *.Cu *.Mask)(drill 1.199998))
-	(pad 2 thru_hole circle (at 1.27 0.00 0.00) (size 2.000 2.000) (layers *.Cu *.Mask)(drill 1.199998))
-	(fp_circle (center -2.54 1.25) (end -2.51 1.25) (layer F.SilkS) (width 0.06))
-	(fp_line (start -2.54 1.25) (end -2.54 -1.25) (layer F.CrtYd) (width 0.05))
-	(fp_line (start -2.54 -1.25) (end 2.54 -1.25) (layer F.CrtYd) (width 0.05))
-	(fp_line (start 2.54 -1.25) (end 2.54 1.25) (layer F.CrtYd) (width 0.05))
-	(fp_line (start 2.54 1.25) (end -2.54 1.25) (layer F.CrtYd) (width 0.05))
-	(model "${KIPRJMOD}/hardware/KiCad/libraries/easyeda2kicad/easyeda2kicad.3dshapes/HDR2.54-M-LI-1X2P.wrl"
-		(offset (xyz 0.000 0.000 0.000))
-		(scale (xyz 1 1 1))
-		(rotate (xyz 0 0 0))
+	(fp_line
+		(start 2.54 -1.27)
+		(end 2.54 1.27)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e6426a27-a5d4-4948-8041-d6f96510959a")
+	)
+	(fp_line
+		(start 2.54 1.27)
+		(end -2.54 1.27)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "03db6097-cce8-48d2-bc7e-2070ef61cb04")
+	)
+	(fp_circle
+		(center -2.54 1.25)
+		(end -2.51 1.25)
+		(stroke
+			(width 0.06)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "c37bbbb3-3148-4572-9484-5bc36c8a67da")
+	)
+	(fp_line
+		(start -2.54 -1.25)
+		(end 2.54 -1.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "cc642784-86cf-427e-a154-fc089ef21ec3")
+	)
+	(fp_line
+		(start -2.54 1.25)
+		(end -2.54 -1.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "f75b1d24-13fc-40b8-b09a-f70c8c2114bd")
+	)
+	(fp_line
+		(start 2.54 -1.25)
+		(end 2.54 1.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "f685af71-c63f-4025-80f3-9ac158e9b458")
+	)
+	(fp_line
+		(start 2.54 1.25)
+		(end -2.54 1.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "6a8f81ed-0c07-4e5b-ab8e-ea1d96cf8ce9")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "c62feadc-9d58-42c9-a137-ebd4d631dde5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole rect
+		(at -1.27 0)
+		(size 2 2)
+		(drill 1.199998)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "bcefa34b-9870-4f04-bb7b-eff4a2382f1c")
+	)
+	(pad "2" thru_hole circle
+		(at 1.27 0)
+		(size 2 2)
+		(drill 1.199998)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "b27566da-1455-45b1-bacd-315ee384ce45")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/libraries/easyeda2kicad/easyeda2kicad.3dshapes/HDR2.54-M-LI-1X2P.wrl"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
 	)
 )

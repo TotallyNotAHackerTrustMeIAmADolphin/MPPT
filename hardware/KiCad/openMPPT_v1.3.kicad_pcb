@@ -27283,12 +27283,6 @@
 		(path "/c80fb01e-2760-4d9b-a0d8-6c17bba01cdd/0e5ba111-5e8a-44f8-9595-58fca7b9132f")
 		(sheetname "/Connectors/")
 		(sheetfile "connectors.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -27426,7 +27420,7 @@
 			(uuid "4aae0776-818f-4a64-b160-f05100269891")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/libraries/easyeda2kicad/easyeda2kicad.3dshapes/HDR2.54-M-LI-1X2P.step"
+		(model "${KIPRJMOD}/libraries/easyeda2kicad/easyeda2kicad.3dshapes/HDR2.54-M-LI-1X2P.wrl"
 			(offset
 				(xyz 0 0 0)
 			)
