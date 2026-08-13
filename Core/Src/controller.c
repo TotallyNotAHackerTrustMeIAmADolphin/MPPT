@@ -382,9 +382,13 @@ void CONTROLLER_UpdateHighRate(void) {
             break;
     }
 
-    // Override for calibration
+    // Override for calibration: hold the converter fully off. Calibration now
+    // relies on an external wire bridging +BULK_IN to +BULK_OUT rather than
+    // driving a particular PWM duty, so the converter itself should stay
+    // quiescent throughout - not fight the bridge or contribute switching
+    // ripple to the calibration reads.
     if (SETTINGS_IsCalibrating()) {
-        targetDuty_ticks = SETTINGS_IsCalHighSideOn() ? (TIMER_PERIOD * DITHER_TABLE_SIZE) : 0;
+        targetDuty_ticks = 0;
     }
 
     POWER_PWM_Set(targetDuty_ticks);

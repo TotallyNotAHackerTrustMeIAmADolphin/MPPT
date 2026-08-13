@@ -44,7 +44,6 @@ static DeviceLimits_t limits = {
     .iOutMin_mA = -500
 };
 static bool isCalibrating = false;
-static bool calHighSideOn = false;
 
 #define SETTINGS_SIGNATURE 0xABCD
 #define LIMITS_WORDS (sizeof(DeviceLimits_t) / 2)
@@ -108,12 +107,4 @@ bool SETTINGS_IsCalibrating(void) {
 
 void SETTINGS_SetCalibrating(bool active) {
     isCalibrating = active;
-}
-
-bool SETTINGS_IsCalHighSideOn(void) {
-    return calHighSideOn;
-}
-
-void SETTINGS_SetCalHighSideOn(bool active) {
-    calHighSideOn = active;
 }

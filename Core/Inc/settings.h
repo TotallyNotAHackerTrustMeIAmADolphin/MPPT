@@ -40,7 +40,5 @@ DeviceLimits_t* SETTINGS_GetLimits(void);
  */
 bool SETTINGS_IsCalibrating(void);
 void SETTINGS_SetCalibrating(bool active);
-bool SETTINGS_IsCalHighSideOn(void);
-void SETTINGS_SetCalHighSideOn(bool active);
 
 #endif /* __SETTINGS_H */
