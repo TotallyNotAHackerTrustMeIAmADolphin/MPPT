@@ -10,7 +10,7 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 - [x] **Robust 10V Gate Drive**: Replace XL7005A with **SCT2A25** tuned to **10V**. [DONE]
 - [x] **Cascaded 3.3V Logic Supply**: Implement **SY8120** stepping down from 10V to 3.3V. [DONE]
 - [x] **Gate Drive Optimization**: Permanently change gate resistors to **5.1 Ω** with **1N4148W** turn-off diodes. [DONE]
-- [ ] **Reset & Debug Pinout**: 
+- [x] **Reset & Debug Pinout**: 
     - Fix the Reset button pinout.
     - Implement **10k Pull-up (SWDIO)**, **10k Pull-down (SWCLK)**, and **47Ω series resistors**.
 - [x] **Filter Cleanup**: Recalculated VSense LPF to **3.47 kHz** (10nF). [DONE]
@@ -39,7 +39,7 @@ This document outlines the development phases for the openMPPT v1.3 hardware rev
 
 ## Phase 4: Architectural Optimization & Cost Reduction
 - [x] **SMD Migration**: Transition to **BSC030N08NS5** or keeping **BRCS030N10SHRA** (TO-220) based on board space.
-- [ ] **Unified Dev Header**: Combined Reset, UART, and SWD.
+- [x] **Unified Dev Header**: Combined Reset, UART, and SWD. (i did this, but only st link and rst)
 - [x] **Switching Frequency: 200kHz**: `TIMER_PERIOD` (`system_config.h`/`MPPT.ioc`) has
       actually computed to 200kHz since the earliest commit in this repo's history — this
       was previously undocumented, not a pending change. Component re-check done — see
