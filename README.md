@@ -7,8 +7,8 @@ A professional-grade firmware for a Maximum Power Point Tracking (MPPT) solar ch
 ## 🚀 Key Technical Features
 
 ### 1. High-Frequency PWM with Resolution Dithering
-- **Frequency:** 100 kHz switching frequency for high power density.
-- **Dithering:** Implements a **3-bit dithering table** (8 cycles). This effectively increases the PWM resolution from 240 steps to **1920 steps**, allowing for ultra-fine-grained voltage and current control.
+- **Frequency:** 200 kHz switching frequency for high power density.
+- **Dithering:** Implements a **4-bit dithering table** (16 cycles). This effectively increases the PWM resolution from 240 steps to **3840 steps**, allowing for ultra-fine-grained voltage and current control.
 - **Hardware Integration:** Managed via TIM1 with DMA-based automated duty cycle updates.
 
 ### 2. High-Performance Sensing (Ping-Pong ADC)

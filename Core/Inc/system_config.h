@@ -18,15 +18,19 @@
 #define HYSTERESIS_CURRENT_MA 100  // 100mA drop before leaving CC
 
 // --- Hardware Constants ---
-#define DITHER_TABLE_SIZE     8
+// 16 dither bits pairs with the 200kHz TIM1 period (see tim.c) to restore the
+// duty-cycle resolution that halving the period from 100kHz took away.
+#define DITHER_TABLE_SIZE     16
 #define ADC_CHANNEL_COUNT     6
 #define ADC_SAMPLE_COUNT      128
 #define ADC_BUF_LEN           (ADC_CHANNEL_COUNT * ADC_SAMPLE_COUNT)
 
 // --- Algorithm Constants ---
+// Step sizes are doubled alongside DITHER_TABLE_SIZE so they represent the
+// same physical duty-cycle percentage as before.
 #define POWER_THRESHOLD_UW    189769 // Optimal threshold for speed/stability
-#define SWEEP_STEP_SIZE_TICKS 8
-#define MPPT_STEP_SIZE_TICKS  13     // Tuned fixed step size (ticks)
+#define SWEEP_STEP_SIZE_TICKS 16
+#define MPPT_STEP_SIZE_TICKS  26     // Tuned fixed step size (ticks)
 
 // --- Sensor Physics ---
 #define V_REF_INT_X1000       1200 // 1.2V * 1000
