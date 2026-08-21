@@ -91,13 +91,77 @@ This directory contains the KiCad electronic design files for the openMPPT contr
 > need to be spread apart from each other and from nearby parts (R9, R10, R17, R18,
 > R36-R39, UA1, UB1) during placement — normal pre-routing layout work, not a bug.
 
-## 3. Tooling
+## 3. PCB Net Classes (Design Rules)
+
+Defined in `openMPPT_v1.3.kicad_pro` → `net_settings` (Board Setup → Net Classes in KiCad).
+Assignment is by netclass pattern, not manual per-net tagging, so newly added nets that match
+a pattern pick up the right width automatically.
+
+| Class | Track Width | Clearance | Pattern(s) | Nets covered |
+| :--- | :--- | :--- | :--- | :--- |
+| `Power_20A` | 3.5mm | 0.5mm | `VIN`, `IN_CAP`, `VOUT`, `OUT_CAP`, `VS_*` | Input/output current path traces — the actual 20A-carrying nets, confirmed at the pad level (CC6937 `IP+`/`IP-` primary pins on U2/U3 sit on `IN_CAP`/`VIN` and `OUT_CAP`/`VOUT`, not on `ISENSEIN`/`ISENSEOUT`) |
+| `AuxSupply` | 0.6mm | 0.2mm (default) | `3V3`, `+10V` | Logic and gate-driver supply rails — meaningful current but nowhere near 20A |
+| `Default` | 0.2mm | 0.2mm | everything else, **including `GND`** | Signal/control, plus GND — a poured zone doesn't care about netclass `track_width` (that only governs hand-drawn trace segments; zone fill width is set by the zone's own "minimum thickness"), so forcing GND to 3.5mm would only have added friction on incidental GND stub traces. Isolation is unaffected: DRC clearance between two nets uses the larger of the two netclasses' clearance, so the GND pour still gets pushed 0.5mm off `VIN`/`VOUT`/etc. via *their* clearance regardless of what class GND itself is in. |
+
+**Deliberately excluded from `Power_20A` despite the naming**: `ISENSEIN`/`ISENSEOUT` are the
+CC6937's isolated analog *output* pins (mA-level signal to the MCU ADC), and `SHUNT_IN+` is
+U4's (aux 10V buck) local input tap off VIN with its own bypass caps — also low current. Traced
+via pad `pinfunction` in the PCB, not assumed from the name.
+
+**Open items, not yet resolved**:
+- `Power_20A`'s 3.5mm width assumes **2oz copper** per the Core Mandate above, but the board has
+  no explicit stackup block (`.kicad_pcb` has no `(stackup ...)` section) — it's silently on
+  KiCad's default, likely 1oz. **Set this explicitly**: Board Setup → Physical Stackup → Copper
+  Layers → 70µm (2oz) for both F.Cu/B.Cu, or the 3.5mm figure understates what's needed. Not
+  done here — no `kicad-cli` available on this machine to validate a hand-edited stackup block,
+  and a malformed one would be a bad way to find out.
+- `Power_20A` clearance (0.5mm) is a rough IPC-2221-style external/uncoated margin for 80V, not
+  derived from a documented calculation — sanity-check it before relying on it, ideally with the
+  actual creepage table (altitude/coating/pollution-degree assumptions all matter and aren't
+  pinned down anywhere yet).
+
+## 4. JLCPCB Manufacturability Floor (Design Rules)
+
+Board-wide DRC floor — applies regardless of net, on top of (not instead of) the net classes
+above. Targets JLCPCB's **standard 2-layer FR4 service** (no HDI/special-process surcharge),
+at this board's chosen **2oz copper, 1.6mm thickness** (both already JLCPCB's own defaults for
+"2oz" and "standard thickness" respectively). Split across two places, both must agree:
+
+- `openMPPT_v1.3.kicad_dru` (Board Setup → Custom Rules): track/spacing, hole/via/annular-ring,
+  silkscreen, edge clearance.
+- `openMPPT_v1.3.kicad_pro` → `board.design_settings.rules` (Board Setup → Design Rules →
+  Constraints): the same floors, as the simple global minimums KiCad checks first.
+
+| Parameter | Value | Note |
+| :--- | :--- | :--- |
+| Track width / spacing | 0.2mm | JLCPCB's published 2oz minimum is 0.16mm (6.5mil) — 0.2mm (8mil) is used instead as the practical margin recommended for 2oz copper (thicker copper etches less precisely than 1oz) |
+| Via/PTH drill | 0.3mm min | JLCPCB's absolute technical minimum is 0.15mm, but sub-~0.3mm on the standard 2-layer service tends to trigger their special-process fee — 0.3mm stays in the no-surcharge tier |
+| Via finished diameter | 0.7mm min | drill (0.3mm) + 2× annular ring (0.2mm) |
+| Annular ring (via/PTH) | 0.2mm min | JLCPCB's recommended value (vs. an 0.13mm absolute minimum) — again biased toward 2oz margin |
+| NPTH hole | 0.5mm min | |
+| Silkscreen line / text height | 0.15mm / 1.0mm min | matches JLCPCB's minimum legible silkscreen |
+| Copper-to-board-edge | 0.3-0.5mm min | JLCPCB minimum is 0.2mm; kept conservative |
+
+Previously (before this pass) `.kicad_dru` had its own copy of the 20A power-net rule,
+independently of the net classes in §3 — it had drifted: it referenced a `PHASE` net that
+doesn't exist in this design (should have been `VS_A`/`VS_B`), still included `GND` (see §3 for
+why that's wrong), and assumed 1oz copper. Removed rather than fixed in place, since keeping the
+power-net width/clearance mandate in one place (net classes) is what avoids this kind of drift
+recurring — `.kicad_dru` now only carries fab-capability floors that don't depend on which net.
+
+Sourced from JLCPCB's [PCB Capabilities page](https://jlcpcb.com/capabilities/pcb-capabilities)
+plus community-verified 2oz-specific guidance, current as of 2026-08; JLCPCB's own gerber-upload
+checker is the final word before ordering, and per-part pricing/surcharge tiers weren't verified
+precisely here (that page's exact cutoffs shift over time) — treat the "stays in the cheap tier"
+framing above as a reasonable rule of thumb, not a guarantee.
+
+## 5. Tooling
 - **KiCad CLI**: `C:\Program Files\KiCad\10.0\bin\kicad-cli.exe`
 - **Vendored Library**: `hardware\KiCad\libraries\easyeda2kicad\` (16 parts not available via PCM — symbols/footprints/3D models fetched with the `easyeda2kicad` tool, registered in `sym-lib-table`/`fp-lib-table`).
 - **JLCPCB Passives**: install the `CDFER/JLCPCB-Kicad-Library` package per-machine via KiCad's Plugin & Content Manager — not vendored into the repo.
 - **Component swap script**: `hardware/scripts/swap_part.py` — vendors a new LCSC part and swaps it into a schematic (and optionally the PCB), handling the reformatting/UUID/net-preservation details that are easy to get wrong by hand (and have been, repeatedly). Doesn't touch STANDARDS.md/CALCULATIONS.typ or run ERC/DRC — update the docs and open KiCad to check the result yourself, same as always. See the script's own docstring for usage and its current limitations (simple passives/2-terminal parts, legacy `module`-format footprints only).
 
-## 4. Working with Claude
+## 6. Working with Claude
 
 Claude reads/edits the KiCad project as plain text (`.kicad_sch`/`.kicad_pcb` are S-expression
 files) — it cannot open KiCad's GUI or judge layout/routing visually without a screenshot.

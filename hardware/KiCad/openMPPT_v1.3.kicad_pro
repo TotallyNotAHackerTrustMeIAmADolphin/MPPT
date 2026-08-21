@@ -140,7 +140,7 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.2,
         "min_connection": 0.0,
         "min_copper_edge_clearance": 0.5,
         "min_groove_width": 0.0,
@@ -149,13 +149,13 @@
         "min_microvia_diameter": 0.2,
         "min_microvia_drill": 0.1,
         "min_resolved_spokes": 2,
-        "min_silk_clearance": 0.0,
-        "min_text_height": 0.8,
-        "min_text_thickness": 0.08,
+        "min_silk_clearance": 0.15,
+        "min_text_height": 1.0,
+        "min_text_thickness": 0.15,
         "min_through_hole_diameter": 0.3,
         "min_track_width": 0.2,
-        "min_via_annular_width": 0.1,
-        "min_via_diameter": 0.5,
+        "min_via_annular_width": 0.2,
+        "min_via_diameter": 0.7,
         "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
@@ -518,29 +518,29 @@
         "diff_pair_width": 0.2,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
-        "name": "Power_20A",
-        "pcb_color": "rgb(0, 255, 7)",
-        "priority": 1,
+        "name": "AuxSupply",
+        "pcb_color": "rgb(255, 81, 12)",
+        "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
+        "track_width": 0.6,
         "tuning_profile": "",
         "via_diameter": 0.6,
         "via_drill": 0.3
       },
       {
-        "clearance": 0.2,
+        "clearance": 0.5,
         "diff_pair_gap": 0.2,
         "diff_pair_width": 0.2,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
-        "name": "thicker",
-        "pcb_color": "rgb(255, 81, 12)",
-        "priority": 0,
+        "name": "Power_20A",
+        "pcb_color": "rgb(0, 255, 7)",
+        "priority": 1,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
+        "track_width": 3.5,
         "tuning_profile": "",
-        "via_diameter": 0.6,
-        "via_drill": 0.3
+        "via_diameter": 1.2,
+        "via_drill": 0.6
       }
     ],
     "meta": {
@@ -558,11 +558,23 @@
         "pattern": "IN_CAP"
       },
       {
-        "netclass": "thicker",
+        "netclass": "Power_20A",
+        "pattern": "VOUT"
+      },
+      {
+        "netclass": "Power_20A",
+        "pattern": "OUT_CAP"
+      },
+      {
+        "netclass": "Power_20A",
+        "pattern": "VS_*"
+      },
+      {
+        "netclass": "AuxSupply",
         "pattern": "3V3"
       },
       {
-        "netclass": "thicker",
+        "netclass": "AuxSupply",
         "pattern": "+10V"
       },
       {

@@ -1,48 +1,49 @@
 (version 1)
-# Custom Design Rules (DRC) for KiCAD 10.0
-# Optimized for JLCPCB 2026 Capabilities and openMPPT 20A Requirements.
+# Custom Design Rules (DRC) for KiCad 10.0 — JLCPCB standard 2-layer FR4 tier.
+#
+# These are the fab's manufacturability floor: what JLCPCB can physically etch/drill on the
+# *standard* (no special-process surcharge) 2-layer service, at the board's chosen 2oz copper
+# and 1.6mm thickness. They apply board-wide regardless of net.
+#
+# Per-net current-carrying width/clearance (20A power path, aux supply rails) is owned by the
+# net classes in openMPPT_v1.3.kicad_pro (Board Setup -> Net Classes: Power_20A / AuxSupply /
+# Default) — not duplicated here, to avoid two sources of truth drifting apart (this file
+# previously had its own copy of the power-net rule, referencing a nonexistent "PHASE" net and
+# still including GND, both now stale — see STANDARDS.md "PCB Net Classes" section).
+#
+# Sources: https://jlcpcb.com/capabilities/pcb-capabilities (official capabilities table) and
+# community-verified guidance for the 2oz-copper case specifically, since the official table's
+# headline min track/space (0.10mm@1oz / 0.16mm@2oz) is the technical limit, not the safe
+# practical value — 2oz copper needs more etch margin than the bare minimum implies.
 
 # =============================================================================
-# 1. POWER STAGE RULES (openMPPT 20A Mandates)
+# Copper (track/pad) — 2oz copper, both layers
 # =============================================================================
 
-(rule "Power Track Width (20A Mandate)"
-	(condition "A.NetName == 'VIN' || A.NetName == 'VOUT' || A.NetName == 'PHASE' || A.NetName == 'GND'")
-	(constraint track_width (min 3.5mm))
-)
-
-(rule "High Power Clearance"
-	(condition "A.NetName == 'VIN' || A.NetName == 'VOUT' || A.NetName == 'PHASE'")
-	(constraint clearance (min 0.5mm))
-)
-
-# =============================================================================
-# 2. JLCPCB MANUFACTURING CAPABILITIES (2026)
-# =============================================================================
-
-(rule "Track width, outer layer (1oz copper)"
-	(layer outer)
+(rule "Track width (2oz copper floor)"
 	(condition "A.Type == 'track'")
-	(constraint track_width (min 0.127mm))
+	(constraint track_width (min 0.2mm))
 )
 
-(rule "Track spacing, outer layer (1oz copper)"
+(rule "Track spacing (2oz copper floor)"
+	(condition "A.Type == 'track' && B.Type == A.Type")
+	(constraint clearance (min 0.2mm))
+)
+
+(rule "Clearance: pad/via to pad/via"
 	(layer outer)
-	(condition "A.Type == 'track' && B.Type == A.Type")
-	(constraint clearance (min 0.127mm))
+	(condition "A.isPlated() && B.isPlated() && A.Net != B.Net")
+	(constraint clearance (min 0.2mm))
 )
 
-(rule "Track width, inner layer"
-	(layer inner)
-	(condition "A.Type == 'track'")
-	(constraint track_width (min 0.09mm))
+(rule "Clearance: track to pad"
+	(condition "A.Type == 'pad' && B.Type == 'track' &&  A.Net != B.Net")
+	(constraint clearance (min 0.2mm))
 )
 
-(rule "Track spacing, inner layer"
-	(layer inner)
-	(condition "A.Type == 'track' && B.Type == A.Type")
-	(constraint clearance (min 0.09mm))
-)
+# =============================================================================
+# Silkscreen
+# =============================================================================
 
 (rule "Silkscreen text"
 	(layer "*SilkS")
@@ -57,10 +58,21 @@
 	(constraint silk_clearance (min 0.15mm))
 )
 
+# =============================================================================
+# Board edge
+# =============================================================================
+
 (rule "Edge (routed) to track clearance"
 	(condition "A.Type == 'track'")
 	(constraint edge_clearance (min 0.3mm))
 )
+
+# =============================================================================
+# Holes and vias
+# =============================================================================
+# Drill floor kept at 0.3mm deliberately: JLCPCB's absolute technical minimum is 0.15mm, but
+# anything under ~0.3mm on the standard 2-layer service tends to trip their special-process
+# fee — 0.3mm is the practical "stays in the cheap tier" floor, not the hard limit.
 
 (rule "Hole diameter"
 	(constraint hole_size (min 0.3mm) (max 6.3mm))
@@ -75,7 +87,7 @@
 (rule "Annular ring width (via and PTH)"
 	(layer outer)
 	(condition "A.isPlated()")
-	(constraint annular_width (min 0.15mm))
+	(constraint annular_width (min 0.2mm))
 )
 
 (rule "Clearance: hole to hole (perimeter), different nets"
@@ -98,15 +110,4 @@
 (rule "Clearance: track to PTH hole perimeter"
 	(condition "A.isPlated() && B.Type == 'track' && A.Net != B.Net")
 	(constraint hole_clearance (min 0.33mm))
-)
-
-(rule "Clearance: track to pad"
-	(condition "A.Type == 'pad' && B.Type == 'track' &&  A.Net != B.Net")
-	(constraint clearance (min 0.2mm))
-)
-
-(rule "Clearance: pad/via to pad/via"
-	(layer outer)
-	(condition "A.isPlated() && B.isPlated() && A.Net != B.Net")
-	(constraint clearance (min 0.127mm))
 )
