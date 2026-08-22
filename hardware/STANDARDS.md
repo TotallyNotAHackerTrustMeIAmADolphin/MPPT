@@ -181,9 +181,12 @@ Workflow:
   the 20A continuous rating, TVS clamping voltage vs. the 80V rail margin, sensor bandwidth vs. the
   ~1.5kHz control loop), checks LCSC/JLCPCB stock/package availability, and documents the
   derivation in `CALCULATIONS.typ` — not just the final part number.
-- **DRC/ERC enforcement**: this is a people job. Claude does not run `kicad-cli` DRC/ERC, proactively
-  or on request — board correctness review stays with the user. The "no merge without a clean
-  report" mandate above is checked by the user, not by Claude.
+- **DRC/ERC**: Claude may run `kicad-cli` DRC/ERC directly (installed in the Linux dev environment,
+  see §5) to check its own edits and report actual violations, rather than reasoning about
+  geometry by hand or waiting on a pasted screenshot. This doesn't change the merge gate in
+  `CLAUDE.md`: a clean report from Claude is informative, not sign-off — the user still confirms
+  hardware verification (or explicit simulation) before a PR touching control/safety logic merges,
+  same as before.
 - **Change mechanics**: hardware edits (this file, `CALCULATIONS.typ`, KiCad files) go through a
   `hardware/<name>` branch and PR, per `CLAUDE.md` — never committed straight to `main`. Example:
   `hardware/fix-resistor-values`.
