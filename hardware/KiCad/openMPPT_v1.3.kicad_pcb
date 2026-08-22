@@ -1671,17 +1671,6 @@
 			(uuid "150d0546-1310-46d5-b6ff-00ab5b0de862")
 		)
 		(fp_circle
-			(center -2.5 0)
-			(end -2.35 0)
-			(stroke
-				(width 0.3)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.Fab")
-			(uuid "ce38dcd6-41de-4340-b1ff-4f306c358387")
-		)
-		(fp_circle
 			(center 0 0)
 			(end 6.25 0)
 			(stroke
@@ -1691,6 +1680,17 @@
 			(fill no)
 			(layer "F.CrtYd")
 			(uuid "f1010d31-6c68-42e2-9f3c-eeee0ae5645c")
+		)
+		(fp_circle
+			(center -2.5 0)
+			(end -2.35 0)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.Fab")
+			(uuid "ce38dcd6-41de-4340-b1ff-4f306c358387")
 		)
 		(fp_circle
 			(center 2.5 0)
@@ -6120,17 +6120,6 @@
 			(uuid "22552ad8-8584-4a4d-9309-90f0b5d5388b")
 		)
 		(fp_circle
-			(center -2.5 0)
-			(end -2.35 0)
-			(stroke
-				(width 0.3)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.Fab")
-			(uuid "f38b2040-0e6e-4faa-980d-d7ab25174a52")
-		)
-		(fp_circle
 			(center 0 0)
 			(end 6.25 0)
 			(stroke
@@ -6140,6 +6129,17 @@
 			(fill no)
 			(layer "F.CrtYd")
 			(uuid "818ceb3b-6333-4b66-96af-186f45e1eb8f")
+		)
+		(fp_circle
+			(center -2.5 0)
+			(end -2.35 0)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.Fab")
+			(uuid "f38b2040-0e6e-4faa-980d-d7ab25174a52")
 		)
 		(fp_circle
 			(center 2.5 0)
@@ -21471,17 +21471,6 @@
 			(uuid "410f1daa-aec8-4ad1-a3ba-40cd8e4940dd")
 		)
 		(fp_circle
-			(center -2.5 0)
-			(end -2.35 0)
-			(stroke
-				(width 0.3)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.Fab")
-			(uuid "601eed09-4ce0-46e3-a237-e74ee5f88069")
-		)
-		(fp_circle
 			(center 0 0)
 			(end 6.25 0)
 			(stroke
@@ -21491,6 +21480,17 @@
 			(fill no)
 			(layer "F.CrtYd")
 			(uuid "1a61c200-51cb-4966-bce5-da8b5748c92c")
+		)
+		(fp_circle
+			(center -2.5 0)
+			(end -2.35 0)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.Fab")
+			(uuid "601eed09-4ce0-46e3-a237-e74ee5f88069")
 		)
 		(fp_circle
 			(center 2.5 0)
@@ -22368,17 +22368,6 @@
 			(uuid "f23f89a1-3115-46ea-b755-4c743c855a89")
 		)
 		(fp_circle
-			(center -2.5 0)
-			(end -2.35 0)
-			(stroke
-				(width 0.3)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.Fab")
-			(uuid "1f17ab6c-d02f-404e-b688-bbe7dbbc1f9f")
-		)
-		(fp_circle
 			(center 0 0)
 			(end 6.25 0)
 			(stroke
@@ -22388,6 +22377,17 @@
 			(fill no)
 			(layer "F.CrtYd")
 			(uuid "bcd3c432-ae51-4a30-b50c-1d55a42da3bf")
+		)
+		(fp_circle
+			(center -2.5 0)
+			(end -2.35 0)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.Fab")
+			(uuid "1f17ab6c-d02f-404e-b688-bbe7dbbc1f9f")
 		)
 		(fp_circle
 			(center 2.5 0)
@@ -24475,7 +24475,6 @@
 			(size 0.7 0.7)
 			(drill 0.7)
 			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
 			(uuid "f22583cd-2b41-4619-8c16-6f01341e120b")
 		)
 		(pad "" np_thru_hole circle
@@ -24483,7 +24482,6 @@
 			(size 0.7 0.7)
 			(drill 0.7)
 			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
 			(uuid "cf76360a-7e74-48e9-ba30-b64825b9574b")
 		)
 		(pad "13" thru_hole oval
@@ -25821,8 +25819,15 @@
 			)
 		)
 		(property ki_fp_filters "MountingHole*")
+		(path "/00737124-27db-4b6e-998e-5bf0fe27f985/9a6b3500-c901-48ad-9f22-5c9d041d018a")
 		(sheetname "/Buck-Boost Stuff/")
 		(sheetfile "buck_boost.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins)
+			)
+		)
 		(attr exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
